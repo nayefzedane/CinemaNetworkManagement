@@ -12,7 +12,10 @@ public class App
 	private static SimpleServer server;
     public static void main( String[] args ) throws IOException
     {
+        ConnectToDatabase.initializeDatabase();
+
         server = new SimpleServer(3000);
         server.listen();
+        System.out.println("is listening:");
     }
 }
