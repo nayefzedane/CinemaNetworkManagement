@@ -32,7 +32,6 @@ public class SimpleServer extends AbstractServer {
 		if (msgString.startsWith("get all movies")) {
 			List<Movie> movies=ConnectToDatabase.getAllMovies();
 			client.sendToClient(movies);
-
 		}
 		if(msgString.startsWith("Update time @")) {
 			String[] parts = msgString.split("@");

@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -29,12 +30,14 @@ public class InitConnection {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        try {
-            System.out.println("INIT REACHED.........................");
-            App.setRoot("MoviesTable");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        System.out.println("INIT REACHED.........................");
+        Platform.runLater(()-> {
+            try {
+                App.setRoot("MoviesTable");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
 
     }

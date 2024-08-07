@@ -13,8 +13,8 @@ import java.util.List;
 public class SimpleClient extends AbstractClient {
 	
 	private static SimpleClient client = null;
-	public static String newHost="";
-	public static int newPort=3000;
+	public static String newHost;
+	public static int newPort;
 
 	private SimpleClient(String host, int port) {
 		super(host, port);
@@ -43,7 +43,7 @@ public class SimpleClient extends AbstractClient {
 	
 	public static SimpleClient getClient() {
 		if (client == null) {
-			client = new SimpleClient("localhost", 3000);
+			client = new SimpleClient(newHost, newPort);/*localhost , 3000*/
 		}
 		return client;
 	}
