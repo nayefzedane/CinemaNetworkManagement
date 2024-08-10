@@ -19,7 +19,6 @@ public class InitConnection {
     @FXML
     private TextField port;
 
-
     @FXML
     void initC(ActionEvent event) {
         newHost = host.getText();
@@ -30,15 +29,14 @@ public class InitConnection {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("INIT REACHED.........................");
-        Platform.runLater(()-> {
+        System.out.println("INIT REACHED...");
+        Platform.runLater(() -> {
             try {
-                App.setRoot("MoviesTable");
+                // לאחר החיבור, הצגת חלון הביניים
+                App.setRoot("selection_window");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
-
-
     }
 }

@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
+import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -12,118 +13,74 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
-import java.sql.SQLOutput;
 import java.time.LocalTime;
 import java.util.List;
 
 public class ConnectToDatabase {
-    private static Session session;
-
-
+    private static SessionFactory sessionFactory;
 
     private static SessionFactory getSessionFactory() throws HibernateException {
-        Configuration configuration = new Configuration();
-        // Add ALL of your entities here. You can also try adding a whole package.
+        if (sessionFactory == null) {
+            Configuration configuration = new Configuration();
+            configuration.addAnnotatedClass(Movie.class);
+            configuration.addAnnotatedClass(User.class);
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        }
+        return sessionFactory;
+    }
 
-        configuration.addAnnotatedClass(Movie.class);
-        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-        return configuration.buildSessionFactory(serviceRegistry);
-}
-public static void CreateDatabase() throws HibernateException {
-    System.out.println("Data Creation is starting");;
-//        Movie movie1 = new Movie(
-//            "Inception",
-//            LocalTime.of(14, 30),
-//            "Sci-Fi",
-//            148,
-//            8.8f,
-//            "Christopher Nolan",
-//            "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO."
-//    );
-//
-//    Movie movie2 = new Movie(
-//            "The Shawshank Redemption",
-//            LocalTime.of(16, 0),
-//            "Drama",
-//            142,
-//            9.3f,
-//            "Frank Darabont",
-//            "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."
-//    );
-//
-//    Movie movie3 = new Movie(
-//            "The Godfather",
-//            LocalTime.of(18, 0),
-//            "Crime",
-//            175,
-//            9.2f,
-//            "Francis Ford Coppola",
-//            "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son."
-//    );
-//
-//    Movie movie4 = new Movie(
-//            "The Dark Knight",
-//            LocalTime.of(20, 0),
-//            "Action",
-//            152,
-//            9.0f,
-//            "Christopher Nolan",
-//            "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham."
-//    );
-//
-//    Movie movie5 = new Movie(
-//            "Pulp Fiction",
-//            LocalTime.of(22, 30),
-//            "Crime",
-//            154,
-//            8.9f,
-//            "Quentin Tarantino",
-//            "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption."
-//    );
-//
-//    Movie movie6 = new Movie(
-//            "Schindler's List",
-//            LocalTime.of(10, 30),
-//            "Biography",
-//            195,
-//            8.9f,
-//            "Steven Spielberg",
-//            "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis."
-//    );
-//
-//    Movie movie7 = new Movie(
-//            "Fight Club",
-//            LocalTime.of(12, 15),
-//            "Drama",
-//            139,
-//            8.8f,
-//            "David Fincher",
-//            "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more."
-//    );
-//    session.save(movie1);
-//    session.flush();
-//    session.save(movie2);
-//    session.flush();
-//    session.save(movie3);
-//    session.flush();
-//    session.save(movie4);
-//    session.flush();
-//    session.save(movie5);
-//    session.flush();
-//    session.save(movie6);
-//    session.flush();
-//    session.save(movie7);
-//    session.flush();
-    System.out.println("ABED IS THE BEST :DDDDD ");
-}
+    public static void CreateDatabase() throws HibernateException {
+        System.out.println("Data Creation is starting");
+
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            // הוספת סרטים לדוגמא
+            Movie movie1 = new Movie("Inception", LocalTime.of(14, 30), "Sci-Fi", 148, 8.8f, "Christopher Nolan", "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.");
+            session.save(movie1);
+
+            Movie movie2 = new Movie("The Shawshank Redemption", LocalTime.of(16, 0), "Drama", 142, 9.3f, "Frank Darabont", "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.");
+            session.save(movie2);
+
+            Movie movie3 = new Movie("The Godfather", LocalTime.of(18, 0), "Crime", 175, 9.2f, "Francis Ford Coppola", "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.");
+            session.save(movie3);
+
+            Movie movie4 = new Movie("The Dark Knight", LocalTime.of(20, 0), "Action", 152, 9.0f, "Christopher Nolan", "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.");
+            session.save(movie4);
+
+            Movie movie5 = new Movie("Pulp Fiction", LocalTime.of(22, 30), "Crime", 154, 8.9f, "Quentin Tarantino", "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.");
+            session.save(movie5);
+
+            Movie movie6 = new Movie("Schindler's List", LocalTime.of(10, 30), "Biography", 195, 8.9f, "Steven Spielberg", "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.");
+            session.save(movie6);
+
+            Movie movie7 = new Movie("Fight Club", LocalTime.of(12, 15), "Drama", 139, 8.8f, "David Fincher", "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.");
+            session.save(movie7);
+
+            // הוספת משתמשים לדוגמא
+            User admin = new User("admin", "admin123", "Admin");
+            User manager = new User("manager", "manager123", "Manager");
+            User customer = new User("customer", "customer123", "Customer");
+            User customerservice = new User("customerservice", "customerservice123", "CustomerService");
+            session.save(admin);
+            session.save(manager);
+            session.save(customer);
+            session.save(customerservice);
+
+            session.getTransaction().commit();
+            System.out.println("Initial data creation finished");
+        } catch (HibernateException e) {
+            System.err.println("Error during initial data creation: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public static void updateShowtime(String title, LocalTime newShowtime) throws Exception {
         System.out.println("Update function reached...");
-        SessionFactory sessionFactory = getSessionFactory();
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
+        try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
-            // Using CriteriaBuilder to fetch the movie with the specified title
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
             Root<Movie> root = query.from(Movie.class);
@@ -139,52 +96,34 @@ public static void CreateDatabase() throws HibernateException {
 
             Movie temp = movies.get(0);
             temp.setReleaseDate(newShowtime);
-            session.update(temp);  // Use update instead of save
+            session.update(temp);
             session.getTransaction().commit();
 
             System.out.println("Updated showtime for movie: " + title);
         } catch (Exception e) {
-            if (session != null && session.getTransaction() != null && session.getTransaction().isActive()) {
-                session.getTransaction().rollback();
-            }
             System.out.println("Error updating showtime: " + e.getMessage());
             throw e;
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 
-
     public static Session initializeDatabase() throws IOException {
         try {
-            SessionFactory sessionFactory = getSessionFactory();
-            session = sessionFactory.openSession();
+            Session session = getSessionFactory().openSession();
             session.beginTransaction();
             session.clear();
             CreateDatabase();
             session.getTransaction().commit();
+            session.close();
+            return session;
         } catch (Exception exception) {
-            if (session != null) {
-                session.getTransaction().rollback();
-            }
-            System.err.println("An error occured, changes have been rolled back.");
+            System.err.println("An error occurred, changes have been rolled back.");
             exception.printStackTrace();
+            throw new IOException("Database initialization failed.", exception);
         }
-        finally {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-        return null;
     }
-    static List<Movie> getAllMovies() throws Exception {
-        Session session = null;
-        try {
-            SessionFactory sessionFactory = getSessionFactory();
-            session = sessionFactory.openSession();
+
+    public static List<Movie> getAllMovies() throws Exception {
+        try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -196,15 +135,29 @@ public static void CreateDatabase() throws HibernateException {
             session.getTransaction().commit();
             return data;
         } catch (Exception e) {
-            if (session != null && session.getTransaction() != null && session.getTransaction().isActive()) {
-                session.getTransaction().rollback(); // Rollback transaction if an exception occurs
-            }
+            System.err.println("Error fetching movies: " + e.getMessage());
             e.printStackTrace();
-            throw e; // rethrow the exception after logging
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            throw e;
+        }
+    }
+
+    public static User getUserByCredentials(String username, String password) {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<User> query = builder.createQuery(User.class);
+            Root<User> root = query.from(User.class);
+            query.select(root).where(builder.equal(root.get("username"), username), builder.equal(root.get("password"), password));
+
+            User user = session.createQuery(query).uniqueResult();
+            session.getTransaction().commit();
+
+            return user;
+        } catch (Exception e) {
+            System.err.println("Error fetching user by credentials: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
 }
