@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # OCSF Mediator Example
 
 ## Structure
@@ -11,3 +12,7 @@ Pay attention to the three modules:
 2. Run the server using the exec:java goal in the server module.
 3. Run the client using the javafx:run goal in the client module.
 4. Press the button and see what happens!
+=======
+# CinemaNetworkManagement
+"Java-based cinema network management system with user authentication and role-based dashboards. Supports Admin, Manager, and Customer Service roles, providing tailored functionalities like movie management, user account control, and customer service tools."
+>>>>>>> 709ad44aa9911f9d1bea4e246ce645fc2769f5c4
