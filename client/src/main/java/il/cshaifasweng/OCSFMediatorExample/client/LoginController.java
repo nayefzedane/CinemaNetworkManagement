@@ -5,6 +5,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.application.Platform;
 import java.io.IOException;
 
@@ -16,11 +18,18 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
+    @FXML
+    private ImageView backgroundImage;
+
     private SimpleClient client;
 
     @FXML
     public void initialize() {
         client = SimpleClient.getClient();
+
+        // טעינת תמונת הרקע
+        Image bgImage = new Image(getClass().getResourceAsStream("/images/background_login.png"));
+        backgroundImage.setImage(bgImage);
     }
 
     @FXML
@@ -46,7 +55,7 @@ public class LoginController {
     @FXML
     private void handleBack() {
         try {
-            App.goBack();  // Use the goBack method to return to the previous screen
+            App.goBack();  // חזרה לחלון הקודם
         } catch (IOException e) {
             showError("Failed to load the previous screen.");
         }

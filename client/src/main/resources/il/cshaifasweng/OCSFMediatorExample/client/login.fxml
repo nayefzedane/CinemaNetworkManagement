@@ -4,18 +4,23 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.LoginController">
 
+    <!-- הוספת ImageView לתמונת הרקע -->
     <children>
-        <VBox alignment="CENTER" layoutX="226.0" layoutY="78.0" spacing="20.0">
+        <ImageView fx:id="backgroundImage" fitHeight="480.0" fitWidth="640.0" preserveRatio="false" />
+
+        <!-- שאר הרכיבים מעל תמונת הרקע -->
+        <VBox alignment="CENTER" layoutX="252.0" layoutY="96.0" spacing="20.0">
             <children>
-                <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="WELCOME" />
-                <Label text="Username:" />
+                <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;" text="WELCOME" />
+                <Label style="-fx-text-fill: white;" text="Username:" />
                 <TextField fx:id="usernameField" />
-                <Label text="Password:" />
+                <Label style="-fx-text-fill: white;" text="Password:" />
                 <PasswordField fx:id="passwordField" />
                 <Button onAction="#handleLogin" text="Login" />
                 <Button onAction="#handleBack" text="Back" /> <!-- כפתור החזרה -->
