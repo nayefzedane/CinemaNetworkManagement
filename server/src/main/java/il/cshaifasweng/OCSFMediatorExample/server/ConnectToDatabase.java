@@ -37,26 +37,33 @@ public class ConnectToDatabase {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
 
-            // הוספת סרטים לדוגמא
+            // הוספת סרטים לדוגמא עם נתיבי תמונה
             Movie movie1 = new Movie("Inception", LocalTime.of(14, 30), "Sci-Fi", 148, 8.8f, "Christopher Nolan", "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.");
+            movie1.setImagePath("images/background_login.png");
             session.save(movie1);
 
             Movie movie2 = new Movie("The Shawshank Redemption", LocalTime.of(16, 0), "Drama", 142, 9.3f, "Frank Darabont", "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.");
+            movie2.setImagePath("images/background_login.png");
             session.save(movie2);
 
             Movie movie3 = new Movie("The Godfather", LocalTime.of(18, 0), "Crime", 175, 9.2f, "Francis Ford Coppola", "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.");
+            movie3.setImagePath("images/background_login.png");
             session.save(movie3);
 
             Movie movie4 = new Movie("The Dark Knight", LocalTime.of(20, 0), "Action", 152, 9.0f, "Christopher Nolan", "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.");
+            movie4.setImagePath("images/background_login.png");
             session.save(movie4);
 
             Movie movie5 = new Movie("Pulp Fiction", LocalTime.of(22, 30), "Crime", 154, 8.9f, "Quentin Tarantino", "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.");
+            movie5.setImagePath("images/background_login.png");
             session.save(movie5);
 
             Movie movie6 = new Movie("Schindler's List", LocalTime.of(10, 30), "Biography", 195, 8.9f, "Steven Spielberg", "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.");
+            movie6.setImagePath("images/background_login.png");
             session.save(movie6);
 
             Movie movie7 = new Movie("Fight Club", LocalTime.of(12, 15), "Drama", 139, 8.8f, "David Fincher", "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.");
+            movie7.setImagePath("images/background_login.png");
             session.save(movie7);
 
             // הוספת משתמשים לדוגמא

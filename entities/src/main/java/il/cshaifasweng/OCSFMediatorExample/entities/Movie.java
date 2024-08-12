@@ -2,9 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Entity
 @Table(name = "movies")
@@ -37,7 +35,8 @@ public class Movie implements Serializable {
     @Column(name = "description")
     private String description;
 
-
+    @Column(name = "image_path")
+    private String imagePath;  // נתיב לתמונה של הסרט
 
     public Movie() {
         // Default constructor
@@ -53,7 +52,7 @@ public class Movie implements Serializable {
         this.description = description;
     }
 
-    // Getters and Setters
+    // Getters ו- Setters
     public int getId() {
         return id;
     }
@@ -118,10 +117,17 @@ public class Movie implements Serializable {
         this.description = description;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
     @Override
     public String toString() {
-        return String.format("Movie ID: %d\nTitle: %s\nRelease Date: %s\nGenre: %s\nDuration: %d minutes\nRating: %.1f\nDirector: %s\nDescription: %s",
-                this.id, this.title, this.releaseDate, this.genre, this.duration, this.rating, this.director, this.description);
-}
+        return String.format("Movie ID: %d\nTitle: %s\nRelease Date: %s\nGenre: %s\nDuration: %d minutes\nRating: %.1f\nDirector: %s\nDescription: %s\nImage Path: %s",
+                this.id, this.title, this.releaseDate, this.genre, this.duration, this.rating, this.director, this.description, this.imagePath);
+    }
 }

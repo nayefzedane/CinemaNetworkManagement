@@ -2,11 +2,8 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import javafx.application.Platform;
-import org.greenrobot.eventbus.EventBus;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
-import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -22,19 +19,18 @@ public class SimpleClient extends AbstractClient {
 
 	@Override
 	protected void handleMessageFromServer(Object msg) {
-		// טיפול באירועי Warning
-		if (msg.getClass().equals(Warning.class)) {
-			EventBus.getDefault().post(new WarningEvent((Warning) msg));
-		}
-
 		// טיפול בקבלת רשימת סרטים מהשרת
-		if(msg instanceof List) {
-			MoviesList.list_allMovies = (List<Movie>) msg;
+		if (msg instanceof List) {
+			List<Movie> movies = (List<Movie>) msg;
+			System.out.println("Movies received from server: " + movies.size()); // Debugging output
 			Platform.runLater(() -> {
 				try {
-					App.setRoot("MoviesList");
-				} catch (IOException e) {
-					throw new RuntimeException(e);
+					CustomerController controller = (CustomerController) App.getController();
+					if (controller != null) {
+						controller.displayMovies(movies);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			});
 		}
@@ -80,5 +76,4 @@ public class SimpleClient extends AbstractClient {
 		}
 		return client;
 	}
-
 }
