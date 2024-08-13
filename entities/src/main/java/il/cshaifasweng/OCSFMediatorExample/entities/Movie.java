@@ -17,8 +17,10 @@ public class Movie implements Serializable {
     @Column(name = "title")
     private String title;
 
+    //chang.......
     @Column(name = "release_date")
     private LocalTime releaseDate;
+    //////////////////////
 
     @Column(name = "genre")
     private String genre;
