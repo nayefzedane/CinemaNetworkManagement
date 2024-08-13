@@ -7,6 +7,7 @@ import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -44,7 +45,11 @@ public class SimpleServer extends AbstractServer {
 		} else if (msgString.startsWith("Update time @")) {
 			String[] parts = msgString.split("@");
 			LocalTime time = LocalTime.parse(parts[1]);
-			ConnectToDatabase.updateShowtime(parts[2], time);
+
+			// ממיר את LocalTime ל-LocalDateTime עם התאריך הנוכחי
+			LocalDateTime dateTime = LocalDateTime.now().with(time);
+
+			ConnectToDatabase.updateShowtime(parts[2], dateTime);
 			List<Movie> movies = ConnectToDatabase.getAllMovies();
 			client.sendToClient(movies);
 		}

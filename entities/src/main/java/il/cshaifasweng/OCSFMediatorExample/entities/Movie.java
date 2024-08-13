@@ -2,7 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "movies")
@@ -14,47 +14,71 @@ public class Movie implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
-    //chang.......
-    @Column(name = "release_date")
-    private LocalTime releaseDate;
-    //////////////////////
+    @Column(name = "showtime", nullable = false)
+    private LocalDateTime showtime = LocalDateTime.now();  // ברירת מחדל - מועד הקרנה נוכחי
 
-    @Column(name = "genre")
-    private String genre;
+    @Column(name = "release_date", nullable = false)
+    private LocalDateTime releaseDate = LocalDateTime.of(2023, 1, 1, 0, 0);  // ברירת מחדל - תאריך יציאה קבוע
 
-    @Column(name = "duration")
-    private int duration; // in minutes
+    @Column(name = "genre", nullable = false)
+    private String genre = "Unspecified";  // ברירת מחדל - ז'אנר לא מוגדר
 
-    @Column(name = "rating")
-    private float rating;
+    @Column(name = "duration", nullable = false)
+    private int duration = 120;  // ברירת מחדל - משך סרט 120 דקות
 
-    @Column(name = "director")
-    private String director;
+    @Column(name = "rating", nullable = false)
+    private float rating = 0.0f;  // ברירת מחדל - דירוג 0
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "director", nullable = false)
+    private String director = "Unknown";  // ברירת מחדל - במאי לא ידוע
 
-    @Column(name = "image_path")
-    private String imagePath;  // נתיב לתמונה של הסרט
+    @Column(name = "description", nullable = false)
+    private String description = "No description available";  // ברירת מחדל - תיאור לא זמין
 
-    public Movie() {
-        // Default constructor
-    }
+    @Column(name = "image_path", nullable = false)
+    private String imagePath = "/images/background_login.png";  // ברירת מחדל - תמונה דיפולטיבית
 
-    public Movie(String title, LocalTime releaseDate, String genre, int duration, float rating, String director, String description) {
+    @Column(name = "place", nullable = false)
+    private String place = "Default Cinema";  // ברירת מחדל - מיקום קולנוע דיפולטיבי
+
+    @Column(name = "price", nullable = false)
+    private float price = 40.0f;  // ברירת מחדל - מחיר כרטיס 40 ש"ח
+
+    @Column(name = "isOnline", nullable = false)
+    private boolean isOnline = false;  // ברירת מחדל - אין צפייה ביתית
+
+    @Column(name = "availableSeat", nullable = false)
+    private int availableSeat = 100;  // ברירת מחדל - 100 מקומות פנויים
+
+    @Column(name = "hallNumber", nullable = false)
+    private int hallNumber = 1;  // ברירת מחדל - אולם מספר 1
+
+    // קונסטרקטור ברירת מחדל
+    public Movie() {}
+
+    // קונסטרקטור עם פרמטרים לכל השדות
+    public Movie(String title, LocalDateTime showtime, LocalDateTime releaseDate, String genre, int duration, float rating, String director, String description, String imagePath, String place, float price, boolean isOnline, int availableSeat, int hallNumber) {
         this.title = title;
+        this.showtime = showtime;
         this.releaseDate = releaseDate;
         this.genre = genre;
         this.duration = duration;
         this.rating = rating;
         this.director = director;
         this.description = description;
+        this.imagePath = imagePath;
+        this.place = place;
+        this.price = price;
+        this.isOnline = isOnline;
+        this.availableSeat = availableSeat;
+        this.hallNumber = hallNumber;
     }
 
-    // Getters ו- Setters
+    // Getters ו- Setters לכל שדה
+
     public int getId() {
         return id;
     }
@@ -71,11 +95,19 @@ public class Movie implements Serializable {
         this.title = title;
     }
 
-    public LocalTime getReleaseDate() {
+    public LocalDateTime getShowtime() {
+        return showtime;
+    }
+
+    public void setShowtime(LocalDateTime showtime) {
+        this.showtime = showtime;
+    }
+
+    public LocalDateTime getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(LocalTime releaseDate) {
+    public void setReleaseDate(LocalDateTime releaseDate) {
         this.releaseDate = releaseDate;
     }
 
@@ -127,9 +159,49 @@ public class Movie implements Serializable {
         this.imagePath = imagePath;
     }
 
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean isOnline) {
+        this.isOnline = isOnline;
+    }
+
+    public int getAvailableSeat() {
+        return availableSeat;
+    }
+
+    public void setAvailableSeat(int availableSeat) {
+        this.availableSeat = availableSeat;
+    }
+
+    public int getHallNumber() {
+        return hallNumber;
+    }
+
+    public void setHallNumber(int hallNumber) {
+        this.hallNumber = hallNumber;
+    }
+
     @Override
     public String toString() {
-        return String.format("Movie ID: %d\nTitle: %s\nRelease Date: %s\nGenre: %s\nDuration: %d minutes\nRating: %.1f\nDirector: %s\nDescription: %s\nImage Path: %s",
-                this.id, this.title, this.releaseDate, this.genre, this.duration, this.rating, this.director, this.description, this.imagePath);
+        return String.format("Movie ID: %d\nTitle: %s\nShowtime: %s\nRelease Date: %s\nGenre: %s\nDuration: %d minutes\nRating: %.1f\nDirector: %s\nDescription: %s\nImage Path: %s\nPlace: %s\nPrice: %.2f\nIs Online: %b\nAvailable Seats: %d\nHall Number: %d",
+                this.id, this.title, this.showtime, this.releaseDate, this.genre, this.duration, this.rating, this.director, this.description, this.imagePath, this.place, this.price, this.isOnline, this.availableSeat, this.hallNumber);
     }
 }

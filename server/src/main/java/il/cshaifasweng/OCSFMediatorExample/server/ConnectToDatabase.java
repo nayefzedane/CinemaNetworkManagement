@@ -13,7 +13,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ConnectToDatabase {
@@ -37,33 +37,68 @@ public class ConnectToDatabase {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
 
-            // הוספת סרטים לדוגמא עם נתיבי תמונה
-            Movie movie1 = new Movie("Inception", LocalTime.of(14, 30), "Sci-Fi", 148, 8.8f, "Christopher Nolan", "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.");
-            movie1.setImagePath("images/background_login.png");
+            // הוספת סרטים לדוגמא עם כל השדות החדשים באמצעות הקונסטרקטור
+            Movie movie1 = new Movie("Inception",
+                    LocalDateTime.of(2024, 12, 24, 14, 30),  // Showtime
+                    LocalDateTime.of(2024, 12, 10, 0, 0),   // Release Date
+                    "Sci-Fi", 148, 8.8f, "Christopher Nolan",
+                    "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
+                    "images/background_login.png", "Cinema City",
+                    40.0f, true, 80, 3);
             session.save(movie1);
 
-            Movie movie2 = new Movie("The Shawshank Redemption", LocalTime.of(16, 0), "Drama", 142, 9.3f, "Frank Darabont", "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.");
-            movie2.setImagePath("images/background_login.png");
+            Movie movie2 = new Movie("The Shawshank Redemption",
+                    LocalDateTime.of(2024, 12, 24, 16, 0),  // Showtime
+                    LocalDateTime.of(2024, 12, 5, 0, 0),    // Release Date
+                    "Drama", 142, 9.3f, "Frank Darabont",
+                    "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+                    "images/background_login.png", "Cinema City",
+                    35.0f, true, 60, 2);
             session.save(movie2);
 
-            Movie movie3 = new Movie("The Godfather", LocalTime.of(18, 0), "Crime", 175, 9.2f, "Francis Ford Coppola", "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.");
-            movie3.setImagePath("images/background_login.png");
+            Movie movie3 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDateTime.of(2024, 12, 3, 0, 0),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
             session.save(movie3);
 
-            Movie movie4 = new Movie("The Dark Knight", LocalTime.of(20, 0), "Action", 152, 9.0f, "Christopher Nolan", "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.");
-            movie4.setImagePath("images/background_login.png");
+            Movie movie4 = new Movie("The Dark Knight",
+                    LocalDateTime.of(2024, 12, 24, 20, 0),  // Showtime
+                    LocalDateTime.of(2024, 12, 7, 0, 0),    // Release Date
+                    "Action", 152, 9.0f, "Christopher Nolan",
+                    "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.",
+                    "images/background_login.png", "Yes Planet",
+                    45.0f, true, 70, 4);
             session.save(movie4);
 
-            Movie movie5 = new Movie("Pulp Fiction", LocalTime.of(22, 30), "Crime", 154, 8.9f, "Quentin Tarantino", "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.");
-            movie5.setImagePath("images/background_login.png");
+            Movie movie5 = new Movie("Pulp Fiction",
+                    LocalDateTime.of(2024, 12, 24, 22, 30),  // Showtime
+                    LocalDateTime.of(2024, 12, 1, 0, 0),     // Release Date
+                    "Crime", 154, 8.9f, "Quentin Tarantino",
+                    "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
+                    "images/background_login.png", "Cinema City",
+                    42.0f, true, 85, 2);
             session.save(movie5);
 
-            Movie movie6 = new Movie("Schindler's List", LocalTime.of(10, 30), "Biography", 195, 8.9f, "Steven Spielberg", "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.");
-            movie6.setImagePath("images/background_login.png");
+            Movie movie6 = new Movie("Schindler's List",
+                    LocalDateTime.of(2024, 12, 24, 10, 30),  // Showtime
+                    LocalDateTime.of(2024, 11, 28, 0, 0),    // Release Date
+                    "Biography", 195, 8.9f, "Steven Spielberg",
+                    "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 60, 1);
             session.save(movie6);
 
-            Movie movie7 = new Movie("Fight Club", LocalTime.of(12, 15), "Drama", 139, 8.8f, "David Fincher", "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.");
-            movie7.setImagePath("images/background_login.png");
+            Movie movie7 = new Movie("Fight Club",
+                    LocalDateTime.of(2024, 12, 24, 12, 15),  // Showtime
+                    LocalDateTime.of(2024, 12, 2, 0, 0),     // Release Date
+                    "Drama", 139, 8.8f, "David Fincher",
+                    "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.",
+                    "images/background_login.png", "Cinema City",
+                    38.0f, true, 90, 3);
             session.save(movie7);
 
             // הוספת משתמשים לדוגמא
@@ -84,7 +119,7 @@ public class ConnectToDatabase {
         }
     }
 
-    public static void updateShowtime(String title, LocalTime newShowtime) throws Exception {
+    public static void updateShowtime(String title, LocalDateTime newShowtime) throws Exception {
         System.out.println("Update function reached...");
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -102,7 +137,7 @@ public class ConnectToDatabase {
             }
 
             Movie temp = movies.get(0);
-            temp.setReleaseDate(newShowtime);
+            temp.setShowtime(newShowtime);
             session.update(temp);
             session.getTransaction().commit();
 
