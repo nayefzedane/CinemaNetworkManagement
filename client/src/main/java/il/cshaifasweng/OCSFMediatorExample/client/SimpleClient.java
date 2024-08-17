@@ -48,7 +48,7 @@ public class SimpleClient extends AbstractClient {
 								App.setRoot("admin_dashboard");
 								break;
 							case "Manager":
-								App.setRoot("manager_dashboard");
+								App.setRoot("content_manager_dashboard");
 								break;
 							case "Customer":
 								App.setRoot("customer_dashboard");

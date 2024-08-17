@@ -7,8 +7,10 @@ import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Base64;
 import java.util.List;
 
 public class SimpleServer extends AbstractServer {
@@ -52,6 +54,70 @@ public class SimpleServer extends AbstractServer {
 			ConnectToDatabase.updateShowtime(parts[2], dateTime);
 			List<Movie> movies = ConnectToDatabase.getAllMovies();
 			client.sendToClient(movies);
+		} else if (msgString.startsWith("id=")) {
+			String movieString = msg.toString();
+			String[] fields = movieString.split(";");
+			Movie movie = new Movie();
+
+			for (String field : fields) {
+				String[] keyValue = field.split("=");
+				String key = keyValue[0];
+				String value = keyValue[1];
+
+				switch (key) {
+					case "id":
+						movie.setId(Integer.parseInt(value));
+						break;
+					case "title":
+						movie.setTitle(value);
+						break;
+					case "showtime":
+						movie.setShowtime(LocalDateTime.parse(value));
+						break;
+					case "releaseDate":
+						movie.setReleaseDate(LocalDate.parse(value));
+						break;
+					case "genre":
+						movie.setGenre(value);
+						break;
+					case "duration":
+						movie.setDuration(Integer.parseInt(value));
+						break;
+					case "rating":
+						movie.setRating(Float.parseFloat(value));
+						break;
+					case "director":
+						movie.setDirector(value);
+						break;
+					case "description":
+						movie.setDescription(value);
+						break;
+					case "imagePath":
+						movie.setImagePath(value);
+						break;
+					case "place":
+						movie.setPlace(value);
+						break;
+					case "price":
+						movie.setPrice(Float.parseFloat(value));
+						break;
+					case "isOnline":
+						movie.setOnline(Boolean.parseBoolean(value));
+						break;
+					case "availableSeat":
+						movie.setAvailableSeat(Integer.parseInt(value));
+						break;
+					case "hallNumber":
+						movie.setHallNumber(Integer.parseInt(value));
+						break;
+					case "imageData":
+						movie.setImageData((value));
+						break;
+					// Handle other fields similarly...
+				}
+			}
+		ConnectToDatabase.addMovie(movie);
 		}
+
 	}
 }
