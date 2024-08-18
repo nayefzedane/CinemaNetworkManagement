@@ -2,13 +2,10 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.HibernateException;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -204,6 +201,7 @@ public class ConnectToDatabase {
             return null;
         }
     }
+
     public static void addMovie(Movie movie) {
         Transaction transaction = null;
         try (Session session = getSessionFactory().openSession()) {
@@ -220,4 +218,17 @@ public class ConnectToDatabase {
         }
     }
 
+    public static Long getMovieCountFromDatabase() {
+        try {
+            Session session = getSessionFactory().openSession();
+            Transaction tx = session.beginTransaction();
+            Long count = session.createQuery("SELECT COUNT(m) FROM Movie m", Long.class).getSingleResult();
+            tx.commit();
+            session.close();
+            return count;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

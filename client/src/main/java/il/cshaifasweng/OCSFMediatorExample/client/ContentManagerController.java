@@ -2,6 +2,8 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import com.mysql.cj.xdevapi.Client;
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.*;
@@ -28,6 +30,34 @@ public class ContentManagerController {
     @FXML private TextField genreField;
     @FXML private TextField imagePathField;
 
+    private SimpleClient client;
+
+    @FXML
+    private Label movieCountLabel;
+    @FXML
+    private void initialize() {
+        client = SimpleClient.getClient();
+        client.setContentManagerController(this);
+        updateMovieCount();
+    }
+
+    public void updateMovieCount() {
+        try {
+            client.sendToServer("#getMovieCount");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setMovieCount(int count) {
+        Platform.runLater(() -> {
+            movieCountLabel.setText("Movies in Database: " + count);
+        });
+    }
+
+    // This method should be called whenever you return to this view
+    public void refreshView() {
+        initialize();
+    }
     @FXML
     private void handleImageUpload() {
         FileChooser fileChooser = new FileChooser();
@@ -120,5 +150,21 @@ public class ContentManagerController {
             showAlert(Alert.AlertType.ERROR, "Error" ,"Failed to load the previous screen." + e.getMessage());
         }
     }
-
+    @FXML
+    public void handleGoToAddMovie(ActionEvent actionEvent) {
+        try {
+            App.setRoot("content_manager_addmovie");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    public void handleGoToDeleteMovie(ActionEvent actionEvent) {
+    }
+    @FXML
+    public void handleGoToUpdatePrice(ActionEvent actionEvent) {
+    }
+    @FXML
+    public void handleGoToUpdateShowtime(ActionEvent actionEvent) {
+    }
 }

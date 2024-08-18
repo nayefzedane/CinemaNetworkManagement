@@ -9,6 +9,7 @@ import java.util.List;
 
 public class SimpleClient extends AbstractClient {
 
+	static ContentManagerController contentManagerController;
 	private static SimpleClient client = null;
 	public static String newHost;
 	public static int newPort;
@@ -17,6 +18,9 @@ public class SimpleClient extends AbstractClient {
 		super(host, port);
 	}
 
+	public void setContentManagerController(ContentManagerController controller) {
+		this.contentManagerController = controller;
+	}
 	@Override
 	protected void handleMessageFromServer(Object msg) {
 		// טיפול בקבלת רשימת סרטים מהשרת
@@ -66,7 +70,15 @@ public class SimpleClient extends AbstractClient {
 					// הודעת שגיאה על כישלון בהתחברות
 					System.out.println("Login failed.");
 				}
+				else if (response.startsWith("#movieCount")) { {
+						int count = Integer.parseInt(response.split(":")[1]);
+						if (contentManagerController != null) {
+							contentManagerController.setMovieCount(count);
+						}
+					}
+				}
 			});
+
 		}
 	}
 

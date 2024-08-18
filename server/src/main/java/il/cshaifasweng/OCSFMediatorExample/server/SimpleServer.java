@@ -5,6 +5,8 @@ import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -117,6 +119,9 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		ConnectToDatabase.addMovie(movie);
+
+		} else if (msgString.startsWith("#getMovieCount")) {
+				client.sendToClient("#movieCount:" + ConnectToDatabase.getMovieCountFromDatabase() );
 		}
 
 	}
