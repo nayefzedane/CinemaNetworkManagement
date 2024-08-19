@@ -161,6 +161,51 @@ public class ContentManagerController {
         }
     }
 
+    public void handleUpdateShowtime(ActionEvent actionEvent) {
+        Movie selectedMovie = movieTable.getSelectionModel().getSelectedItem();
+        if (selectedMovie != null) {
+            // Validate the date
+            LocalDate selectedDate = showtimeDatePicker.getValue();
+            LocalDate today = LocalDate.now();
+            if (selectedDate == null || !selectedDate.isAfter(today)) {
+                showAlert(Alert.AlertType.ERROR, "Invalid Date", "Please select a future date.");
+                return;
+            }
+
+            // Validate the time fields
+            String hourText = showtimeHourField.getText();
+            String minuteText = showtimeMinuteField.getText();
+            int hour, minute;
+
+            try {
+                hour = Integer.parseInt(hourText);
+                minute = Integer.parseInt(minuteText);
+
+                if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+                    showAlert(Alert.AlertType.ERROR, "Invalid Time", "Please enter a valid time (HH:MM).");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter numeric values for hours and minutes.");
+                return;
+            }
+
+            try {
+                SimpleClient.getClient().sendToServer("update showtime:" + selectedMovie.getId() + ":" + selectedDate.toString() +
+                        ":" + hour + ":" + minute); // Send update showtime request
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to update movie showtime: " + e.getMessage());
+                return;
+            }
+            showAlert(Alert.AlertType.CONFIRMATION, "Confirmation", "Movie showtime updated successfully \nNew show date and time are: " +
+                    selectedDate.toString() + " , " + hour + ":" + minute);
+            loadMoviesIntoTable();
+        } else {
+            showAlert(Alert.AlertType.ERROR, "No Movie Selected", "Please select a movie.");
+        }
+    }
+
 
     private void clearForm() {
         titleField.clear();
@@ -195,7 +240,7 @@ public class ContentManagerController {
     @FXML
     public void handleGoTo(ActionEvent actionEvent) {
         Button clickedButton = (Button) actionEvent.getSource();
-        System.out.println(actionEvent.toString());
+        System.out.println("Navigating to " + clickedButton.getText());
         String fxmlFile = "";
 
         switch (clickedButton.getText()) {
@@ -206,10 +251,10 @@ public class ContentManagerController {
                 fxmlFile = "content_manager_deletemovie";
                 break;
             case "Update Price":
-                fxmlFile = "UpdatePrice.fxml";
+                fxmlFile = "";
                 break;
             case "Update Showtime":
-                fxmlFile = "UpdateShowtime.fxml";
+                fxmlFile = "content_manager_updatehowtime";
                 break;
         }
         try {

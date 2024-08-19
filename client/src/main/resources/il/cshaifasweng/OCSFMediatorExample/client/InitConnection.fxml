@@ -11,8 +11,8 @@
     <children>
         <ImageView fx:id="backgroundImage" fitHeight="480.0" fitWidth="640.0" preserveRatio="false" />
         <Button layoutX="131.0" layoutY="120.0" mnemonicParsing="false" onAction="#initC" text="Connect" />
-        <TextField fx:id="port" layoutX="86.0" layoutY="77.0" promptText="port" />
-        <TextField fx:id="host" layoutX="86.0" layoutY="41.0" promptText="local ip address" />
+        <TextField fx:id="port" layoutX="86.0" layoutY="77.0" promptText="port" text="3000" />
+        <TextField fx:id="host" layoutX="86.0" layoutY="41.0" promptText="local ip address" text="localhost" />
         <!-- עדכון הצבע של ה-Label ללב -->
         <Label layoutX="42.0" layoutY="45.0" style="-fx-text-fill: white;" text="Host:" />
         <Label layoutX="43.0" layoutY="81.0" style="-fx-text-fill: white;" text="Port:" />

@@ -246,4 +246,28 @@ public class ConnectToDatabase {
         session.close();
     }
 
+    public static void updateMovieShowtimeInDatabase(int movieId, LocalDateTime newShowtime) {
+        Session session = ConnectToDatabase.getSessionFactory().openSession();
+        Transaction transaction = null;
+
+        try {
+            transaction = session.beginTransaction();
+
+            // Retrieve the movie from the database
+            Movie movie = session.get(Movie.class, movieId);
+            if (movie == null) {
+                throw new Exception("Movie not found.");
+            }
+
+            // Update the showtime
+            movie.setShowtime(newShowtime);
+            session.update(movie);
+
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        session.close();
+        System.out.println("Show time updated successfully");
+    }
 }

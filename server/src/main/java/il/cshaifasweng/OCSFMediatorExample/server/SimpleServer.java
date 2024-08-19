@@ -46,16 +46,21 @@ public class SimpleServer extends AbstractServer {
 		} else if (msgString.startsWith("get all movies")) {
 			List<Movie> movies = ConnectToDatabase.getAllMovies();
 			client.sendToClient(movies);
-		} else if (msgString.startsWith("Update time @")) {
-			String[] parts = msgString.split("@");
-			LocalTime time = LocalTime.parse(parts[1]);
+		} else if (msgString.startsWith("update showtime:")){
+			msgString = msgString.substring("update showtime:".length());
+			String[] parts = msgString.split(":");
+			int movieId = Integer.parseInt(parts[0]);
+			String dateStr = parts[1];
+			int hour = Integer.parseInt(parts[2]);
+			int minute = Integer.parseInt(parts[3]);
 
-			// ממיר את LocalTime ל-LocalDateTime עם התאריך הנוכחי
-			LocalDateTime dateTime = LocalDateTime.now().with(time);
+			// Parse date and time
+			LocalDate date = LocalDate.parse(dateStr);
+			LocalTime time = LocalTime.of(hour, minute);
+			LocalDateTime newShowtime = LocalDateTime.of(date, time);
 
-			ConnectToDatabase.updateShowtime(parts[2], dateTime);
-			List<Movie> movies = ConnectToDatabase.getAllMovies();
-			client.sendToClient(movies);
+			// Update the movie's showtime in the database
+			ConnectToDatabase.updateMovieShowtimeInDatabase(movieId, newShowtime);
 		} else if (msgString.startsWith("id=")) {
 			String movieString = msg.toString();
 			String[] fields = movieString.split(";");
