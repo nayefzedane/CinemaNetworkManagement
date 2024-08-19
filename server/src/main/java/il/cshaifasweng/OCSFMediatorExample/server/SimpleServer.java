@@ -118,11 +118,15 @@ public class SimpleServer extends AbstractServer {
 					// Handle other fields similarly...
 				}
 			}
-		ConnectToDatabase.addMovie(movie);
+			ConnectToDatabase.addMovie(movie);
 
-		} else if (msgString.startsWith("#getMovieCount")) {
-				client.sendToClient("#movieCount:" + ConnectToDatabase.getMovieCountFromDatabase() );
 		}
-
+		else if (msgString.startsWith("#getMovieCount")) {
+			client.sendToClient("#movieCount:" + ConnectToDatabase.getMovieCountFromDatabase());
+		}
+		else if (msgString.startsWith("delete movie ")) {
+			String movieId = msgString.substring("delete movie ".length());
+			ConnectToDatabase.deleteMovieById(Integer.parseInt(movieId));
+		}
 	}
 }

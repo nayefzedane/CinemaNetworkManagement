@@ -231,4 +231,19 @@ public class ConnectToDatabase {
         }
         return null;
     }
+
+    public static void deleteMovieById(int id) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Movie movie = session.get(Movie.class, id);
+        if (movie != null) {
+            session.delete(movie);
+        } else {
+            System.out.println("Movie with ID " + id + " not found.");
+        }
+        session.getTransaction().commit();
+        session.close();
+    }
+
 }

@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import javafx.application.Platform;
+import il.cshaifasweng.OCSFMediatorExample.client.ContentManagerController;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 import java.io.IOException;
@@ -29,14 +30,17 @@ public class SimpleClient extends AbstractClient {
 			System.out.println("Movies received from server: " + movies.size()); // Debugging output
 			Platform.runLater(() -> {
 				try {
-					CustomerController controller = (CustomerController) App.getController();
-					if (controller != null) {
-						controller.displayMovies(movies);
+					CustomerController customerController = (CustomerController) App.getController();
+					if (customerController != null) {
+						customerController.displayMovies(movies);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			});
+			ContentManagerController controller = (ContentManagerController) App.getController();
+			controller.updateMovieTable(movies);
+
 		}
 
 		// טיפול בתשובת ההתחברות מהשרת

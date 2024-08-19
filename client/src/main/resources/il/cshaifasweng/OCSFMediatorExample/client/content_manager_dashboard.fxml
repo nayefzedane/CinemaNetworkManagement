@@ -17,10 +17,10 @@
 
     <!-- Main Buttons -->
     <GridPane hgap="20" vgap="20" alignment="CENTER">
-        <Button text="Add Movie" onAction="#handleGoToAddMovie" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Button text="Delete Movie" onAction="#handleGoToDeleteMovie" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-        <Button text="Update Price" onAction="#handleGoToUpdatePrice" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <Button text="Update Showtime" onAction="#handleGoToUpdateShowtime" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Button text="Add Movie" onAction="#handleGoTo" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Button text="Delete Movie" onAction="#handleGoTo" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Button text="Update Price" onAction="#handleGoTo" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Button text="Update Showtime" onAction="#handleGoTo" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
     </GridPane>
 
     <!-- Back Button -->

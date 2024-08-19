@@ -7,9 +7,13 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.CustomerController">
     <children>
-        <ScrollPane layoutX="14.0" layoutY="14.0" prefHeight="372.0" prefWidth="600.0">
+        <!-- ScrollPane to display the movies, made to fill the area dynamically -->
+        <ScrollPane fx:id="scrollPane" AnchorPane.topAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.bottomAnchor="50.0">
             <VBox fx:id="moviesContainer" spacing="10.0" />
         </ScrollPane>
-        <Button layoutX="14.0" layoutY="394.0" mnemonicParsing="false" text="Back" onAction="#handleBack"/> <!-- כפתור החזרה -->
+
+        <!-- Back Button positioned at the bottom left -->
+        <Button fx:id="backButton" text="Back" mnemonicParsing="false" onAction="#handleBack"
+                AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" />
     </children>
 </AnchorPane>
