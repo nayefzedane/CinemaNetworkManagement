@@ -1,17 +1,32 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
+import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
+
 import javafx.application.Platform;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 import java.io.IOException;
 import java.util.List;
+import il.cshaifasweng.OCSFMediatorExample.entities.Request;
+
+
 
 public class SimpleClient extends AbstractClient {
 
 	private static SimpleClient client = null;
 	public static String newHost;
 	public static int newPort;
+	static AdminController adminController;
+	//static price_change_requestsController priceChangeRequestsController;
+	public void setAdminController(AdminController adminController) {
+		this.adminController = adminController;
+		System.out.println("AdminController set: " + (adminController != null));
+	}
+
+
+
+
 
 	private SimpleClient(String host, int port) {
 		super(host, port);
@@ -19,20 +34,53 @@ public class SimpleClient extends AbstractClient {
 
 	@Override
 	protected void handleMessageFromServer(Object msg) {
-		// טיפול בקבלת רשימת סרטים מהשרת
-		if (msg instanceof List) {
-			List<Movie> movies = (List<Movie>) msg;
-			System.out.println("Movies received from server: " + movies.size()); // Debugging output
-			Platform.runLater(() -> {
-				try {
-					CustomerController controller = (CustomerController) App.getController();
-					if (controller != null) {
-						controller.displayMovies(movies);
+		// Check if the message is a list
+		if (msg instanceof List<?>) {
+			List<?> list = (List<?>) msg;
+
+			// Check if it's a list of movies
+			if (!list.isEmpty() && list.get(0) instanceof Movie) {
+				List<Movie> movies = (List<Movie>) list;
+				System.out.println("Movies received from server: " + movies.size()); // Debugging output
+				Platform.runLater(() -> {
+					try {
+						CustomerController controller = (CustomerController) App.getController();
+						if (controller != null) {
+							controller.displayMovies(movies);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			});
+				});
+			}
+
+			// Check if it's a list of purchase cards
+			else if (!list.isEmpty() && list.get(0) instanceof purchaseCard) {
+				System.out.println("we are in simple client after we get back from server, purchase card");
+				List<purchaseCard> purchaseList = (List<purchaseCard>) list;
+				System.out.println("Purchase report received from server: " + purchaseList.size()); // Debugging output
+				Platform.runLater(() -> {
+					AdminController controller  = (AdminController) App.getController();
+					controller.updatePurchaseList(purchaseList);
+				});
+			}
+			else if (!list.isEmpty() && list.get(0) instanceof Request) {
+				System.out.println("on simple client requests");
+				List<Request> requests = (List<Request>) list;
+				System.out.println("Price change requests received from server: " + requests.size());
+				Platform.runLater(() -> {
+					try{
+						AdminController controller  = (AdminController) App.getController();
+						if (controller != null) {
+							controller.updateRequestList(requests);
+					}
+
+					} catch(Exception e){
+						e.printStackTrace();
+
+					}
+				});
+			}
 		}
 
 		// טיפול בתשובת ההתחברות מהשרת
@@ -76,4 +124,9 @@ public class SimpleClient extends AbstractClient {
 		}
 		return client;
 	}
+
+
+
+
+
 }

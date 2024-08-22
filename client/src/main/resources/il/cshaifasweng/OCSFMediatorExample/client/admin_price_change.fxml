@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.AdminController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <top>
+        <HBox spacing="10.0" alignment="center" style="-fx-padding: 10px;">
+            <Button text="Get the Report" onAction="#Request_Report"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="10.0" style="-fx-padding: 20px;">
+            <Label text="Price Change Requests" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+            <TableView fx:id="requestTableView" prefWidth="560.0" prefHeight="250.0">
+                <columns>
+                    <TableColumn fx:id="idColumn" text="ID" prefWidth="80.0"/>
+                    <TableColumn fx:id="titleColumn" text="Title" prefWidth="240.0"/>
+                    <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="240.0"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10.0" alignment="center" style="-fx-padding: 10px;">
+            <Button text="Approve" fx:id="approveButton" onAction="#handleApprove"/>
+            <Button text="Deny" fx:id="denyButton" onAction="#handleDeny"/>
+            <Button text="Return" onAction="#handleReturn"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

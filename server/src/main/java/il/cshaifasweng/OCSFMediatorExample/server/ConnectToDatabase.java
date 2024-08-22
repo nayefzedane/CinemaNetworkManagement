@@ -2,12 +2,14 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.HibernateException;
+import org.hibernate.Transaction;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,6 +17,11 @@ import javax.persistence.criteria.Root;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+
+//this what loay added:
+import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
+import java.time.LocalDate;
+import javax.persistence.criteria.Order;
 
 public class ConnectToDatabase {
     private static SessionFactory sessionFactory;
@@ -24,6 +31,8 @@ public class ConnectToDatabase {
             Configuration configuration = new Configuration();
             configuration.addAnnotatedClass(Movie.class);
             configuration.addAnnotatedClass(User.class);
+            configuration.addAnnotatedClass(purchaseCard.class);
+            configuration.addAnnotatedClass(Request.class);
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -33,7 +42,10 @@ public class ConnectToDatabase {
 
     public static void CreateDatabase() throws HibernateException {
         System.out.println("Data Creation is starting");
+        createPurchases();
+        createRequests();
 
+        System.out.println("Initial data creation finished");
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
 
@@ -202,4 +214,162 @@ public class ConnectToDatabase {
             return null;
         }
     }
+
+    //adding purchases
+    public static void createPurchases() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            purchaseCard purchase1 = new purchaseCard(
+                    LocalDate.of(2024, 8, 17),
+                    "Cinema City",
+                    40,
+                    1001,
+                    1234,
+                    "Inception",
+                    LocalDateTime.of(2024, 12, 24, 14, 30)
+            );
+            session.save(purchase1);
+            purchaseCard purchase2 = new purchaseCard(
+                    LocalDate.of(2024, 8, 17),
+                    "Yes Planet",
+                    45,
+                    1002,
+                    5678,
+                    "The Dark Knight",
+                    LocalDateTime.of(2024, 12, 24, 20, 0)
+            );
+            session.save(purchase2);
+
+            purchaseCard purchase3 = new purchaseCard(
+                    LocalDate.of(2024, 3, 17),
+                    "Yes Planet",
+                    100,
+                    1003,
+                    1414,
+                    "loay asaad",
+                    LocalDateTime.of(2025, 12, 24, 20, 0)
+            );
+            session.save(purchase3);
+
+            session.getTransaction().commit();
+            System.out.println("Sample purchases created successfully");
+        } catch (HibernateException e) {
+            System.err.println("Error creating sample purchases: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static void createRequests() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            Request request1 = new Request(
+                    "Update Price",
+                    "Update Price movie 2 to:50"
+            );
+            session.save(request1);
+            Request request2 = new Request(
+                    "Update Price",
+                    "Update price movie 15 to:1000"
+            );
+            session.save(request2);
+            Request request3 = new Request(
+                    "Update Price",
+                    "The Shawshank Redemption, Id: 2, Showtime:2024-12-24T16, Place:00, Old price: 35.0, New price: 60.0"
+            );
+            session.save(request3);
+
+
+            session.getTransaction().commit();
+            System.out.println("Sample requests created successfully");
+        } catch (HibernateException e) {
+            System.err.println("Error creating sample requests: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static List<purchaseCard> getAllPurchasesOrderedByDate() throws Exception {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<purchaseCard> query = builder.createQuery(purchaseCard.class);
+            Root<purchaseCard> root = query.from(purchaseCard.class);
+
+            // Order by purchase date
+            query.select(root).orderBy(builder.asc(root.get("purchaseDate")));
+
+            List<purchaseCard> purchases = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return purchases;
+        } catch (Exception e) {
+            System.err.println("Error fetching purchases: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static List<Request> getAllPriceChangeRequests() throws Exception {
+        System.out.println("we are on data base asking for the requests");
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Request> query = builder.createQuery(Request.class);
+            Root<Request> root = query.from(Request.class);
+
+            // Select all requests
+            query.select(root);
+
+            List<Request> requests = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return requests;
+        } catch (Exception e) {
+            System.err.println("Error fetching requests: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static void deleteRequestById(Long id) {
+        System.out.println("we are on connect to data base and we are deleting a request");
+        System.out.println(id);
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        Request request = session.get(Request.class, id);
+        if (request != null) {
+            session.delete(request);
+        } else {
+            System.out.println("Request with ID " + id + " not found.");
+        }
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    public static void updateMoviePrice(int movieId, float newprice) {
+        Session session = ConnectToDatabase.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            // Retrieve the movie from the database
+            Movie movie = session.get(Movie.class, movieId);
+            if (movie == null) {
+                throw new Exception("Movie not found.");
+            }
+            // Update the showtime
+            movie.setPrice(newprice);
+            session.update(movie);
+            transaction.commit();
+        }catch (Exception e){
+            System.out.println("haha");
+            e.printStackTrace();
+        }
+
+
+
+    }
 }
+
+
+
