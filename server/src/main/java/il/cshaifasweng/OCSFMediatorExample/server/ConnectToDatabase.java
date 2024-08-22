@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 
 public class ConnectToDatabase {
     private static SessionFactory sessionFactory;
@@ -23,6 +24,8 @@ public class ConnectToDatabase {
             Configuration configuration = new Configuration();
             configuration.addAnnotatedClass(Movie.class);
             configuration.addAnnotatedClass(User.class);
+            configuration.addAnnotatedClass(purchaseCard.class);
+
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -32,7 +35,7 @@ public class ConnectToDatabase {
 
     public static void CreateDatabase() throws HibernateException {
         System.out.println("Data Creation is starting");
-
+        createPurchases();
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
 
@@ -244,6 +247,72 @@ public class ConnectToDatabase {
         }
         session.getTransaction().commit();
         session.close();
+    }
+    // הוספת הפונקציה ליצירת רשומות purchaseCard
+    public static void createPurchases() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            purchaseCard purchase1 = new purchaseCard(
+                    LocalDate.of(2024, 8, 17),
+                    "Cinema City",
+                    40,
+                    1001,
+                    1234,
+                    "Inception",
+                    LocalDateTime.of(2024, 12, 24, 14, 30)
+            );
+            session.save(purchase1);
+            purchaseCard purchase2 = new purchaseCard(
+                    LocalDate.of(2024, 8, 17),
+                    "Yes Planet",
+                    45,
+                    1002,
+                    5678,
+                    "The Dark Knight",
+                    LocalDateTime.of(2024, 12, 24, 20, 0)
+            );
+            session.save(purchase2);
+
+            purchaseCard purchase3 = new purchaseCard(
+                    LocalDate.of(2024, 3, 17),
+                    "Yes Planet",
+                    100,
+                    1003,
+                    1414,
+                    "loay asaad",
+                    LocalDateTime.of(2025, 12, 24, 20, 0)
+            );
+            session.save(purchase3);
+
+            session.getTransaction().commit();
+            System.out.println("Sample purchases created successfully");
+        } catch (HibernateException e) {
+            System.err.println("Error creating sample purchases: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // הוספת הפונקציה להחזרת כל רכישות
+    public static List<purchaseCard> getAllPurchasesOrderedByDate() throws Exception {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<purchaseCard> query = builder.createQuery(purchaseCard.class);
+            Root<purchaseCard> root = query.from(purchaseCard.class);
+
+            // סדר לפי תאריך הרכישה
+            query.select(root).orderBy(builder.asc(root.get("purchaseDate")));
+
+            List<purchaseCard> purchases = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return purchases;
+        } catch (Exception e) {
+            System.err.println("Error fetching purchases: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public static void updateMovieShowtimeInDatabase(int movieId, LocalDateTime newShowtime) {
