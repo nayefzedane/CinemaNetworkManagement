@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
+import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
@@ -132,6 +133,19 @@ public class SimpleServer extends AbstractServer {
 		else if (msgString.startsWith("delete movie ")) {
 			String movieId = msgString.substring("delete movie ".length());
 			ConnectToDatabase.deleteMovieById(Integer.parseInt(movieId));
+		}
+		else if (msgString.startsWith("send request:")){
+
+			String[] parts = msgString.split(":");
+			String movieTitle = parts[1];
+			String movieId = parts[2];
+			String moviePrice = parts[3];
+			String newPrice = parts[4];
+
+			Request req = new Request();
+			req.setTitle("Price update request");
+			req.setDescription(movieTitle+", Id: "+movieId+", Old price: "+moviePrice+", New price: "+newPrice);
+			ConnectToDatabase.addRequest(req);
 		}
 	}
 }

@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class ContentManagerController {
     @FXML private TableColumn<Movie, String> titleColumn;
     @FXML private TableColumn<Movie, String> placeColumn;
     @FXML private TableColumn<Movie, String> showtimeColumn;
+    @FXML private TableColumn<Movie, String> priceColumn;
     private ObservableList<Movie> movieList;
 
     @FXML private TextField titleField;
@@ -51,6 +53,7 @@ public class ContentManagerController {
             titleColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitle()));
             placeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPlace()));
             showtimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getShowtime().toString()));
+            priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
             loadMoviesIntoTable();
         } catch (Exception e) {
             e.printStackTrace();
@@ -198,7 +201,7 @@ public class ContentManagerController {
                 showAlert(Alert.AlertType.ERROR, "Error", "Failed to update movie showtime: " + e.getMessage());
                 return;
             }
-            showAlert(Alert.AlertType.CONFIRMATION, "Confirmation", "Movie showtime updated successfully \nNew show date and time are: " +
+            showAlert(Alert.AlertType.INFORMATION, "Confirmation", "Movie showtime updated successfully \nNew show date and time are: " +
                     selectedDate.toString() + " , " + hour + ":" + minute);
             loadMoviesIntoTable();
         } else {
@@ -206,6 +209,27 @@ public class ContentManagerController {
         }
     }
 
+    public void handleUpdatePrice(ActionEvent actionEvent) {
+        Movie selectedMovie = movieTable.getSelectionModel().getSelectedItem();
+        if (selectedMovie != null) {
+            try {
+                double newPrice = Double.parseDouble(priceField.getText());
+                if (newPrice >= 0) {
+                    SimpleClient.getClient().sendToServer("send request:"+ selectedMovie.getTitle() + ":" + selectedMovie.getId() + ":" + selectedMovie.getPrice() + ":" + newPrice);
+                    showAlert(Alert.AlertType.INFORMATION, "Confirmation", "Request to update movie price sent successfully \n new price: " + newPrice);
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Invalid Price", "Please enter a valid price greater than 0.");
+                }
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for the price.");
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to update movie price: " + e.getMessage());
+            }
+        } else {
+            showAlert(Alert.AlertType.ERROR, "No Movie Selected", "Please select a movie to update.");
+        }
+    }
 
     private void clearForm() {
         titleField.clear();
@@ -251,10 +275,10 @@ public class ContentManagerController {
                 fxmlFile = "content_manager_deletemovie";
                 break;
             case "Update Price":
-                fxmlFile = "";
+                fxmlFile = "content_manager_updateprice";
                 break;
             case "Update Showtime":
-                fxmlFile = "content_manager_updatehowtime";
+                fxmlFile = "content_manager_updateshowtime";
                 break;
         }
         try {

@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
+import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
@@ -23,6 +24,7 @@ public class ConnectToDatabase {
             Configuration configuration = new Configuration();
             configuration.addAnnotatedClass(Movie.class);
             configuration.addAnnotatedClass(User.class);
+            configuration.addAnnotatedClass(Request.class);
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -269,5 +271,21 @@ public class ConnectToDatabase {
         }
         session.close();
         System.out.println("Show time updated successfully");
+    }
+
+    public static void addRequest(Request req) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(req);
+            transaction.commit();
+            System.out.println("Request saved successfully");
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("Failed to save the request");
+        }
     }
 }
