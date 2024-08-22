@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import javafx.application.Platform;
+import il.cshaifasweng.OCSFMediatorExample.client.ContentManagerController;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.util.List;
 
 public class SimpleClient extends AbstractClient {
 
+	static ContentManagerController contentManagerController;
 	private static SimpleClient client = null;
 	public static String newHost;
 	public static int newPort;
@@ -17,6 +19,9 @@ public class SimpleClient extends AbstractClient {
 		super(host, port);
 	}
 
+	public void setContentManagerController(ContentManagerController controller) {
+		this.contentManagerController = controller;
+	}
 	@Override
 	protected void handleMessageFromServer(Object msg) {
 		// טיפול בקבלת רשימת סרטים מהשרת
@@ -25,14 +30,17 @@ public class SimpleClient extends AbstractClient {
 			System.out.println("Movies received from server: " + movies.size()); // Debugging output
 			Platform.runLater(() -> {
 				try {
-					CustomerController controller = (CustomerController) App.getController();
-					if (controller != null) {
-						controller.displayMovies(movies);
+					CustomerController customerController = (CustomerController) App.getController();
+					if (customerController != null) {
+						customerController.displayMovies(movies);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			});
+			ContentManagerController controller = (ContentManagerController) App.getController();
+			controller.updateMovieTable(movies);
+
 		}
 
 		// טיפול בתשובת ההתחברות מהשרת
@@ -48,7 +56,7 @@ public class SimpleClient extends AbstractClient {
 								App.setRoot("admin_dashboard");
 								break;
 							case "Manager":
-								App.setRoot("manager_dashboard");
+								App.setRoot("content_manager_dashboard");
 								break;
 							case "Customer":
 								App.setRoot("customer_dashboard");
@@ -66,7 +74,15 @@ public class SimpleClient extends AbstractClient {
 					// הודעת שגיאה על כישלון בהתחברות
 					System.out.println("Login failed.");
 				}
+				else if (response.startsWith("#movieCount")) { {
+						int count = Integer.parseInt(response.split(":")[1]);
+						if (contentManagerController != null) {
+							contentManagerController.setMovieCount(count);
+						}
+					}
+				}
 			});
+
 		}
 	}
 

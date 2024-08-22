@@ -2,7 +2,9 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 @Entity
 @Table(name = "movies")
@@ -21,7 +23,7 @@ public class Movie implements Serializable {
     private LocalDateTime showtime = LocalDateTime.now();  // ברירת מחדל - מועד הקרנה נוכחי
 
     @Column(name = "release_date", nullable = false)
-    private LocalDateTime releaseDate = LocalDateTime.of(2023, 1, 1, 0, 0);  // ברירת מחדל - תאריך יציאה קבוע
+    private LocalDate releaseDate = LocalDate.of(2023, 1, 1);  // ברירת מחדל - תאריך יציאה קבוע
 
     @Column(name = "genre", nullable = false)
     private String genre = "Unspecified";  // ברירת מחדל - ז'אנר לא מוגדר
@@ -56,11 +58,15 @@ public class Movie implements Serializable {
     @Column(name = "hallNumber", nullable = false)
     private int hallNumber = 1;  // ברירת מחדל - אולם מספר 1
 
+    @Lob
+    @Column(name = "image_data", columnDefinition="LONGBLOB")
+    private byte[] imageData;
+
     // קונסטרקטור ברירת מחדל
     public Movie() {}
 
     // קונסטרקטור עם פרמטרים לכל השדות
-    public Movie(String title, LocalDateTime showtime, LocalDateTime releaseDate, String genre, int duration, float rating, String director, String description, String imagePath, String place, float price, boolean isOnline, int availableSeat, int hallNumber) {
+    public Movie(String title, LocalDateTime showtime, LocalDate releaseDate, String genre, int duration, float rating, String director, String description, String imagePath, String place, float price, boolean isOnline, int availableSeat, int hallNumber) {
         this.title = title;
         this.showtime = showtime;
         this.releaseDate = releaseDate;
@@ -75,6 +81,20 @@ public class Movie implements Serializable {
         this.isOnline = isOnline;
         this.availableSeat = availableSeat;
         this.hallNumber = hallNumber;
+    }
+
+    public Movie(String title, LocalDateTime showtime, LocalDate releaseDate, String director, String description, float price, boolean isOnline, String genre, int duration, float rating, byte[] imageData) {
+        this.title = title;
+        this.showtime = showtime;
+        this.releaseDate = releaseDate;
+        this.genre = genre;
+        this.duration = duration;
+        this.rating = rating;
+        this.director = director;
+        this.description = description;
+        this.price = price;
+        this.isOnline = isOnline;
+        this.imageData = imageData;
     }
 
     // Getters ו- Setters לכל שדה
@@ -103,11 +123,11 @@ public class Movie implements Serializable {
         this.showtime = showtime;
     }
 
-    public LocalDateTime getReleaseDate() {
+    public LocalDate getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(LocalDateTime releaseDate) {
+    public void setReleaseDate(LocalDate releaseDate) {
         this.releaseDate = releaseDate;
     }
 
@@ -199,9 +219,19 @@ public class Movie implements Serializable {
         this.hallNumber = hallNumber;
     }
 
+    public void setImageData(String base64ImageData) {
+
+        this.imageData = Base64.getDecoder().decode(base64ImageData);
+    }
+    public byte[] getImageData() {
+        return imageData;
+    }
+
     @Override
     public String toString() {
-        return String.format("Movie ID: %d\nTitle: %s\nShowtime: %s\nRelease Date: %s\nGenre: %s\nDuration: %d minutes\nRating: %.1f\nDirector: %s\nDescription: %s\nImage Path: %s\nPlace: %s\nPrice: %.2f\nIs Online: %b\nAvailable Seats: %d\nHall Number: %d",
-                this.id, this.title, this.showtime, this.releaseDate, this.genre, this.duration, this.rating, this.director, this.description, this.imagePath, this.place, this.price, this.isOnline, this.availableSeat, this.hallNumber);
+        return String.format(
+                "id=%d;title=%s;showtime=%s;releaseDate=%s;genre=%s;duration=%d;rating=%.1f;director=%s;description=%s;imagePath=%s;place=%s;price=%.2f;isOnline=%b;availableSeat=%d;hallNumber=%d;imageData=%s",
+                this.id, this.title, this.showtime, this.releaseDate, this.genre, this.duration, this.rating, this.director, this.description, this.imagePath, this.place, this.price, this.isOnline, this.availableSeat, this.hallNumber, Base64.getEncoder().encodeToString(this.imageData)
+        );
     }
 }

@@ -2,17 +2,16 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.HibernateException;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class ConnectToDatabase {
             // הוספת סרטים לדוגמא עם כל השדות החדשים באמצעות הקונסטרקטור
             Movie movie1 = new Movie("Inception",
                     LocalDateTime.of(2024, 12, 24, 14, 30),  // Showtime
-                    LocalDateTime.of(2024, 12, 10, 0, 0),   // Release Date
+                    LocalDate.of(2024, 12, 10),   // Release Date
                     "Sci-Fi", 148, 8.8f, "Christopher Nolan",
                     "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
                     "images/background_login.png", "Cinema City",
@@ -49,7 +48,7 @@ public class ConnectToDatabase {
 
             Movie movie2 = new Movie("The Shawshank Redemption",
                     LocalDateTime.of(2024, 12, 24, 16, 0),  // Showtime
-                    LocalDateTime.of(2024, 12, 5, 0, 0),    // Release Date
+                    LocalDate.of(2024, 12, 5),    // Release Date
                     "Drama", 142, 9.3f, "Frank Darabont",
                     "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
                     "images/background_login.png", "Cinema City",
@@ -58,7 +57,7 @@ public class ConnectToDatabase {
 
             Movie movie3 = new Movie("The Godfather",
                     LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDateTime.of(2024, 12, 3, 0, 0),    // Release Date
+                    LocalDate.of(2024, 12, 3),    // Release Date
                     "Crime", 175, 9.2f, "Francis Ford Coppola",
                     "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
                     "images/background_login.png", "Yes Planet",
@@ -67,7 +66,7 @@ public class ConnectToDatabase {
 
             Movie movie4 = new Movie("The Dark Knight",
                     LocalDateTime.of(2024, 12, 24, 20, 0),  // Showtime
-                    LocalDateTime.of(2024, 12, 7, 0, 0),    // Release Date
+                    LocalDate.of(2024, 12, 7),    // Release Date
                     "Action", 152, 9.0f, "Christopher Nolan",
                     "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.",
                     "images/background_login.png", "Yes Planet",
@@ -76,7 +75,7 @@ public class ConnectToDatabase {
 
             Movie movie5 = new Movie("Pulp Fiction",
                     LocalDateTime.of(2024, 12, 24, 22, 30),  // Showtime
-                    LocalDateTime.of(2024, 12, 1, 0, 0),     // Release Date
+                    LocalDate.of(2024, 12, 1),     // Release Date
                     "Crime", 154, 8.9f, "Quentin Tarantino",
                     "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
                     "images/background_login.png", "Cinema City",
@@ -85,7 +84,7 @@ public class ConnectToDatabase {
 
             Movie movie6 = new Movie("Schindler's List",
                     LocalDateTime.of(2024, 12, 24, 10, 30),  // Showtime
-                    LocalDateTime.of(2024, 11, 28, 0, 0),    // Release Date
+                    LocalDate.of(2024, 11, 28),    // Release Date
                     "Biography", 195, 8.9f, "Steven Spielberg",
                     "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
                     "images/background_login.png", "Yes Planet",
@@ -94,7 +93,7 @@ public class ConnectToDatabase {
 
             Movie movie7 = new Movie("Fight Club",
                     LocalDateTime.of(2024, 12, 24, 12, 15),  // Showtime
-                    LocalDateTime.of(2024, 12, 2, 0, 0),     // Release Date
+                    LocalDate.of(2024, 12, 2),     // Release Date
                     "Drama", 139, 8.8f, "David Fincher",
                     "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.",
                     "images/background_login.png", "Cinema City",
@@ -103,7 +102,7 @@ public class ConnectToDatabase {
 
             // הוספת משתמשים לדוגמא
             User admin = new User("admin", "admin123", "Admin");
-            User manager = new User("manager", "manager123", "Manager");
+            User manager = new User("man", "123", "Manager");
             User customer = new User("customer", "customer123", "Customer");
             User customerservice = new User("customerservice", "customerservice123", "CustomerService");
             session.save(admin);
@@ -201,5 +200,74 @@ public class ConnectToDatabase {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static void addMovie(Movie movie) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(movie);  // Save the movie object to the database
+            transaction.commit();
+            System.out.println("Movie added successfully: " + movie.getTitle());
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();  // Rollback in case of an error
+            }
+            System.err.println("Failed to add movie: " + movie.getTitle());
+            e.printStackTrace();  // Log the exception for debugging purposes
+        }
+    }
+
+    public static Long getMovieCountFromDatabase() {
+        try {
+            Session session = getSessionFactory().openSession();
+            Transaction tx = session.beginTransaction();
+            Long count = session.createQuery("SELECT COUNT(m) FROM Movie m", Long.class).getSingleResult();
+            tx.commit();
+            session.close();
+            return count;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void deleteMovieById(int id) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Movie movie = session.get(Movie.class, id);
+        if (movie != null) {
+            session.delete(movie);
+        } else {
+            System.out.println("Movie with ID " + id + " not found.");
+        }
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    public static void updateMovieShowtimeInDatabase(int movieId, LocalDateTime newShowtime) {
+        Session session = ConnectToDatabase.getSessionFactory().openSession();
+        Transaction transaction = null;
+
+        try {
+            transaction = session.beginTransaction();
+
+            // Retrieve the movie from the database
+            Movie movie = session.get(Movie.class, movieId);
+            if (movie == null) {
+                throw new Exception("Movie not found.");
+            }
+
+            // Update the showtime
+            movie.setShowtime(newShowtime);
+            session.update(movie);
+
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        session.close();
+        System.out.println("Show time updated successfully");
     }
 }

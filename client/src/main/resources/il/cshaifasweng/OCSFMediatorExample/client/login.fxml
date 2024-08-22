@@ -19,9 +19,9 @@
             <children>
                 <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;" text="WELCOME" />
                 <Label style="-fx-text-fill: white;" text="Username:" />
-                <TextField fx:id="usernameField" />
+                <TextField fx:id="usernameField" text="man" />
                 <Label style="-fx-text-fill: white;" text="Password:" />
-                <PasswordField fx:id="passwordField" />
+                <PasswordField fx:id="passwordField" text="123"/>
                 <Button onAction="#handleLogin" text="Login" />
                 <Button onAction="#handleBack" text="Back" /> <!-- כפתור החזרה -->
             </children>

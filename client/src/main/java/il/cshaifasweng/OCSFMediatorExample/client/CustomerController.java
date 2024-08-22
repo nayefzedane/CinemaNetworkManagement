@@ -9,6 +9,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -32,11 +34,17 @@ public class CustomerController {
             HBox movieBox = new HBox(10);
             ImageView imageView;
 
-            // בדיקה אם הנתיב לתמונה לא ריק
-            if (movie.getImagePath() != null && !movie.getImagePath().isEmpty()) {
+            // Check if the movie has image data
+            if (movie.getImageData() != null && movie.getImageData().length > 0) {
+                // Convert byte array to Image
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(movie.getImageData());
+                imageView = new ImageView(new Image(inputStream));
+            } else if (movie.getImagePath() != null && !movie.getImagePath().isEmpty()) {
+                // If no image data, check if imagePath is available
                 imageView = new ImageView(new Image(movie.getImagePath()));
             } else {
-                imageView = new ImageView(new Image("images/default_movie.png")); // תמונת ברירת מחדל
+                // If neither image data nor imagePath, use a default image
+                imageView = new ImageView(new Image("images/default_movie.png"));
             }
 
             imageView.setFitHeight(150);
@@ -51,6 +59,7 @@ public class CustomerController {
             moviesContainer.getChildren().add(movieBox);
         }
     }
+
 
     @FXML
     private void handleBack() {

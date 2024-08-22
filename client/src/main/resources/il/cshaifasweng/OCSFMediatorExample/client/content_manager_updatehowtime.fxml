@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ContentManagerController">
+   <padding>
+      <Insets top="20" right="20" bottom="20" left="20"/>
+   </padding>
+   <children>
+      <Label text="Update Showtime" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+      <TableView fx:id="movieTable" prefHeight="400" prefWidth="600">
+         <columns>
+            <TableColumn fx:id="titleColumn" text="Title" />
+            <TableColumn fx:id="placeColumn" text="Place" />
+            <TableColumn fx:id="showtimeColumn" text="Showtime" />
+         </columns>
+      </TableView>
+
+      <HBox spacing="10">
+         <Label text="New Showtime:" style="-fx-font-size: 14px;"/>
+         <DatePicker fx:id="showtimeDatePicker" promptText="Select Date" />
+         <TextField fx:id="showtimeHourField" promptText="HH" prefWidth="50"/>
+         <Label text=":"/>
+         <TextField fx:id="showtimeMinuteField" promptText="MM" prefWidth="50"/>
+      </HBox>
+
+      <Button text="Update Selected Movie's Showtime" onAction="#handleUpdateShowtime" style="-fx-font-size: 14px;"/>
+      <Button text="Back" onAction="#handleBack" style="-fx-font-size: 14px;"/>
+   </children>
+</VBox>
