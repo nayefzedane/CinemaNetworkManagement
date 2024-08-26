@@ -20,10 +20,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import javafx.application.Platform;
-
+import javafx.scene.control.ComboBox;
 
 public class AdminController {
     String pageName = "";
+
+    @FXML
+    private ComboBox<String> monthComboBox;
     @FXML
     private TableView<purchaseCard> purchaseTableView;
     @FXML
@@ -55,7 +58,7 @@ public class AdminController {
     private Button denyButton;
 
     private SimpleClient client;
-    private ObservableList<purchaseCard> purchaseList;
+    private ObservableList<purchaseCard> purchaseList; // the entire list
     private ObservableList<Request> requestList;
 
 
@@ -72,10 +75,61 @@ public class AdminController {
         }
     }
     // Method to update the TableView with the data received from the server
-    public void updatePurchaseList(List<purchaseCard> purchaseList) {
-        ObservableList<purchaseCard> data = FXCollections.observableArrayList(purchaseList);
-        purchaseTableView.setItems(data);
+    public void updatePurchaseList(List<purchaseCard> purchases) {
+        purchaseList = FXCollections.observableArrayList(purchases);
+        filterPurchaseList(); // Apply filtering after loading data
     }
+    //method to filter the purchases list to the selected month
+    private void filterPurchaseList() {
+        String selectedMonth = monthComboBox.getValue();
+        if (selectedMonth != null) {
+            ObservableList<purchaseCard> filteredList = FXCollections.observableArrayList();
+            int monthNumber = monthToNumber(selectedMonth);
+
+            for (purchaseCard purchase : purchaseList) {
+                if (purchase.getPurchaseDate().getMonthValue() == monthNumber) {
+                    filteredList.add(purchase);
+                }
+            }
+
+            purchaseTableView.setItems(filteredList);
+        } else {
+            purchaseTableView.setItems(purchaseList); // Show all if no month is selected
+        }
+    }
+
+    private int monthToNumber(String month) {
+        switch (month) {
+            case "January":
+                return 1;
+            case "February":
+                return 2;
+            case "March":
+                return 3;
+            case "April":
+                return 4;
+            case "May":
+                return 5;
+            case "June":
+                return 6;
+            case "July":
+                return 7;
+            case "August":
+                return 8;
+            case "September":
+                return 9;
+            case "October":
+                return 10;
+            case "November":
+                return 11;
+            case "December":
+                return 12;
+            default:
+                throw new IllegalArgumentException("Invalid month: " + month);
+        }
+    }
+
+
 
 
     private void viewPackagesAndMoviesReport(ActionEvent event) {
@@ -201,7 +255,13 @@ public class AdminController {
     }
 
     public void Ticket_Report(ActionEvent event){
-        initialize_tickets();
+        // If the purchaseList is already loaded, filter based on the selected month
+        if (purchaseList != null) {
+            filterPurchaseList();
+        } else {
+            // Load the data from the server if not already loaded
+            initialize_tickets();
+        }
     }
     public void Request_Report(ActionEvent event){
         initialize_requests();
@@ -221,16 +281,16 @@ public class AdminController {
         String fxmlFile = "";
 
         switch (clickedButton.getText()) {
-            case "View Tickets Sold Report":
+            case "Tickets Report":
                 fxmlFile = "admin_tickets_report";
                 break;
-            case "View Packages and Online Movies Report":
+            case "Packages,Online Movies Report":
                 fxmlFile = "admin_tickets_report";  // Assuming you have another FXML file
                 break;
-            case "View Complaints Report":
+            case "Complaints Report":
                 fxmlFile = "admin_tickets_report";  // Assuming you have another FXML file
                 break;
-            case "View Change Prices Requests":
+            case "Change Prices Requests":
                 fxmlFile = "admin_price_change";
                 break;
         }

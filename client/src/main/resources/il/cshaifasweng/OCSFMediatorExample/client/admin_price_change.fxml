@@ -25,9 +25,9 @@
 
             <TableView fx:id="requestTableView" prefWidth="560.0" prefHeight="250.0">
                 <columns>
-                    <TableColumn fx:id="idColumn" text="ID" prefWidth="80.0"/>
-                    <TableColumn fx:id="titleColumn" text="Title" prefWidth="240.0"/>
-                    <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="240.0"/>
+                    <TableColumn fx:id="idColumn" text="ID" prefWidth="20.0"/>
+                    <TableColumn fx:id="titleColumn" text="Title" prefWidth="75.0"/>
+                    <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="580.0"/>
                 </columns>
             </TableView>
         </VBox>
