@@ -18,8 +18,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // Start with the connection window
-        scene = new Scene(loadFXML("InitConnection"), 640, 480);
+        // Start with the connection window with a larger size
+        scene = new Scene(loadFXML("InitConnection"), 1200, 800); // Updated size
         stage.setScene(scene);
         stage.show();
         history.push("InitConnection"); // Add the initial screen to history
