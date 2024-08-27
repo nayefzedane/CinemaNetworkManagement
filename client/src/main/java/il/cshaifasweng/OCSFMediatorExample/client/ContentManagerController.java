@@ -215,7 +215,7 @@ public class ContentManagerController {
             try {
                 double newPrice = Double.parseDouble(priceField.getText());
                 if (newPrice >= 0) {
-                    SimpleClient.getClient().sendToServer("send request:"+ selectedMovie.getTitle() + ":" + selectedMovie.getId() + ":" + selectedMovie.getPrice() + ":" + newPrice);
+                    SimpleClient.getClient().sendToServer("send request:"+ selectedMovie.getTitle() + ":" + selectedMovie.getId() + ":" + selectedMovie.getPrice() + ":" + newPrice  + ":" + selectedMovie.getShowtime() + ":" + selectedMovie.getPlace());
                     showAlert(Alert.AlertType.INFORMATION, "Confirmation", "Request to update movie price sent successfully \n new price: " + newPrice);
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Invalid Price", "Please enter a valid price greater than 0.");

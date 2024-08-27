@@ -134,6 +134,7 @@ public class SimpleServer extends AbstractServer {
 			String movieId = msgString.substring("delete movie ".length());
 			ConnectToDatabase.deleteMovieById(Integer.parseInt(movieId));
 		}
+
 		else if (msgString.startsWith("send request:")){
 
 			String[] parts = msgString.split(":");
@@ -141,10 +142,12 @@ public class SimpleServer extends AbstractServer {
 			String movieId = parts[2];
 			String moviePrice = parts[3];
 			String newPrice = parts[4];
+			String movieShowtime = parts[5];
+			String moviePlace = parts[6];
 
 			Request req = new Request();
 			req.setTitle("Price update request");
-			req.setDescription(movieTitle+", Id: "+movieId+", Old price: "+moviePrice+", New price: "+newPrice);
+			req.setDescription(movieTitle+", Id: "+movieId + ", Showtime: "+ movieShowtime + ", Place: " + moviePlace +", Old price: " +moviePrice+", New price: "+newPrice);
 			ConnectToDatabase.addRequest(req);
 		}
 	}
