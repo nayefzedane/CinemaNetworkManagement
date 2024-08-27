@@ -124,10 +124,14 @@ public class ConnectToDatabase {
             User manager = new User("manager", "manager123", "Manager");
             User customer = new User("customer", "customer123", "Customer");
             User customerservice = new User("customerservice", "customerservice123", "CustomerService");
+            User adminhaifa = new User("adminha", "123", "admin haifa");
+            User adminnazareth = new User("adminna", "123", "admin nazareth");
             session.save(admin);
             session.save(manager);
             session.save(customer);
             session.save(customerservice);
+            session.save(adminhaifa);
+            session.save(adminnazareth);
 
             session.getTransaction().commit();
             System.out.println("Initial data creation finished");
@@ -260,6 +264,28 @@ public class ConnectToDatabase {
                     "nayef@gmail.com"
             );
             session.save(purchase3);
+            purchaseCard purchase4 = new purchaseCard(
+                    LocalDate.of(2024, 8, 1),
+                    "Yes Planet",
+                    60,
+                    1004,
+                    1414,
+                    "nayef zedan",
+                    LocalDateTime.of(2025, 12, 24, 20, 0),
+                    "nayef1@gmail.com"
+            );
+            session.save(purchase4);
+            purchaseCard purchase5 = new purchaseCard(
+                    LocalDate.of(2024, 8, 1),
+                    "Cinema City",
+                    25,
+                    1006,
+                    1414,
+                    "real madrid",
+                    LocalDateTime.of(2025, 11, 24, 20, 0),
+                    "madrid@gmail.com"
+            );
+            session.save(purchase5);
 
             session.getTransaction().commit();
             System.out.println("Sample purchases created successfully");

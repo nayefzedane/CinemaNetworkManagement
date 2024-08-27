@@ -22,6 +22,26 @@ import java.time.LocalDateTime;
 import javafx.application.Platform;
 
 public class AdminController {
+    private static String viewType = "Admin";
+
+
+    public static void setViewType(String viewType1) {
+        System.out.println("we are in set view type method and the new view type is: " + viewType);
+
+        if (viewType1.equals("admin haifa")) {
+            viewType = "Yes Planet";
+        } else if (viewType1.equals("admin nazareth")) {
+            viewType = "Cinema City";
+        } else {
+            viewType = "Admin";
+        }
+
+
+        System.out.println("Updated viewType is now: " + viewType);  // Print the updated value
+    }
+    public static String getViewType() {
+        return viewType;
+    }
     String pageName = "";
 
     @FXML
@@ -117,35 +137,64 @@ public class AdminController {
     public void updatePurchaseList(List<purchaseCard> purchases) {
         purchaseList = FXCollections.observableArrayList(purchases);
         filterPurchaseList(); // Apply filtering after loading data
+
     }
 
     //method to filter the purchases list to the selected month
     private void filterPurchaseList() {
+        // Print the current viewType for debugging purposes
+        System.out.println("we are in filter purchase and this is " + viewType);
+
+        // Get the selected month from the ComboBox
         String selectedMonth = monthComboBox.getValue();
         double totalIncome = 0.0; // Initialize total income
+
+        // Create a list to hold the filtered purchases
+        ObservableList<purchaseCard> filteredList = FXCollections.observableArrayList();
+
+        // If a month is selected, filter by both branch name and month
         if (selectedMonth != null) {
-            ObservableList<purchaseCard> filteredList = FXCollections.observableArrayList();
-            int monthNumber = monthToNumber(selectedMonth);
+            int monthNumber = monthToNumber(selectedMonth); // Convert month name to its corresponding number
 
-
+            // Iterate through all purchases to apply the filters
             for (purchaseCard purchase : purchaseList) {
-                if (purchase.getPurchaseDate().getMonthValue() == monthNumber) {
+                boolean matchesMonth = purchase.getPurchaseDate().getMonthValue() == monthNumber; // Check if purchase month matches
+                boolean matchesBranch = viewType.equals("Admin") || purchase.getBranchName().equals(viewType); // Check if purchase branch matches or if viewType is Admin
+
+                // If both the month and branch match, add the purchase to the filtered list and update total income
+                if (matchesMonth && matchesBranch) {
                     filteredList.add(purchase);
                     totalIncome += purchase.getPrice(); // Add to total income
                 }
             }
 
+            // Set the filtered list in the TableView
             purchaseTableView.setItems(filteredList);
         } else {
-            purchaseTableView.setItems(purchaseList); // Show all if no month is selected
-            // Calculate total income for all purchases
-            totalIncome = purchaseList.stream()
+            // If no month is selected, filter only by branch name
+            for (purchaseCard purchase : purchaseList) {
+                boolean matchesBranch = viewType.equals("Admin") || purchase.getBranchName().equals(viewType); // Check if purchase branch matches or if viewType is Admin
+
+                // If the branch matches, add the purchase to the filtered list and update total income
+                if (matchesBranch) {
+                    filteredList.add(purchase);
+                    totalIncome += purchase.getPrice(); // Add to total income
+                }
+            }
+
+            // Set the filtered list in the TableView
+            purchaseTableView.setItems(filteredList);
+
+            // Calculate total income for all purchases in the filtered list
+            totalIncome = filteredList.stream()
                     .mapToDouble(purchaseCard::getPrice)
                     .sum();
         }
-        // Update the total income label
+
+        // Update the total income label with the calculated total income
         totalIncomeLabel.setText(String.format("%.2f", totalIncome));
     }
+
     private void filterPackageList() {
         String selectedMonth = monthComboBox.getValue();
         double totalIncome = 0.0; // Initialize total income

@@ -123,11 +123,29 @@ public class SimpleClient extends AbstractClient {
 							case "CustomerService":
 								App.setRoot("customer_service_dashboard");
 								break;
+							case "admin haifa":
+								App.setRoot("admin_haifa");
+								break;
+							case "admin nazareth":
+								App.setRoot("admin_nazareth");
+								break;
 							default:
 								throw new IllegalArgumentException("Unknown role: " + role);
+
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
+					}
+					try{ // this function is to know whether it is the admin or one of the branches admin, because we made the same controller for all of them
+						System.out.println("we are setting the view type now:");
+						AdminController controller  = (AdminController) App.getController();
+						if (controller != null) {
+							controller.setViewType(role);
+						}
+
+					} catch(Exception e){
+						e.printStackTrace();
+
 					}
 				} else if (response.equals("login_failed")) {
 					// הודעת שגיאה על כישלון בהתחברות
