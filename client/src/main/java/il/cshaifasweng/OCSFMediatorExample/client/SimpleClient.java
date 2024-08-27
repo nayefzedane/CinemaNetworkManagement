@@ -2,6 +2,8 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
+import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
+import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
 
 import javafx.application.Platform;
 
@@ -64,6 +66,23 @@ public class SimpleClient extends AbstractClient {
 					controller.updatePurchaseList(purchaseList);
 				});
 			}
+			if (!list.isEmpty() && list.get(0) instanceof PurchaseLink) {
+				System.out.println("Client: Received purchase link report from server");
+				List<PurchaseLink> purchaseLinkList = (List<PurchaseLink>) list;
+				Platform.runLater(() -> {
+					AdminController controller  = (AdminController) App.getController();
+					controller.updatePurchaseLinkList(purchaseLinkList);
+				});
+			}
+			if (!list.isEmpty() && list.get(0) instanceof PackageCard) {
+				System.out.println("Client: Received package report from server");
+				List<PackageCard> packageCardList = (List<PackageCard>) list;
+				Platform.runLater(() -> {
+					AdminController controller = (AdminController) App.getController();
+					controller.updatePackageList(packageCardList);
+				});
+			}
+
 			else if (!list.isEmpty() && list.get(0) instanceof Request) {
 				System.out.println("on simple client requests");
 				List<Request> requests = (List<Request>) list;

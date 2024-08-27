@@ -3,6 +3,8 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import il.cshaifasweng.OCSFMediatorExample.entities.Request;
+import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
+import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -33,6 +35,8 @@ public class ConnectToDatabase {
             configuration.addAnnotatedClass(User.class);
             configuration.addAnnotatedClass(purchaseCard.class);
             configuration.addAnnotatedClass(Request.class);
+            configuration.addAnnotatedClass(PurchaseLink.class);
+            configuration.addAnnotatedClass(PackageCard.class);
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -44,6 +48,8 @@ public class ConnectToDatabase {
         System.out.println("Data Creation is starting");
         createPurchases();
         createRequests();
+        createPurchaseLinks();
+        createPackageCards();
 
         System.out.println("Initial data creation finished");
         try (Session session = getSessionFactory().openSession()) {
@@ -227,7 +233,8 @@ public class ConnectToDatabase {
                     1001,
                     1234,
                     "Inception",
-                    LocalDateTime.of(2024, 12, 24, 14, 30)
+                    LocalDateTime.of(2024, 12, 24, 14, 30),
+                    "loay@gmail.com"
             );
             session.save(purchase1);
             purchaseCard purchase2 = new purchaseCard(
@@ -237,7 +244,8 @@ public class ConnectToDatabase {
                     1002,
                     5678,
                     "The Dark Knight",
-                    LocalDateTime.of(2024, 12, 24, 20, 0)
+                    LocalDateTime.of(2024, 12, 24, 20, 0),
+                    "mohammed@gmail.com"
             );
             session.save(purchase2);
 
@@ -248,17 +256,87 @@ public class ConnectToDatabase {
                     1003,
                     1414,
                     "loay asaad",
-                    LocalDateTime.of(2025, 12, 24, 20, 0)
+                    LocalDateTime.of(2025, 12, 24, 20, 0),
+                    "nayef@gmail.com"
             );
             session.save(purchase3);
 
             session.getTransaction().commit();
             System.out.println("Sample purchases created successfully");
+
         } catch (HibernateException e) {
             System.err.println("Error creating sample purchases: " + e.getMessage());
             e.printStackTrace();
         }
     }
+    public static void createPurchaseLinks() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            // Creating a sample PurchaseLink
+            PurchaseLink purchaseLink1 = new PurchaseLink(
+                    LocalDateTime.of(2024, 8, 17, 10, 0),  // purchaseTime
+                    1004,  // customerId
+                    9876,  // paymentCardLastFour
+                    "Avatar",  // movieTitle
+                    "example@example.com",  // customerMail
+                    50
+            );
+            session.save(purchaseLink1);
+
+            // You can add more PurchaseLink samples as needed
+            PurchaseLink purchaseLink2 = new PurchaseLink(
+                    LocalDateTime.of(2024, 8, 18, 15, 0),  // purchaseTime
+                    1005,  // customerId
+                    4321,  // paymentCardLastFour
+                    "Interstellar",  // movieTitle
+                    "sample@example.com",
+                    30// customerMail
+            );
+            session.save(purchaseLink2);
+
+            session.getTransaction().commit();
+            System.out.println("Sample purchase links created successfully");
+
+        } catch (HibernateException e) {
+            System.err.println("Error creating sample purchase links: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    public static void createPackageCards() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            // Creating a sample PackageCard
+            PackageCard packageCard1 = new PackageCard(
+                    LocalDate.of(2024, 8, 17),  // purchaseDate
+                    100.00,  // price
+                    1004,  // customerId
+                    "example@example.com",  // customerEmail
+                    9876  // paymentLastFourDigits
+            );
+            session.save(packageCard1);
+
+            // Adding another sample PackageCard
+            PackageCard packageCard2 = new PackageCard(
+                    LocalDate.of(2024, 8, 18),  // purchaseDate
+                    120.00,  // price
+                    1005,  // customerId
+                    "sample@example.com",  // customerEmail
+                    4321  // paymentLastFourDigits
+            );
+            session.save(packageCard2);
+
+            session.getTransaction().commit();
+            System.out.println("Sample package cards created successfully");
+
+        } catch (HibernateException e) {
+            System.err.println("Error creating sample package cards: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
 
     public static void createRequests() {
         try (Session session = getSessionFactory().openSession()) {
@@ -309,6 +387,48 @@ public class ConnectToDatabase {
             throw e;
         }
     }
+    public static List<PackageCard> getAllPackageCardsOrderedByDate() throws Exception {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<PackageCard> query = builder.createQuery(PackageCard.class);
+            Root<PackageCard> root = query.from(PackageCard.class);
+
+            // Order by purchase date
+            query.select(root).orderBy(builder.asc(root.get("purchaseDate")));
+
+            List<PackageCard> packageCards = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return packageCards;
+        } catch (Exception e) {
+            System.err.println("Error fetching package cards: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static List<PurchaseLink> getAllPurchaseLinksOrderedByDate() throws Exception {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<PurchaseLink> query = builder.createQuery(PurchaseLink.class);
+            Root<PurchaseLink> root = query.from(PurchaseLink.class);
+
+            // Order by purchase time
+            query.select(root).orderBy(builder.asc(root.get("purchaseTime")));
+
+            List<PurchaseLink> purchaseLinks = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return purchaseLinks;
+        } catch (Exception e) {
+            System.err.println("Error fetching purchase links: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 
     public static List<Request> getAllPriceChangeRequests() throws Exception {
         System.out.println("we are on data base asking for the requests");

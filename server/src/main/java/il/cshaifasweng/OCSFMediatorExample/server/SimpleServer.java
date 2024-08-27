@@ -5,6 +5,8 @@ import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 import il.cshaifasweng.OCSFMediatorExample.entities.Request;
+import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
+import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
@@ -34,6 +36,27 @@ public class SimpleServer extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
+		if (msg.equals("request_purchase_link_report")) {
+			System.out.println("Server: Handling request for purchase link report");
+			List<PurchaseLink> purchaseLinkList = ConnectToDatabase.getAllPurchaseLinksOrderedByDate();
+			try {
+				client.sendToClient(purchaseLinkList);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if (msg.equals("request_package_report")) {
+			System.out.println("Server: Handling request for package report");
+			List<PackageCard> packageCardList = ConnectToDatabase.getAllPackageCardsOrderedByDate();
+			try {
+				client.sendToClient(packageCardList);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+
 		if (msg.equals("request_price_change_requests")) {
 			System.out.println("we are on server and we are on request price change requests");
 			List<Request> requestsList = ConnectToDatabase.getAllPriceChangeRequests();

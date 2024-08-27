@@ -1,17 +1,17 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.event.ActionEvent;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 import il.cshaifasweng.OCSFMediatorExample.entities.Request;
+import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
+import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import javafx.application.Platform;
-import javafx.scene.control.ComboBox;
 
 public class AdminController {
     String pageName = "";
@@ -56,10 +55,45 @@ public class AdminController {
     private Button approveButton;
     @FXML
     private Button denyButton;
+    //this is for link table
+    @FXML
+    private TableView<PurchaseLink> purchaseLinkTableView;
+    @FXML
+    private TableColumn<PurchaseLink, Integer> link_id;
+    @FXML
+    private TableColumn<PurchaseLink, String> movie_title_link;
+    @FXML
+    private TableColumn<PurchaseLink, Integer> customer_id;
+    @FXML
+    private TableColumn<PurchaseLink, LocalDateTime> purchase_time;
+    @FXML
+    private TableColumn<PurchaseLink, String> customer_mail;
+    @FXML
+    private TableColumn<PurchaseLink, Float> price_link;
+    @FXML
+    private Label totalIncomeLabel;
+    //this for packages:
+    @FXML
+    private TableView<PackageCard> packageTableView;
+    @FXML
+    private TableColumn<PackageCard, Integer> package_id;
+    @FXML
+    private TableColumn<PackageCard, Integer> remaining_entries;
+    @FXML
+    private TableColumn<PackageCard, LocalDate> purchase_date_package;
+    @FXML
+    private TableColumn<PackageCard, Integer> customer_id_package;
+    @FXML
+    private TableColumn<PackageCard, String> customer_email;
+    @FXML
+    private TableColumn<PackageCard, Double> price_package;
 
     private SimpleClient client;
     private ObservableList<purchaseCard> purchaseList; // the entire list
     private ObservableList<Request> requestList;
+    private ObservableList<PurchaseLink> purchaseLinkList;
+    private ObservableList<PackageCard> packageCardList;
+
 
 
 
@@ -74,28 +108,97 @@ public class AdminController {
             showAlert("Error", "Failed to request ticket report from the server.");
         }
     }
+    public void updatePackageList(List<PackageCard> packages) {
+        packageCardList = FXCollections.observableArrayList(packages);
+        filterPackageList(); // Apply filtering after loading data
+    }
+
     // Method to update the TableView with the data received from the server
     public void updatePurchaseList(List<purchaseCard> purchases) {
         purchaseList = FXCollections.observableArrayList(purchases);
         filterPurchaseList(); // Apply filtering after loading data
     }
+
     //method to filter the purchases list to the selected month
     private void filterPurchaseList() {
         String selectedMonth = monthComboBox.getValue();
+        double totalIncome = 0.0; // Initialize total income
         if (selectedMonth != null) {
             ObservableList<purchaseCard> filteredList = FXCollections.observableArrayList();
             int monthNumber = monthToNumber(selectedMonth);
 
+
             for (purchaseCard purchase : purchaseList) {
                 if (purchase.getPurchaseDate().getMonthValue() == monthNumber) {
                     filteredList.add(purchase);
+                    totalIncome += purchase.getPrice(); // Add to total income
                 }
             }
 
             purchaseTableView.setItems(filteredList);
         } else {
             purchaseTableView.setItems(purchaseList); // Show all if no month is selected
+            // Calculate total income for all purchases
+            totalIncome = purchaseList.stream()
+                    .mapToDouble(purchaseCard::getPrice)
+                    .sum();
         }
+        // Update the total income label
+        totalIncomeLabel.setText(String.format("%.2f", totalIncome));
+    }
+    private void filterPackageList() {
+        String selectedMonth = monthComboBox.getValue();
+        double totalIncome = 0.0; // Initialize total income
+
+        if (selectedMonth != null) {
+            ObservableList<PackageCard> filteredList = FXCollections.observableArrayList();
+            int monthNumber = monthToNumber(selectedMonth);
+
+            for (PackageCard packageCard : packageCardList) {
+                if (packageCard.getPurchaseDate().getMonthValue() == monthNumber) {
+                    filteredList.add(packageCard);
+                    totalIncome += packageCard.getPrice(); // Add to total income
+                }
+            }
+
+            packageTableView.setItems(filteredList);
+        } else {
+            packageTableView.setItems(packageCardList); // Show all if no month is selected
+            // Calculate total income for all packages
+            totalIncome = packageCardList.stream()
+                    .mapToDouble(PackageCard::getPrice)
+                    .sum();
+        }
+
+        // Update the total income label
+        totalIncomeLabel.setText(String.format("%.2f", totalIncome));
+    }
+
+    public void filterPurchaseLink(){
+        String selectedMonth = monthComboBox.getValue();
+        double totalIncome = 0.0; // Initialize total income
+        if (selectedMonth != null) {
+            ObservableList<PurchaseLink> filteredListLink = FXCollections.observableArrayList();
+            int monthNumber = monthToNumber(selectedMonth);
+
+            for (PurchaseLink purchase : purchaseLinkList) {
+                if (purchase.getPurchaseTime().getMonthValue() == monthNumber) {
+                    filteredListLink.add(purchase);
+                    totalIncome += purchase.getPrice(); // Add to total income
+                }
+            }
+
+            purchaseLinkTableView.setItems(filteredListLink);
+        } else {
+            purchaseLinkTableView.setItems(purchaseLinkList); // Show all if no month is selected
+            // Calculate total income for all purchases
+            totalIncome = purchaseLinkList.stream()
+                    .mapToDouble(PurchaseLink::getPrice)
+                    .sum();
+        }
+
+        // Update the total income label
+        totalIncomeLabel.setText(String.format("%.2f", totalIncome));
     }
 
     private int monthToNumber(String month) {
@@ -132,10 +235,7 @@ public class AdminController {
 
 
 
-    private void viewPackagesAndMoviesReport(ActionEvent event) {
-        // TODO: Implement the logic to handle the viewing of packages and online movies sold report
-        showAlert("Packages & Online Movies Report", "This feature is under development.");
-    }
+
 
 
     private void viewComplaintsReport(ActionEvent event) {
@@ -154,6 +254,32 @@ public class AdminController {
             e.printStackTrace();
             System.out.println("Error sending request to server: " + e.getMessage());  // Add this line
         }
+    }
+    public void loadLinks(){
+        System.out.println("loadLinks method called");
+        try {
+            SimpleClient.getClient().sendToServer("request_purchase_link_report");
+            System.out.println("Requesting links from server");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error sending request for links to server: " + e.getMessage());  // Add this line
+        }
+    }
+    public void loadPackages() {
+        System.out.println("loadPackages method called");
+        try {
+            SimpleClient.getClient().sendToServer("request_package_report");
+            System.out.println("Requesting packages from server");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error sending request for packages to server: " + e.getMessage());
+        }
+    }
+
+    public void updatePurchaseLinkList(List<PurchaseLink> purchases) {
+        purchaseLinkList = FXCollections.observableArrayList(purchases);
+        filterPurchaseLink(); // Apply filtering after loading data
     }
     public void updateRequestList(List<Request> requests) {
         requestList = FXCollections.observableArrayList(requests);
@@ -253,6 +379,37 @@ public class AdminController {
         //load the data from server
         loadChangePricesRequests();
     }
+    public void initialize_Links(){
+        System.out.println("initialize_Links method called");
+        client = SimpleClient.getClient();  // Assign to the instance variable, not a new local variable
+        client.setAdminController(this);
+
+        link_id.setCellValueFactory(new PropertyValueFactory<>("linkId"));
+        movie_title_link.setCellValueFactory(new PropertyValueFactory<>("movieTitle"));
+        customer_id.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        purchase_time.setCellValueFactory(new PropertyValueFactory<>("purchaseTime"));
+        customer_mail.setCellValueFactory(new PropertyValueFactory<>("customerMail"));
+        price_link.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        //load the data from server
+        loadLinks();
+    }
+    public void initialize_Packages() {
+        System.out.println("initialize_Packages method called");
+        client = SimpleClient.getClient();  // Assign to the instance variable, not a new local variable
+        client.setAdminController(this);
+
+        package_id.setCellValueFactory(new PropertyValueFactory<>("packageId"));
+        remaining_entries.setCellValueFactory(new PropertyValueFactory<>("remainingEntries"));
+        purchase_date_package.setCellValueFactory(new PropertyValueFactory<>("purchaseDate"));
+        customer_id_package.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        customer_email.setCellValueFactory(new PropertyValueFactory<>("customerEmail"));
+        price_package.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        // Load the data from server
+        loadPackages();
+    }
+
 
     public void Ticket_Report(ActionEvent event){
         // If the purchaseList is already loaded, filter based on the selected month
@@ -261,6 +418,22 @@ public class AdminController {
         } else {
             // Load the data from the server if not already loaded
             initialize_tickets();
+        }
+    }
+    public void Link_Report(ActionEvent event){
+        // If the purchaseList is already loaded, filter based on the selected month
+        if (purchaseLinkList != null) {
+            filterPurchaseLink();
+        } else {
+            // Load the data from the server if not already loaded
+            initialize_Links();
+        }
+    }
+    public void Package_Report(ActionEvent event){
+        if (packageCardList != null){
+            filterPackageList();
+        } else {
+            initialize_Packages();
         }
     }
     public void Request_Report(ActionEvent event){
@@ -284,8 +457,8 @@ public class AdminController {
             case "Tickets Report":
                 fxmlFile = "admin_tickets_report";
                 break;
-            case "Packages,Online Movies Report":
-                fxmlFile = "admin_tickets_report";  // Assuming you have another FXML file
+            case "Online Movies Report":
+                fxmlFile = "admin_links_report";  // Assuming you have another FXML file
                 break;
             case "Complaints Report":
                 fxmlFile = "admin_tickets_report";  // Assuming you have another FXML file
@@ -293,6 +466,8 @@ public class AdminController {
             case "Change Prices Requests":
                 fxmlFile = "admin_price_change";
                 break;
+            case "Packages Report":
+                fxmlFile = "admin_package_report";
         }
 
         System.out.println("Attempting to load FXML: " + fxmlFile);  // Add this line
