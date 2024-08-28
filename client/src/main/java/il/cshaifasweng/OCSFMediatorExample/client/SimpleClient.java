@@ -4,7 +4,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
 import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
-
+import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
 import javafx.application.Platform;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
@@ -100,6 +100,15 @@ public class SimpleClient extends AbstractClient {
 					}
 				});
 			}
+			else if (!list.isEmpty() && list.get(0) instanceof Complaints) {
+				System.out.println("Client: Received complaints report from server");
+				List<Complaints> complaintsList = (List<Complaints>) list;
+				Platform.runLater(() -> {
+					AdminController controller = (AdminController) App.getController();
+					controller.updateComplaintsList(complaintsList);
+				});
+			}
+
 		}
 
 		// טיפול בתשובת ההתחברות מהשרת

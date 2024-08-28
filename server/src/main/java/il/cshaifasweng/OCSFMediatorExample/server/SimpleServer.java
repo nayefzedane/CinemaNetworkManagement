@@ -7,6 +7,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
 import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
+import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
@@ -24,6 +25,17 @@ public class SimpleServer extends AbstractServer {
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) throws Exception {
 		String msgString = msg.toString();
+
+		//handle the complaints report
+		if (msg.equals("request_complaints_report")) {
+			System.out.println("Server: Handling request for complaints report");
+			List<Complaints> complaintsList = ConnectToDatabase.getAllComplaintsOrderedByDate();
+			try {
+				client.sendToClient(complaintsList);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 		//handle the report request
 		if (msg.equals("request_ticket_report")) {

@@ -5,6 +5,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
 import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
+import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -37,6 +38,7 @@ public class ConnectToDatabase {
             configuration.addAnnotatedClass(Request.class);
             configuration.addAnnotatedClass(PurchaseLink.class);
             configuration.addAnnotatedClass(PackageCard.class);
+            configuration.addAnnotatedClass(Complaints.class);
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -50,6 +52,7 @@ public class ConnectToDatabase {
         createRequests();
         createPurchaseLinks();
         createPackageCards();
+        createComplaints();
 
         System.out.println("Initial data creation finished");
         try (Session session = getSessionFactory().openSession()) {
@@ -361,6 +364,73 @@ public class ConnectToDatabase {
             e.printStackTrace();
         }
     }
+    public static void createComplaints() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            // Creating sample complaints
+            Complaints complaint1 = new Complaints(
+                    "user1@example.com",
+                    "Cinema City",
+                    "Long Queue",
+                    "The queue was too long and slow.",
+                    LocalDateTime.of(2024, 8, 15, 10, 30)
+            );
+            session.save(complaint1);
+
+            Complaints complaint2 = new Complaints(
+                    "user2@example.com",
+                    "Yes Planet",
+                    "Uncomfortable Seats",
+                    "The seats were very uncomfortable.",
+                    LocalDateTime.of(2024, 8, 16, 14, 45)
+            );
+            session.save(complaint2);
+
+            Complaints complaint3 = new Complaints(
+                    "user3@example.com",
+                    "",  // No branch provided, should use default value
+                    "Late Start",
+                    "The movie started 15 minutes late.",
+                    LocalDateTime.of(2024, 8, 17, 18, 00)
+            );
+            session.save(complaint3);
+
+            Complaints complaint4 = new Complaints(
+                    "user4@example.com",
+                    "Cinema City",
+                    "Poor Sound Quality",
+                    "The sound quality was poor and distorted.",
+                    LocalDateTime.of(2024, 8, 17, 20, 15)
+            );
+            session.save(complaint4);
+
+            Complaints complaint5 = new Complaints(
+                    "user5@example.com",
+                    "Yes Planet",
+                    "Rude Staff",
+                    "The staff was rude and unhelpful.",
+                    LocalDateTime.of(2024, 8, 2, 11, 20)
+            );
+            session.save(complaint5);
+            Complaints complaint6 = new Complaints(
+                    "user5@example.com",
+                    "Yes Planet",
+                    "Rude Staff",
+                    "The staff was rude and unhelpful.",
+                    LocalDateTime.of(2024, 8, 17, 11, 20)
+            );
+            session.save(complaint6);
+
+            session.getTransaction().commit();
+            System.out.println("Sample complaints created successfully");
+
+        } catch (HibernateException e) {
+            System.err.println("Error creating sample complaints: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -413,6 +483,27 @@ public class ConnectToDatabase {
             throw e;
         }
     }
+    public static List<Complaints> getAllComplaintsOrderedByDate() throws Exception {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Complaints> query = builder.createQuery(Complaints.class);
+            Root<Complaints> root = query.from(Complaints.class);
+
+            // Order by complain date
+            query.select(root).orderBy(builder.asc(root.get("complainDate")));
+
+            List<Complaints> complaints = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return complaints;
+        } catch (Exception e) {
+            System.err.println("Error fetching complaints: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     public static List<PackageCard> getAllPackageCardsOrderedByDate() throws Exception {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();

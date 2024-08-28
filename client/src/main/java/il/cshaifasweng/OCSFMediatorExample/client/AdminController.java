@@ -1,6 +1,8 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import javafx.fxml.FXML;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.event.ActionEvent;
@@ -9,16 +11,20 @@ import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
 import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
+import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.util.Map;
+
 import javafx.application.Platform;
 
 public class AdminController {
@@ -107,15 +113,92 @@ public class AdminController {
     private TableColumn<PackageCard, String> customer_email;
     @FXML
     private TableColumn<PackageCard, Double> price_package;
-
+    @FXML
+    private BarChart<String, Number> complaintsHistogram;//for the histogram
     private SimpleClient client;
     private ObservableList<purchaseCard> purchaseList; // the entire list
     private ObservableList<Request> requestList;
     private ObservableList<PurchaseLink> purchaseLinkList;
     private ObservableList<PackageCard> packageCardList;
+    private ObservableList<Complaints> complaintsList;
 
+    private void loadComplaintsReport() {
+        System.out.println("Loading complaints report...");
+        try {
+            SimpleClient.getClient().sendToServer("request_complaints_report");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to request complaints report from the server.");
+        }
+    }
+    public void updateComplaintsList(List<Complaints> complaints) {
+        complaintsList = FXCollections.observableArrayList(complaints);
+        filterComplaintsByMonth(); // Apply filtering after loading data
+    }
+    private void filterComplaintsByMonth() {
+        // Print the current viewType for debugging purposes
+        System.out.println("we are in filter complaints and this is " + viewType);
 
+        // Get the selected month from the ComboBox
+        String selectedMonth = monthComboBox.getValue();
 
+        if (selectedMonth == null) {
+            // Alert the user if no month is selected
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select a month to view the histogram.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Create a map to store the number of complaints per day
+        Map<Integer, Integer> complaintsPerDay = new HashMap<>();
+        int monthNumber = monthToNumber(selectedMonth); // Convert month to corresponding number
+
+        // Filter complaints by month and branch
+        for (Complaints complaint : complaintsList) {
+            boolean matchesMonth = complaint.getComplainDate().getMonthValue() == monthNumber; // Check if the complaint month matches
+            boolean matchesBranch = viewType.equals("Admin") || complaint.getBranch().equals(viewType); // Check if complaint branch matches or if viewType is Admin
+
+            // If both the month and branch match, count the complaint
+            if (matchesMonth && matchesBranch) {
+                int day = complaint.getComplainDate().getDayOfMonth();
+                complaintsPerDay.put(day, complaintsPerDay.getOrDefault(day, 0) + 1); // Count complaints per day
+            }
+        }
+
+        // Clear previous data in the histogram
+        complaintsHistogram.getData().clear();
+
+        // Create a new series for the histogram
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName(selectedMonth);
+
+        // Add data to the series
+        for (Map.Entry<Integer, Integer> entry : complaintsPerDay.entrySet()) {
+            series.getData().add(new XYChart.Data<>(String.valueOf(entry.getKey()), entry.getValue()));
+        }
+
+        // Add the series to the histogram
+        complaintsHistogram.getData().add(series);
+    }
+
+    public void initializeComplaints() {
+        System.out.println("Initializing complaints view...");
+        client = SimpleClient.getClient();
+        client.setAdminController(this);
+
+        // Load the data from the server
+        loadComplaintsReport();
+    }
+    public void handleViewHistogram(ActionEvent event) {
+        if (complaintsList != null) {
+            filterComplaintsByMonth();
+        } else {
+            initializeComplaints();
+        }
+    }
 
     private void loadTicketsSoldReport() {
         System.out.println("load tickets sold method called");
@@ -280,18 +363,6 @@ public class AdminController {
                 throw new IllegalArgumentException("Invalid month: " + month);
         }
     }
-
-
-
-
-
-
-
-    private void viewComplaintsReport(ActionEvent event) {
-        // TODO: Implement the logic to handle the viewing of complaints report
-        showAlert("Complaints Report", "This feature is under development.");
-    }
-
 
     private void loadChangePricesRequests() {
         System.out.println("loadChangePricesRequests method called");  // Add this lin
@@ -507,10 +578,10 @@ public class AdminController {
                 fxmlFile = "admin_tickets_report";
                 break;
             case "Online Movies Report":
-                fxmlFile = "admin_links_report";  // Assuming you have another FXML file
+                fxmlFile = "admin_links_report";
                 break;
             case "Complaints Report":
-                fxmlFile = "admin_tickets_report";  // Assuming you have another FXML file
+                fxmlFile = "admin_complaints";
                 break;
             case "Change Prices Requests":
                 fxmlFile = "admin_price_change";
