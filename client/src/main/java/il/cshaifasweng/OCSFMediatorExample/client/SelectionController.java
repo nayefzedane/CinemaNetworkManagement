@@ -34,7 +34,7 @@ public class SelectionController {
         customerButton.setOnMouseExited(this::onMouseExit);
         customerButton.setOnAction(event -> {
             try {
-                App.setRoot("customer_dashboard");
+                App.setRoot("MainWindow");
             } catch (IOException e) {
                 e.printStackTrace();
             }

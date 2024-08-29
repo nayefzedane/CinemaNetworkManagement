@@ -46,7 +46,7 @@ public class ConnectToDatabase {
                     "Sci-Fi", 148, 8.8f, "Christopher Nolan",
                     "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
                     "images/background_login.png", "Cinema City",
-                    40.0f, true, 80, 3);
+                    40.0f, false, 80, 3);
             session.save(movie1);
 
             Movie movie2 = new Movie("The Shawshank Redemption",
@@ -339,4 +339,90 @@ public class ConnectToDatabase {
         session.close();
         System.out.println("Show time updated successfully");
     }
+    public static List<Movie> getMoviesByOnlineStatus(boolean isOnline) {
+        try (Session session = getSessionFactory().openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
+            query.select(root).where(builder.equal(root.get("isOnline"), isOnline));
+            return session.createQuery(query).getResultList();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<Movie> searchMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title) {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
+
+            // התחלת הבנייה של השאילתה
+            query.select(root);
+
+            // הוספת תנאים לפי הקריטריונים
+            if (cinema != null && !cinema.isEmpty()) {
+                query.where(builder.equal(root.get("place"), cinema));
+            }
+            if (startDate != null && endDate != null) {
+                query.where(
+                        builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate)
+                );
+            }
+            if (genre != null && !genre.isEmpty()) {
+                query.where(builder.equal(root.get("genre"), genre));
+            }
+            if (title != null && !title.isEmpty()) {
+                query.where(builder.like(root.get("title"), "%" + title + "%"));
+            }
+
+            List<Movie> movies = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+
+            return movies;
+        } catch (Exception e) {
+            System.err.println("Error fetching movies by advanced criteria: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static List<Movie> searchOnlineMoviesByCriteria(String genre, String title) {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
+
+            query.select(root).where(builder.equal(root.get("isOnline"), true));
+
+            // הוספת תנאים לפי הקריטריונים
+            if (genre != null && !genre.isEmpty()) {
+                query.where(builder.and(
+                        builder.equal(root.get("genre"), genre),
+                        builder.equal(root.get("isOnline"), true)
+                ));
+            }
+            if (title != null && !title.isEmpty()) {
+                query.where(builder.and(
+                        builder.like(root.get("title"), "%" + title + "%"),
+                        builder.equal(root.get("isOnline"), true)
+                ));
+            }
+
+            List<Movie> movies = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+
+            return movies;
+        } catch (Exception e) {
+            System.err.println("Error fetching online movies by criteria: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
 }
