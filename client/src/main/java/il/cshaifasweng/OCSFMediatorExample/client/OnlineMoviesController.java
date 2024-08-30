@@ -21,7 +21,7 @@ public class OnlineMoviesController {
 
     @FXML
     public void initialize() {
-        genreComboBox.getItems().addAll("Action", "Drama", "Comedy", "Horror", "Documentary");
+        genreComboBox.getItems().addAll("ALL", "Action", "Drama", "Comedy", "Horror", "Documentary");
 
         // האזנה לשינויים בטקסט של שדה החיפוש
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -29,7 +29,12 @@ public class OnlineMoviesController {
         });
 
         // האזנה לשינוי בז'אנר
-        genreComboBox.valueProperty().addListener((observable, oldValue, newValue) -> searchMovies());
+        genreComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if ("ALL".equals(newValue)) {
+                genreComboBox.setValue(null);
+            }
+            searchMovies();
+        });
 
         // טעינת הסרטים האונליין בברירת מחדל
         showAllOnlineMovies();
@@ -45,6 +50,10 @@ public class OnlineMoviesController {
     public void searchMovies() {
         String selectedGenre = genreComboBox.getValue();
         String movieTitle = searchField.getText(); // קבלת ערך משדה החיפוש
+
+        if ("ALL".equals(selectedGenre)) {
+            selectedGenre = null; // אם נבחרה האפשרות "ALL", נאפס את הבחירה
+        }
 
         SimpleClient client = SimpleClient.getClient();
         client.requestOnlineMoviesByCriteria(selectedGenre, movieTitle); // שליחת הבקשה עם כל הקריטריונים

@@ -140,6 +140,7 @@ public class SimpleServer extends AbstractServer {
 			LocalDate endDate = null;
 			String genre = null;
 			String title = null;
+			boolean isOnline = false;  // Always searching for offline movies
 
 			for (String criterion : criteria) {
 				String[] keyValue = criterion.split("=");
@@ -162,8 +163,8 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 
-			List<Movie> movies = ConnectToDatabase.searchMoviesByAdvancedCriteria(cinema, startDate, endDate, genre, title);
-			System.out.println("Movies fetched by advanced criteria: " + movies.size()); // Debugging output
+			List<Movie> movies = ConnectToDatabase.searchMoviesByAdvancedCriteria(cinema, startDate, endDate, genre, title, isOnline);
+			System.out.println("Movies fetched by advanced criteria (Offline only): " + movies.size()); // Debugging output
 			client.sendToClient(movies);
 		} else if (msgString.startsWith("#searchOnlineMoviesByCriteria")) {
 			String[] criteria = msgString.substring("#searchOnlineMoviesByCriteria ".length()).split(";");

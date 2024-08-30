@@ -33,8 +33,7 @@ public class SimpleClient extends AbstractClient {
 			e.printStackTrace();
 		}
 	}
-
-	public void requestMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title) {
+	public void requestMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title, boolean isOnline) {
 		try {
 			StringBuilder request = new StringBuilder("#searchMoviesByAdvancedCriteria;");
 
@@ -53,6 +52,9 @@ public class SimpleClient extends AbstractClient {
 			if (title != null && !title.isEmpty()) {
 				request.append("title=").append(title).append(";");
 			}
+
+			// הוספת הפרמטר שמציין האם הסרט הוא אונליין או לא
+			request.append("isOnline=").append(isOnline).append(";");
 
 			System.out.println("Requesting movies by advanced criteria: " + request.toString()); // Debugging output
 			sendToServer(request.toString());
@@ -161,7 +163,6 @@ public class SimpleClient extends AbstractClient {
 			});
 		}
 	}
-
 
 	public static SimpleClient getClient() {
 		if (client == null) {
