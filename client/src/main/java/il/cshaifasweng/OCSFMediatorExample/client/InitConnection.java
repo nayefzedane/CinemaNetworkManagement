@@ -37,7 +37,7 @@ public class InitConnection {
         System.out.println("INIT REACHED...");
         Platform.runLater(() -> {
             try {
-                App.setRoot("selection_window");
+                App.setRoot("MainWindow");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -3,9 +3,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OfflineMoviesController" spacing="10" alignment="center">
@@ -14,8 +14,8 @@
     <HBox spacing="10">
         <DatePicker fx:id="startDatePicker" promptText="תאריך התחלה"/>
         <DatePicker fx:id="endDatePicker" promptText="תאריך סיום"/>
-        <Button text="אפס" onAction="#resetDates"/> <!-- כפתור לאיפוס התאריכים -->
+        <Button text="אפס" onAction="#resetDates"/>
     </HBox>
     <ComboBox fx:id="genreComboBox" promptText="בחר ז'אנר"/>
-    <ListView fx:id="movieListView"/>
+    <TilePane fx:id="movieTilePane" hgap="10" vgap="10" alignment="center"/>
 </VBox>

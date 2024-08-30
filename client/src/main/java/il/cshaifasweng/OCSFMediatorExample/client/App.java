@@ -18,11 +18,21 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // Start with the connection window with a larger size
-        scene = new Scene(loadFXML("InitConnection"), 1200, 800); // Updated size
+        // קבלת גודל המסך של המשתמש
+        double screenWidth = javafx.stage.Screen.getPrimary().getVisualBounds().getWidth();
+        double screenHeight = javafx.stage.Screen.getPrimary().getVisualBounds().getHeight();
+
+        // הגדרת גודל החלון לגודל המסך המלא
+        scene = new Scene(loadFXML("InitConnection"), screenWidth, screenHeight);
+
+        // הגדרת גודל החלון והצגת החלון
         stage.setScene(scene);
+        stage.setWidth(screenWidth);
+        stage.setHeight(screenHeight);
         stage.show();
-        history.push("InitConnection"); // Add the initial screen to history
+
+        // הוספת המסך הראשוני להיסטוריה
+        history.push("InitConnection");
     }
 
     static void setRoot(String fxml) throws IOException {

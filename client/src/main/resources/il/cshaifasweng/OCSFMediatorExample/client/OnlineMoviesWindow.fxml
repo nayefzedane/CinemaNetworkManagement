@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OnlineMoviesController" spacing="10" alignment="center">
-    <TextField fx:id="searchField" promptText="שם הסרט"/>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OnlineMoviesController" spacing="10" alignment="center">
+    <TextField fx:id="searchField" promptText="חפש לפי שם סרט"/>
     <ComboBox fx:id="genreComboBox" promptText="בחר ז'אנר"/>
-    <ListView fx:id="movieListView"/>
+    <TilePane fx:id="movieTilePane" hgap="10" vgap="10" alignment="center"/>
 </VBox>

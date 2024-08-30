@@ -11,6 +11,7 @@
         <VBox spacing="10" styleClass="side-menu">
             <Button text="סרטים לא אונליין" onAction="#showOfflineMovies"/>
             <Button text="סרטים אונליין" onAction="#showOnlineMovies"/>
+            <Button text="התחברות" onAction="#showLoginWindow"/> <!-- כפתור התחברות חדש -->
         </VBox>
     </left>
     <center>

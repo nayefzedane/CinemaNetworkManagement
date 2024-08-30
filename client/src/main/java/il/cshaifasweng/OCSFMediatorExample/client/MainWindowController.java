@@ -13,6 +13,7 @@ public class MainWindowController {
 
     private OfflineMoviesController offlineMoviesController;
     private OnlineMoviesController onlineMoviesController;
+    private LoginController loginController;  // משתנה עבור ה-LoginController
     private Object activeController; // משתנה לשמירת הקונטרולר הפעיל
 
     @FXML
@@ -53,12 +54,32 @@ public class MainWindowController {
         }
     }
 
+    public void showLoginWindow() {
+        System.out.println("Loading Login Window...");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
+            contentPane.getChildren().clear();
+            contentPane.getChildren().add(loader.load());
+
+            loginController = loader.getController();
+            activeController = loginController; // שמירת הקונטרולר הפעיל
+            System.out.println("Loaded LoginController: " + loginController.getClass().getName());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public OfflineMoviesController getOfflineMoviesController() {
         return offlineMoviesController;
     }
 
     public OnlineMoviesController getOnlineMoviesController() {
         return onlineMoviesController;
+    }
+
+    public LoginController getLoginController() {
+        return loginController;
     }
 
     public Object getActiveController() {

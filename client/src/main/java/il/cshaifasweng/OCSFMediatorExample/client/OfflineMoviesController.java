@@ -4,8 +4,12 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.TilePane;
+import javafx.scene.text.Text;
+import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,7 +17,7 @@ import java.util.List;
 public class OfflineMoviesController {
 
     @FXML
-    private ListView<String> movieListView;
+    private TilePane movieTilePane;
 
     @FXML
     private ComboBox<String> cinemaComboBox;
@@ -28,23 +32,20 @@ public class OfflineMoviesController {
     private ComboBox<String> genreComboBox;
 
     @FXML
-    private TextField searchField; // שדה חיפוש לפי שם הסרט
+    private TextField searchField;
 
     @FXML
     public void initialize() {
         cinemaComboBox.getItems().addAll("ALL", "Cinema City", "Yes Planet", "Rav Chen", "Lev Cinema");
-        genreComboBox.getItems().addAll("ALL", "Action", "Drama", "Comedy", "Sci-Fi", "Horror"); // דוגמה לז'אנרים
+        genreComboBox.getItems().addAll("ALL", "Action", "Drama", "Comedy", "Sci-Fi", "Horror");
 
-        // האזנה לשינויים בטקסט של שדה החיפוש
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             searchMovies();
         });
 
-        // האזנה לשינויים בתאריך התחלה או סיום
         startDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> searchMovies());
         endDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> searchMovies());
 
-        // האזנה לשינוי בקולנוע או בז'אנר
         cinemaComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if ("ALL".equals(newValue)) {
                 cinemaComboBox.setValue(null);
@@ -59,7 +60,6 @@ public class OfflineMoviesController {
             searchMovies();
         });
 
-        // טעינת הסרטים בברירת מחדל כאשר הממשק נטען
         showAllMovies();
     }
 
@@ -67,13 +67,13 @@ public class OfflineMoviesController {
     public void resetDates() {
         startDatePicker.setValue(null);
         endDatePicker.setValue(null);
-        showAllMovies(); // חזרה להצגת כל הסרטים הלא-אונליין
+        showAllMovies();
     }
 
     @FXML
     public void showAllMovies() {
         SimpleClient client = SimpleClient.getClient();
-        client.requestMoviesByOnlineStatus(false);  // מבקש את כל הסרטים הלא-אונליין מהשרת
+        client.requestMoviesByOnlineStatus(false);
     }
 
     @FXML
@@ -82,24 +82,29 @@ public class OfflineMoviesController {
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
         String selectedGenre = genreComboBox.getValue();
-        String movieTitle = searchField.getText(); // קבלת ערך משדה החיפוש
+        String movieTitle = searchField.getText();
 
         if ("ALL".equals(selectedCinema)) {
-            selectedCinema = null; // אם נבחרה האפשרות "ALL", נאפס את הבחירה
+            selectedCinema = null;
         }
         if ("ALL".equals(selectedGenre)) {
-            selectedGenre = null; // אם נבחרה האפשרות "ALL", נאפס את הבחירה
+            selectedGenre = null;
         }
 
-        // קריאה לפונקציה עם הפרמטר isOnline=false כדי לוודא חיפוש רק על סרטים לא אונליין
         SimpleClient client = SimpleClient.getClient();
         client.requestMoviesByAdvancedCriteria(selectedCinema, startDate, endDate, selectedGenre, movieTitle, false);
     }
 
     public void displayMovies(List<Movie> movies) {
-        movieListView.getItems().clear();
+        movieTilePane.getChildren().clear();
         for (Movie movie : movies) {
-            movieListView.getItems().add(movie.getTitle());
+            VBox movieBox = new VBox(5);
+            ImageView movieImage = new ImageView(new Image(movie.getImagePath()));
+            movieImage.setFitHeight(150);
+            movieImage.setFitWidth(100);
+            Text movieTitle = new Text(movie.getTitle());
+            movieBox.getChildren().addAll(movieImage, movieTitle);
+            movieTilePane.getChildren().add(movieBox);
         }
     }
 }
