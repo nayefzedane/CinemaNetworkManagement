@@ -6,12 +6,13 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.MainWindowController">
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.MainWindowController"
+            stylesheets="@styles.css">
     <left>
-        <VBox spacing="10" styleClass="side-menu">
-            <Button text="סרטים לא אונליין" onAction="#showOfflineMovies"/>
-            <Button text="סרטים אונליין" onAction="#showOnlineMovies"/>
-            <Button text="התחברות" onAction="#showLoginWindow"/> <!-- כפתור התחברות חדש -->
+        <VBox spacing="15" styleClass="side-menu"> <!-- מרווח גדול יותר בין הפריטים -->
+            <Button text="סרטים לא אונליין" onAction="#showOfflineMovies" styleClass="menu-button"/>
+            <Button text="סרטים אונליין" onAction="#showOnlineMovies" styleClass="menu-button"/>
+            <Button text="התחברות" onAction="#showLoginWindow" styleClass="menu-button"/> <!-- כפתור התחברות חדש -->
         </VBox>
     </left>
     <center>

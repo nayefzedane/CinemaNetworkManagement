@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
@@ -13,6 +14,7 @@ import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OfflineMoviesController {
 
@@ -35,24 +37,42 @@ public class OfflineMoviesController {
     private TextField searchField;
 
     @FXML
+    private ImageView upcomingMovieImage;
+
+    @FXML
+    private Text upcomingMovieTitle;
+
+    @FXML
+    private Text upcomingMovieDate;
+
+    @FXML
+    private Button prevButton;
+
+    @FXML
+    private Button nextButton;
+
+    @FXML
+    private VBox searchWindow;
+
+    private List<Movie> upcomingMovies;
+    private int currentUpcomingIndex = 0;
+
+    @FXML
     public void initialize() {
+        // Initialize combo boxes
         cinemaComboBox.getItems().addAll("ALL", "Cinema City", "Yes Planet", "Rav Chen", "Lev Cinema");
         genreComboBox.getItems().addAll("ALL", "Action", "Drama", "Comedy", "Sci-Fi", "Horror");
 
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            searchMovies();
-        });
-
+        // Add listeners for search criteria
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> searchMovies());
         startDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> searchMovies());
         endDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> searchMovies());
-
         cinemaComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if ("ALL".equals(newValue)) {
                 cinemaComboBox.setValue(null);
             }
             searchMovies();
         });
-
         genreComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if ("ALL".equals(newValue)) {
                 genreComboBox.setValue(null);
@@ -60,7 +80,12 @@ public class OfflineMoviesController {
             searchMovies();
         });
 
+        // Show all movies initially
         showAllMovies();
+
+        // Ensure search window is hidden initially
+        searchWindow.setVisible(false);
+        searchWindow.setManaged(false);
     }
 
     @FXML
@@ -73,6 +98,7 @@ public class OfflineMoviesController {
     @FXML
     public void showAllMovies() {
         SimpleClient client = SimpleClient.getClient();
+        System.out.println("Requesting all movies that are not online.");
         client.requestMoviesByOnlineStatus(false);
     }
 
@@ -91,12 +117,15 @@ public class OfflineMoviesController {
             selectedGenre = null;
         }
 
+        System.out.println("Searching movies with criteria: Cinema=" + selectedCinema + ", StartDate=" + startDate + ", EndDate=" + endDate + ", Genre=" + selectedGenre + ", Title=" + movieTitle);
+
         SimpleClient client = SimpleClient.getClient();
         client.requestMoviesByAdvancedCriteria(selectedCinema, startDate, endDate, selectedGenre, movieTitle, false);
     }
 
     public void displayMovies(List<Movie> movies) {
         movieTilePane.getChildren().clear();
+        System.out.println("Displaying " + movies.size() + " movies.");
         for (Movie movie : movies) {
             VBox movieBox = new VBox(5);
             ImageView movieImage = new ImageView(new Image(movie.getImagePath()));
@@ -107,4 +136,75 @@ public class OfflineMoviesController {
             movieTilePane.getChildren().add(movieBox);
         }
     }
+
+    public void setUpcomingMovies(List<Movie> movies) {
+        this.upcomingMovies = movies.stream()
+                .filter(movie -> movie.getShowtime().toLocalDate().isAfter(LocalDate.now()))
+                .sorted((m1, m2) -> m1.getShowtime().compareTo(m2.getShowtime()))
+                .limit(4) // Display max 4 upcoming movies
+                .collect(Collectors.toList());
+
+        System.out.println("Filtered " + upcomingMovies.size() + " upcoming movies.");
+
+        currentUpcomingIndex = 0;
+        updateUpcomingMovieDisplay();
+    }
+
+    @FXML
+    private void showNextUpcomingMovie() {
+        if (upcomingMovies != null && !upcomingMovies.isEmpty()) {
+            currentUpcomingIndex = (currentUpcomingIndex + 1) % upcomingMovies.size();
+            System.out.println("Showing next upcoming movie: Index " + currentUpcomingIndex);
+            updateUpcomingMovieDisplay();
+        }
+    }
+
+    @FXML
+    private void showPreviousUpcomingMovie() {
+        if (upcomingMovies != null && !upcomingMovies.isEmpty()) {
+            currentUpcomingIndex = (currentUpcomingIndex - 1 + upcomingMovies.size()) % upcomingMovies.size();
+            System.out.println("Showing previous upcoming movie: Index " + currentUpcomingIndex);
+            updateUpcomingMovieDisplay();
+        }
+    }
+
+    private void updateUpcomingMovieDisplay() {
+        if (upcomingMovies != null && !upcomingMovies.isEmpty()) {
+            Movie movie = upcomingMovies.get(currentUpcomingIndex);
+            System.out.println("Updating display for movie: " + movie.getTitle() + " at index " + currentUpcomingIndex);
+            upcomingMovieImage.setImage(new Image(movie.getImagePath()));
+            upcomingMovieTitle.setText(movie.getTitle());
+            upcomingMovieDate.setText(movie.getShowtime().toString());
+            upcomingMovieImage.setVisible(true);
+            upcomingMovieTitle.setVisible(true);
+            upcomingMovieDate.setVisible(true);
+            prevButton.setVisible(true);
+            nextButton.setVisible(true);
+        } else {
+            System.out.println("No upcoming movies to display.");
+            upcomingMovieImage.setVisible(false);
+            upcomingMovieTitle.setVisible(false);
+            upcomingMovieDate.setVisible(false);
+            prevButton.setVisible(false);
+            nextButton.setVisible(false);
+        }
+    }
+
+    @FXML
+    public void toggleSearchWindow() {
+        boolean isCurrentlyVisible = searchWindow.isVisible();
+        searchWindow.setVisible(!isCurrentlyVisible);
+        searchWindow.setManaged(!isCurrentlyVisible);
+
+        if (!isCurrentlyVisible) {
+            searchWindow.getStyleClass().remove("hidden");
+            searchWindow.getStyleClass().add("visible");
+            searchWindow.toFront();
+        } else {
+            searchWindow.getStyleClass().remove("visible");
+            searchWindow.getStyleClass().add("hidden");
+        }
+    }
+
+
 }

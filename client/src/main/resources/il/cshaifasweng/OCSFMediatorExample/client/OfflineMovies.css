@@ -1,0 +1,87 @@
+/* הגדרות כלליות */
+.root {
+    -fx-background-color: #F5F5F5; /* רקע אפור בהיר */
+}
+
+.label-header {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333; /* צבע טקסט כהה */
+}
+
+.label-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000; /* צבע טקסט כהה יותר לכותרת הראשית */
+    -fx-padding: 20px 0; /* רווח מעל ומתחת לכותרת */
+}
+
+.search-field, .combo-box, .date-picker, .reset-button {
+    -fx-font-size: 16px;
+    -fx-padding: 8px;
+    -fx-background-color: #E0E0E0; /* רקע אפור בהיר מאוד לשדות טקסט וכפתורים */
+    -fx-border-color: #CCC; /* צבע גבול אפור */
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.movie-tile-pane {
+    -fx-padding: 15px;
+    -fx-background-color: #FFF; /* רקע לבן לתמונות הסרטים */
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.upcoming-movie-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #444; /* צבע טקסט כהה לכותרות הסרטים */
+}
+
+.upcoming-movie-date {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666; /* צבע טקסט תאריכים */
+}
+
+.upcoming-movie-image {
+    -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0); /* אפקט של צל לצילום הסרט */
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.nav-button {
+    -fx-font-size: 18px;
+    -fx-background-color: #333; /* רקע כהה לכפתורי הניווט */
+    -fx-text-fill: #FFF; /* טקסט לבן */
+    -fx-padding: 10px;
+    -fx-background-radius: 5px;
+}
+
+/* סגנון לכפתור החיפוש */
+.search-icon {
+    -fx-font-size: 24px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #333;
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+}
+
+/* אנימציה לשינוי שקיפות */
+.search-window {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0);
+    -fx-opacity: 0;
+    -fx-transition: opacity 0.3s ease;
+}
+
+.search-window.visible {
+    -fx-opacity: 1;
+}
+
+.search-window.hidden {
+    -fx-opacity: 0;
+}

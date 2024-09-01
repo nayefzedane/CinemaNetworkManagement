@@ -33,6 +33,7 @@ public class SimpleClient extends AbstractClient {
 			e.printStackTrace();
 		}
 	}
+
 	public void requestMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title, boolean isOnline) {
 		try {
 			StringBuilder request = new StringBuilder("#searchMoviesByAdvancedCriteria;");
@@ -53,7 +54,6 @@ public class SimpleClient extends AbstractClient {
 				request.append("title=").append(title).append(";");
 			}
 
-			// הוספת הפרמטר שמציין האם הסרט הוא אונליין או לא
 			request.append("isOnline=").append(isOnline).append(";");
 
 			System.out.println("Requesting movies by advanced criteria: " + request.toString()); // Debugging output
@@ -62,7 +62,6 @@ public class SimpleClient extends AbstractClient {
 			e.printStackTrace();
 		}
 	}
-
 
 	public void requestMoviesByCriteria(String cinema, LocalDate date, String title) {
 		try {
@@ -112,7 +111,9 @@ public class SimpleClient extends AbstractClient {
 					Object activeController = mainController.getActiveController();
 
 					if (activeController instanceof OfflineMoviesController) {
-						((OfflineMoviesController) activeController).displayMovies(movies);
+						OfflineMoviesController controller = (OfflineMoviesController) activeController;
+						controller.displayMovies(movies);
+						controller.setUpcomingMovies(movies);  // הוספת קריאה לפונקציה setUpcomingMovies
 					} else if (activeController instanceof OnlineMoviesController) {
 						((OnlineMoviesController) activeController).displayMovies(movies);
 					} else {

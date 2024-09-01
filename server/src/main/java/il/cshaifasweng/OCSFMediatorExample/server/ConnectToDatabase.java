@@ -523,6 +523,35 @@ public class ConnectToDatabase {
             return null;
         }
     }
+    public static List<Movie> getMoviesByScreeningDate(LocalDate startDate, LocalDate endDate) {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
+
+            // Filtering movies based on screening dates
+            if (startDate != null && endDate != null) {
+                query.select(root).where(builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate));
+            } else if (startDate != null) {
+                query.select(root).where(builder.greaterThanOrEqualTo(root.get("showtime").as(LocalDate.class), startDate));
+            } else if (endDate != null) {
+                query.select(root).where(builder.lessThanOrEqualTo(root.get("showtime").as(LocalDate.class), endDate));
+            } else {
+                query.select(root); // If no date criteria are provided, return all movies
+            }
+
+            List<Movie> movies = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+
+            return movies;
+        } catch (Exception e) {
+            System.err.println("Error fetching movies by screening date: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
 }

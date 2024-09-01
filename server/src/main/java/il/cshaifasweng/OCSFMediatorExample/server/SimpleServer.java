@@ -21,7 +21,7 @@ public class SimpleServer extends AbstractServer {
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) throws Exception {
 		String msgString = msg.toString();
-		System.out.println("Received message: " + msgString); // Debugging output
+		System.out.println("Received message from client: " + msgString); // Debugging output
 
 		if (msgString.startsWith("login@")) {
 			String[] parts = msgString.split("@");
@@ -31,14 +31,14 @@ public class SimpleServer extends AbstractServer {
 			User user = ConnectToDatabase.getUserByCredentials(username, password);
 
 			if (user != null) {
-				System.out.println("User authenticated: " + username);  // הדפסה אם המשתמש אומת בהצלחה
+				System.out.println("User authenticated successfully: " + username);  // Debugging output for successful authentication
 				client.sendToClient("login_success@" + user.getRole());
 			} else {
-				System.out.println("User authentication failed: " + username);  // הדפסה אם המשתמש לא אומת
+				System.out.println("Authentication failed: " + username);  // Debugging output for failed authentication
 				client.sendToClient("login_failed");
 			}
 		} else if (msgString.startsWith("#warning")) {
-			Warning warning = new Warning("Warning from server!");
+			Warning warning = new Warning("Server Warning!");
 			client.sendToClient(warning);
 			System.out.format("Sent warning to client %s\n", client.getInetAddress().getHostAddress());
 		} else if (msgString.startsWith("get all movies")) {
@@ -53,12 +53,12 @@ public class SimpleServer extends AbstractServer {
 			int hour = Integer.parseInt(parts[2]);
 			int minute = Integer.parseInt(parts[3]);
 
-			// Parse date and time
+			// Convert date and time
 			LocalDate date = LocalDate.parse(dateStr);
 			LocalTime time = LocalTime.of(hour, minute);
 			LocalDateTime newShowtime = LocalDateTime.of(date, time);
 
-			// Update the movie's showtime in the database
+			// Update movie showtime in the database
 			ConnectToDatabase.updateMovieShowtimeInDatabase(movieId, newShowtime);
 		} else if (msgString.startsWith("id=")) {
 			String movieString = msg.toString();
@@ -131,7 +131,7 @@ public class SimpleServer extends AbstractServer {
 		} else if (msgString.startsWith("#getMoviesByOnlineStatus")) {
 			boolean isOnline = Boolean.parseBoolean(msgString.substring("#getMoviesByOnlineStatus".length()).trim());
 			List<Movie> movies = ConnectToDatabase.getMoviesByOnlineStatus(isOnline);
-			System.out.println("Movies fetched from database (Online status " + isOnline + "): " + movies.size()); // Debugging output
+			System.out.println("Movies fetched by online status (" + isOnline + "): " + movies.size()); // Debugging output
 			client.sendToClient(movies);
 		} else if (msgString.startsWith("#searchMoviesByAdvancedCriteria")) {
 			String[] criteria = msgString.substring("#searchMoviesByAdvancedCriteria;".length()).split(";");
@@ -140,7 +140,7 @@ public class SimpleServer extends AbstractServer {
 			LocalDate endDate = null;
 			String genre = null;
 			String title = null;
-			boolean isOnline = false;  // Always searching for offline movies
+			boolean isOnline = false;  // חיפוש תמידי לסרטים לא אונליין
 
 			for (String criterion : criteria) {
 				String[] keyValue = criterion.split("=");
@@ -164,7 +164,7 @@ public class SimpleServer extends AbstractServer {
 			}
 
 			List<Movie> movies = ConnectToDatabase.searchMoviesByAdvancedCriteria(cinema, startDate, endDate, genre, title, isOnline);
-			System.out.println("Movies fetched by advanced criteria (Offline only): " + movies.size()); // Debugging output
+			System.out.println("Movies fetched by advanced criteria (non-online): " + movies.size()); // Debugging output
 			client.sendToClient(movies);
 		} else if (msgString.startsWith("#searchOnlineMoviesByCriteria")) {
 			String[] criteria = msgString.substring("#searchOnlineMoviesByCriteria ".length()).split(";");
@@ -181,9 +181,23 @@ public class SimpleServer extends AbstractServer {
 			}
 
 			List<Movie> movies = ConnectToDatabase.searchOnlineMoviesByCriteria(genre, title);
-			System.out.println("Online movies fetched by criteria (genre: " + genre + ", title: " + title + "): " + movies.size()); // Debugging output
+			System.out.println("Online movies fetched by criteria (Genre: " + genre + ", Title: " + title + "): " + movies.size()); // Debugging output
+			client.sendToClient(movies);
+		} else if (msgString.startsWith("#getMoviesByScreeningDate")) {
+			String[] dates = msgString.substring("#getMoviesByScreeningDate".length()).trim().split(";");
+			LocalDate startDate = null;
+			LocalDate endDate = null;
+
+			if (dates.length > 0 && !dates[0].isEmpty()) {
+				startDate = LocalDate.parse(dates[0]);
+			}
+			if (dates.length > 1 && !dates[1].isEmpty()) {
+				endDate = LocalDate.parse(dates[1]);
+			}
+
+			List<Movie> movies = ConnectToDatabase.getMoviesByScreeningDate(startDate, endDate);
+			System.out.println("Movies fetched by screening date: " + movies.size()); // Debugging output
 			client.sendToClient(movies);
 		}
 	}
-
 }
