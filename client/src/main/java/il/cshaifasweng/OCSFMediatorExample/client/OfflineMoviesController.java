@@ -8,6 +8,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.text.Text;
 import javafx.scene.layout.VBox;
@@ -44,6 +45,9 @@ public class OfflineMoviesController {
 
     @FXML
     private Text upcomingMovieDate;
+
+    @FXML
+    private Text upcomingMovieDescription;
 
     @FXML
     private Button prevButton;
@@ -125,15 +129,39 @@ public class OfflineMoviesController {
 
     public void displayMovies(List<Movie> movies) {
         movieTilePane.getChildren().clear();
-        System.out.println("Displaying " + movies.size() + " movies.");
-        for (Movie movie : movies) {
-            VBox movieBox = new VBox(5);
-            ImageView movieImage = new ImageView(new Image(movie.getImagePath()));
-            movieImage.setFitHeight(150);
-            movieImage.setFitWidth(100);
-            Text movieTitle = new Text(movie.getTitle());
-            movieBox.getChildren().addAll(movieImage, movieTitle);
-            movieTilePane.getChildren().add(movieBox);
+
+        if (movies == null || movies.isEmpty()) {
+            Text noMoviesText = new Text("No movies found.");
+            movieTilePane.getChildren().add(noMoviesText);
+        } else {
+            for (Movie movie : movies) {
+                VBox movieBox = new VBox(10);
+                movieBox.getStyleClass().add("movie-box");
+
+                StackPane imageContainer = new StackPane();
+                ImageView movieImage = new ImageView(new Image(movie.getImagePath()));
+                movieImage.setFitHeight(250);
+                movieImage.setFitWidth(150);
+                movieImage.getStyleClass().add("movie-image");
+
+                Button viewMoreButton = new Button("View More");
+                viewMoreButton.getStyleClass().add("view-more");
+
+                // להוסיף את הכפתור "View More" לתוך StackPane כדי להניח אותו מעל התמונה
+                imageContainer.getChildren().addAll(movieImage, viewMoreButton);
+
+                Text movieTitle = new Text(movie.getTitle());
+                movieTitle.getStyleClass().add("movie-title");
+
+                movieBox.getChildren().addAll(imageContainer, movieTitle);
+                movieTilePane.getChildren().add(movieBox);
+
+                // הוספת EventHandler לכפתור "View More"
+                viewMoreButton.setOnAction(event -> {
+                    // תוסיף כאן את הקוד לפתיחת חלון פרטים נוספים
+                    System.out.println("View more clicked for movie: " + movie.getTitle());
+                });
+            }
         }
     }
 
@@ -175,16 +203,37 @@ public class OfflineMoviesController {
             upcomingMovieImage.setImage(new Image(movie.getImagePath()));
             upcomingMovieTitle.setText(movie.getTitle());
             upcomingMovieDate.setText(movie.getShowtime().toString());
+            upcomingMovieDescription.setText(movie.getDescription());
+
             upcomingMovieImage.setVisible(true);
             upcomingMovieTitle.setVisible(true);
             upcomingMovieDate.setVisible(true);
+            upcomingMovieDescription.setVisible(true);
             prevButton.setVisible(true);
             nextButton.setVisible(true);
+
+            // בודקים אם הורה של ImageView הוא StackPane לפני שמנסים להוסיף את הכפתור
+            if (upcomingMovieImage.getParent() instanceof StackPane) {
+                StackPane imageContainer = (StackPane) upcomingMovieImage.getParent();
+                if (imageContainer.getChildren().size() == 1) {
+                    Button viewMoreButton = new Button("View More");
+                    viewMoreButton.getStyleClass().add("upcoming-view-more");
+                    imageContainer.getChildren().add(viewMoreButton);
+
+                    viewMoreButton.setOnAction(event -> {
+                        // תוסיף כאן את הקוד לפתיחת חלון פרטים נוספים לסרטים שיוצגו בקרוב
+                        System.out.println("View more clicked for upcoming movie: " + movie.getTitle());
+                    });
+                }
+            } else {
+                System.out.println("The parent of upcomingMovieImage is not a StackPane.");
+            }
         } else {
             System.out.println("No upcoming movies to display.");
             upcomingMovieImage.setVisible(false);
             upcomingMovieTitle.setVisible(false);
             upcomingMovieDate.setVisible(false);
+            upcomingMovieDescription.setVisible(false);
             prevButton.setVisible(false);
             nextButton.setVisible(false);
         }
@@ -205,6 +254,4 @@ public class OfflineMoviesController {
             searchWindow.getStyleClass().add("hidden");
         }
     }
-
-
 }

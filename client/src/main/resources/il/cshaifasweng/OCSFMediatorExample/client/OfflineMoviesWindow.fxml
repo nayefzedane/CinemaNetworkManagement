@@ -16,28 +16,37 @@
 
     <!-- כל שאר החלון הראשי -->
     <ScrollPane fitToWidth="true">
-        <VBox spacing="25" alignment="center">
-            <!-- תוכן החלון הראשי -->
+        <!-- תוכן החלון הראשי -->
+        <VBox spacing="60" alignment="center" style="-fx-background-color: #D3D3D3;">
             <!-- כותרת ראשית לחלון -->
             <Text text="Movies Page" styleClass="label-title"/>
 
-            <!-- תוצאות הסרטים הזמינים -->
-            <VBox spacing="15" alignment="center">
-                <Text text="סרטים זמינים" styleClass="label-header"/>
-                <TilePane fx:id="movieTilePane" hgap="15" vgap="15" alignment="center" styleClass="movie-tile-pane"/>
-            </VBox>
-
-            <!-- אזור לסרט הקרוב עם אפשרות מעבר בין סרטים -->
-            <VBox spacing="25" alignment="center">
+            <!-- הוספת מרווח גדול יותר לפני אזור הסרטים הקרובים -->
+            <VBox spacing="80" alignment="center"> <!-- מרווח גדול יותר למטה מהכותרת -->
+                <!-- אזור לסרט הקרוב עם אפשרות מעבר בין סרטים -->
                 <HBox fx:id="upcomingMovieBox" alignment="center" spacing="25">
                     <Button fx:id="prevButton" text="◀" onAction="#showPreviousUpcomingMovie" styleClass="nav-button"/>
-                    <VBox alignment="center" spacing="10">
-                        <ImageView fx:id="upcomingMovieImage" fitHeight="300" fitWidth="200" styleClass="upcoming-movie-image"/>
-                        <Text fx:id="upcomingMovieTitle" styleClass="upcoming-movie-title"/>
-                        <Text fx:id="upcomingMovieDate" styleClass="upcoming-movie-date"/>
+
+                    <!-- האזור המורחב לתמונה עם תיאור הסרט -->
+                    <VBox alignment="CENTER" spacing="10">
+                        <!-- הרחבת התמונה והזזה שמאלה -->
+                        <ImageView fx:id="upcomingMovieImage" fitHeight="450" fitWidth="400" styleClass="upcoming-movie-image"/>
                     </VBox>
+                    <VBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 20px;">
+                        <Text fx:id="upcomingMovieTitle" styleClass="upcoming-movie-title" textAlignment="LEFT"/>
+                        <Text fx:id="upcomingMovieDate" styleClass="upcoming-movie-date" textAlignment="LEFT"/>
+                        <Text fx:id="upcomingMovieDescription" wrappingWidth="200" textAlignment="LEFT"/> <!-- הסבר קצר על הסרט -->
+                    </VBox>
+
                     <Button fx:id="nextButton" text="▶" onAction="#showNextUpcomingMovie" styleClass="nav-button"/>
                 </HBox>
+            </VBox>
+
+            <!-- תוצאות הסרטים הזמינים -->
+            <VBox spacing="40" alignment="center">
+                <!-- שינוי הטקסט לאנגלית, הגדלתו והדגשתו -->
+                <Text text="Available Movies" styleClass="label-header" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                <TilePane fx:id="movieTilePane" hgap="15" vgap="15" alignment="center" styleClass="movie-tile-pane"/>
             </VBox>
         </VBox>
     </ScrollPane>
@@ -47,13 +56,14 @@
 
     <!-- חלון החיפוש -->
     <VBox fx:id="searchWindow" spacing="10" maxWidth="250" maxHeight="250" styleClass="search-window" visible="false" managed="false" StackPane.alignment="TOP_RIGHT" translateY="60">
-        <TextField fx:id="searchField" promptText="חפש לפי שם סרט" styleClass="search-field" maxWidth="200"/>
-        <ComboBox fx:id="cinemaComboBox" promptText="בחר קולנוע" styleClass="combo-box" maxWidth="200"/>
-        <DatePicker fx:id="startDatePicker" promptText="תאריך התחלה" styleClass="date-picker" maxWidth="200"/>
-        <DatePicker fx:id="endDatePicker" promptText="תאריך סיום" styleClass="date-picker" maxWidth="200"/>
-        <ComboBox fx:id="genreComboBox" promptText="בחר ז'אנר" styleClass="combo-box" maxWidth="200"/>
-        <Button text="אפס" onAction="#resetDates" styleClass="reset-button" maxWidth="200"/>
-        <Button text="בצע חיפוש" onAction="#searchMovies" styleClass="nav-button" maxWidth="200"/>
+        <!-- סידור מחדש של הקריטריונים -->
+        <TextField fx:id="searchField" promptText="Search by Movie Name" styleClass="search-field" maxWidth="200"/>
+        <DatePicker fx:id="startDatePicker" promptText="Start Date" styleClass="date-picker" maxWidth="200"/>
+        <DatePicker fx:id="endDatePicker" promptText="End Date" styleClass="date-picker" maxWidth="200"/>
+        <Button text="Reset Dates" onAction="#resetDates" styleClass="reset-button" maxWidth="200"/>
+        <ComboBox fx:id="cinemaComboBox" promptText="Select Cinema" styleClass="combo-box" maxWidth="200"/>
+        <ComboBox fx:id="genreComboBox" promptText="Select Genre" styleClass="combo-box" maxWidth="200"/>
+        <Button text="Search" onAction="#searchMovies" styleClass="nav-button" maxWidth="200"/>
     </VBox>
 
 </StackPane>

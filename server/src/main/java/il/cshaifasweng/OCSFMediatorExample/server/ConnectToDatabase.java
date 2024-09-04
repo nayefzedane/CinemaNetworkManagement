@@ -103,6 +103,68 @@ public class ConnectToDatabase {
                     38.0f, true, 90, 3);
             session.save(movie7);
 
+            Movie movie8 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie8);
+
+            Movie movie9 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie9);
+
+            Movie movie10 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie10);
+
+            Movie movie11 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie11);
+
+            Movie movie12 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie12);
+
+            Movie movie13 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie13);
+
+            Movie movie14 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie14);
             // הוספת משתמשים לדוגמא
             User admin = new User("admin", "admin123", "Admin");
             User manager = new User("man", "123", "Manager");
@@ -248,7 +310,7 @@ public class ConnectToDatabase {
         session.getTransaction().commit();
         session.close();
     }
-    // הוספת הפונקציה ליצירת רשומות purchaseCard
+
     public static void createPurchases() {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -293,7 +355,6 @@ public class ConnectToDatabase {
         }
     }
 
-    // הוספת הפונקציה להחזרת כל רכישות
     public static List<purchaseCard> getAllPurchasesOrderedByDate() throws Exception {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -302,7 +363,6 @@ public class ConnectToDatabase {
             CriteriaQuery<purchaseCard> query = builder.createQuery(purchaseCard.class);
             Root<purchaseCard> root = query.from(purchaseCard.class);
 
-            // סדר לפי תאריך הרכישה
             query.select(root).orderBy(builder.asc(root.get("purchaseDate")));
 
             List<purchaseCard> purchases = session.createQuery(query).getResultList();
@@ -315,7 +375,7 @@ public class ConnectToDatabase {
         }
     }
 
-    public static void updateMovieShowtimeInDatabase(int movieId, LocalDateTime newShowtime) {
+    public static void pdateMovieShowtimeInDatabase(int movieId, LocalDateTime newShowtime) {
         Session session = ConnectToDatabase.getSessionFactory().openSession();
         Transaction transaction = null;
 
@@ -339,6 +399,7 @@ public class ConnectToDatabase {
         session.close();
         System.out.println("Show time updated successfully");
     }
+
     public static List<Movie> getMoviesByOnlineStatus(boolean isOnline) {
         try (Session session = getSessionFactory().openSession()) {
             CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -552,6 +613,5 @@ public class ConnectToDatabase {
             return null;
         }
     }
-
 
 }
