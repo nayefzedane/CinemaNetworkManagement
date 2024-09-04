@@ -4,8 +4,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.io.IOException;
 
@@ -22,13 +20,8 @@ public class InitConnection {
     private TextField port;
 
     @FXML
-    private ImageView backgroundImage; // הוסף ImageView מה-FXML
-
-    @FXML
     public void initialize() {
-        // טען את התמונה מהמשאבים
-        Image image = new Image(getClass().getResource("/images/background.png").toExternalForm());
-        backgroundImage.setImage(image);
+        // אין צורך לטעון את התמונה בקוד, היא נטענת דרך CSS
     }
 
     @FXML
@@ -44,10 +37,15 @@ public class InitConnection {
         System.out.println("INIT REACHED...");
         Platform.runLater(() -> {
             try {
-                App.setRoot("selection_window");
+                App.setRoot("MainWindow");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    @FXML
+    void exitApp(ActionEvent event) {
+        Platform.exit(); // סוגר את האפליקציה
     }
 }

@@ -1,0 +1,27 @@
+.root {
+    -fx-background-image: url('/images/background2.png'); /* קישור לתמונת הרקע */
+    -fx-background-size: cover; /* התאמת גודל התמונה לגודל החלון */
+    -fx-background-position: center; /* מיקום התמונה במרכז החלון */
+    -fx-background-repeat: no-repeat; /* מניעת חזרת התמונה */
+}
+
+.label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14pt;
+    -fx-background-color: rgba(0, 0, 0, 0.5); /* רקע שחור חצי שקוף */
+    -fx-padding: 5px; /* הוספת מרווחים בתוך התווית */
+}
+
+.button {
+    -fx-background-color: #4CAF50; /* צבע כפתור ירוק */
+    -fx-text-fill: #ffffff; /* צבע טקסט לבן */
+    -fx-font-size: 14pt; /* גודל טקסט */
+    -fx-padding: 10px 20px; /* מרווחים בכפתור */
+}
+
+.text-field {
+    -fx-background-color: #333333; /* רקע שדה טקסט */
+    -fx-text-fill: #ffffff; /* צבע טקסט לבן */
+    -fx-font-size: 14pt; /* גודל טקסט */
+    -fx-padding: 5px; /* מרווחים בתוך שדה הטקסט */
+}

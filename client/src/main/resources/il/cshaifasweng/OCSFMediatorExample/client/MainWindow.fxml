@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.MainWindowController"
+            stylesheets="@styles.css">
+    <left>
+        <VBox spacing="15" styleClass="side-menu"> <!-- מרווח גדול יותר בין הפריטים -->
+            <Button text="Movies" onAction="#showOfflineMovies" styleClass="menu-button"/> <!-- כפתור Movies -->
+            <Button text="Online Movies" onAction="#showOnlineMovies" styleClass="menu-button"/> <!-- כפתור Online Movies -->
+            <Button text="Return Tickets" onAction="#showReturnTicketWindow" styleClass="menu-button"/> <!-- כפתור Return Tickets -->
+            <Button text="Buy Ticket Package" onAction="#showBuyTicketPackageWindow" styleClass="menu-button"/> <!-- כפתור Buy Ticket Package -->
+            <Button text="Submit Complaint" onAction="#showSubmitComplaintWindow" styleClass="menu-button"/> <!-- כפתור Submit Complaint -->
+            <Button text="Login" onAction="#showLoginWindow" styleClass="menu-button"/> <!-- כפתור Login בסוף הרשימה -->
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentPane" />
+    </center>
+</BorderPane>

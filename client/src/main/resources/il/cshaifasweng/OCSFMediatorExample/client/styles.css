@@ -1,0 +1,24 @@
+/* הגדרות כלליות */
+.root {
+    -fx-background-color: #F5F5F5; /* רקע אפור בהיר */
+}
+
+.side-menu {
+    -fx-padding: 20px; /* ריווח פנימי */
+    -fx-background-color: #333; /* רקע כהה לתפריט */
+}
+
+.menu-button {
+    -fx-background-color: transparent; /* כפתור שקוף */
+    -fx-text-fill: #FFFFFF; /* צבע טקסט לבן */
+    -fx-font-size: 16px; /* גודל גופן */
+    -fx-border-width: 0 0 2px 0; /* גבול תחתון בלבד */
+    -fx-border-color: #FFFFFF; /* צבע גבול תחתון לבן */
+    -fx-padding: 10px 20px; /* ריווח פנימי בתוך הכפתור */
+    -fx-alignment: center-left; /* יישור הטקסט לשמאל */
+}
+
+.menu-button:hover {
+    -fx-background-color: #555; /* רקע כהה יותר בעת ריחוף */
+    -fx-cursor: hand; /* מצביע עכבר משתנה ליד בעת ריחוף */
+}

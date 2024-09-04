@@ -1,0 +1,41 @@
+/* הגדרות כלליות */
+.root {
+    -fx-background-color: #D3D3D3; /* רקע אפור כהה לכל החלון */
+}
+
+.search-field, .combo-box, .nav-button {
+    -fx-font-size: 16px;
+    -fx-padding: 8px;
+    -fx-background-color: #C0C0C0; /* רקע אפור בהיר לשדות טקסט וכפתורים */
+    -fx-border-color: #AAA; /* צבע גבול אפור כהה */
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.search-icon {
+    -fx-font-size: 24px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #333;
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+}
+
+/* סגנון לחלון החיפוש */
+.search-window {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0);
+    -fx-opacity: 0;
+    -fx-transition: opacity 0.3s ease;
+}
+
+.search-window.visible {
+    -fx-opacity: 1;
+}
+
+.search-window.hidden {
+    -fx-opacity: 0;
+}
