@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
+import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
@@ -198,6 +199,22 @@ public class SimpleServer extends AbstractServer {
 			List<Movie> movies = ConnectToDatabase.getMoviesByScreeningDate(startDate, endDate);
 			System.out.println("Movies fetched by screening date: " + movies.size()); // Debugging output
 			client.sendToClient(movies);
+		}
+
+		else if (msgString.startsWith("send request:")){
+
+			String[] parts = msgString.split(":");
+			String movieTitle = parts[1];
+			String movieId = parts[2];
+			String moviePrice = parts[3];
+			String newPrice = parts[4];
+			String movieShowtime = parts[5];
+			String moviePlace = parts[6];
+
+			Request req = new Request();
+			req.setTitle("Price update request");
+			req.setDescription(movieTitle+", Id: "+movieId + ", Showtime: "+ movieShowtime + ", Place: " + moviePlace +", Old price: " +moviePrice+", New price: "+newPrice);
+			ConnectToDatabase.addRequest(req);
 		}
 	}
 }

@@ -9,7 +9,7 @@
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
     <children>
-        <Label text="Delete Movie" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Label text="Update Movie Price" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
 
         <TableView fx:id="movieTable" prefHeight="400" prefWidth="600">
             <columns>
@@ -20,7 +20,12 @@
             </columns>
         </TableView>
 
-        <Button text="Delete Selected Movie" onAction="#handleDeleteMovie" style="-fx-font-size: 14px;"/>
+        <HBox spacing="10">
+            <Label text="New Price:" />
+            <TextField fx:id="priceField" promptText="Enter new price"/>
+        </HBox>
+
+        <Button text="Update Price" onAction="#handleUpdatePrice" style="-fx-font-size: 14px;"/>
         <Button text="Back" onAction="#handleBack" style="-fx-font-size: 14px;"/>
     </children>
 </VBox>
