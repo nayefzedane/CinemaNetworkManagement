@@ -175,14 +175,21 @@ public class AdminController {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName(selectedMonth);
 
-        // Add data to the series
-        for (Map.Entry<Integer, Integer> entry : complaintsPerDay.entrySet()) {
-            series.getData().add(new XYChart.Data<>(String.valueOf(entry.getKey()), entry.getValue()));
-        }
+        // Sort the days and add data to the series in order
+        complaintsPerDay.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey()) // Sort by day (key)
+                .forEach(entry -> {
+                    series.getData().add(new XYChart.Data<>(String.valueOf(entry.getKey()), entry.getValue()));
+                });
 
         // Add the series to the histogram
         complaintsHistogram.getData().add(series);
     }
+
+
+
+
+
 
     public void initializeComplaints() {
         System.out.println("Initializing complaints view...");
