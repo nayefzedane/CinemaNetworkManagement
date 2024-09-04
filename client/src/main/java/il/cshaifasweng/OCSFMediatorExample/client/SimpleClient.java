@@ -123,6 +123,8 @@ public class SimpleClient extends AbstractClient {
 					e.printStackTrace();
 				}
 			});
+			ContentManagerController controller = (ContentManagerController) App.getController();
+			controller.updateMovieTable(movies);
 		}
 
 		// טיפול בתשובת ההתחברות מהשרת
