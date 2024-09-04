@@ -1,7 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
-import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
@@ -25,7 +24,6 @@ public class ConnectToDatabase {
             Configuration configuration = new Configuration();
             configuration.addAnnotatedClass(Movie.class);
             configuration.addAnnotatedClass(User.class);
-            configuration.addAnnotatedClass(Request.class);
             configuration.addAnnotatedClass(purchaseCard.class);
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
@@ -41,6 +39,7 @@ public class ConnectToDatabase {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
 
+            // הוספת סרטים לדוגמא עם כל השדות החדשים באמצעות הקונסטרקטור
             Movie movie1 = new Movie("Inception",
                     LocalDateTime.of(2024, 12, 24, 14, 30),  // Showtime
                     LocalDate.of(2024, 12, 10),   // Release Date
@@ -104,68 +103,6 @@ public class ConnectToDatabase {
                     38.0f, true, 90, 3);
             session.save(movie7);
 
-            Movie movie8 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie8);
-
-            Movie movie9 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie9);
-
-            Movie movie10 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie10);
-
-            Movie movie11 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie11);
-
-            Movie movie12 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie12);
-
-            Movie movie13 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie13);
-
-            Movie movie14 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie14);
             // הוספת משתמשים לדוגמא
             User admin = new User("admin", "admin123", "Admin");
             User manager = new User("man", "123", "Manager");
@@ -311,7 +248,7 @@ public class ConnectToDatabase {
         session.getTransaction().commit();
         session.close();
     }
-
+    // הוספת הפונקציה ליצירת רשומות purchaseCard
     public static void createPurchases() {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -356,6 +293,7 @@ public class ConnectToDatabase {
         }
     }
 
+    // הוספת הפונקציה להחזרת כל רכישות
     public static List<purchaseCard> getAllPurchasesOrderedByDate() throws Exception {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -364,6 +302,7 @@ public class ConnectToDatabase {
             CriteriaQuery<purchaseCard> query = builder.createQuery(purchaseCard.class);
             Root<purchaseCard> root = query.from(purchaseCard.class);
 
+            // סדר לפי תאריך הרכישה
             query.select(root).orderBy(builder.asc(root.get("purchaseDate")));
 
             List<purchaseCard> purchases = session.createQuery(query).getResultList();
@@ -376,7 +315,7 @@ public class ConnectToDatabase {
         }
     }
 
-    public static void pdateMovieShowtimeInDatabase(int movieId, LocalDateTime newShowtime) {
+    public static void updateMovieShowtimeInDatabase(int movieId, LocalDateTime newShowtime) {
         Session session = ConnectToDatabase.getSessionFactory().openSession();
         Transaction transaction = null;
 
@@ -389,6 +328,7 @@ public class ConnectToDatabase {
                 throw new Exception("Movie not found.");
             }
 
+            // Update the showtime
             movie.setShowtime(newShowtime);
             session.update(movie);
 
@@ -399,157 +339,219 @@ public class ConnectToDatabase {
         session.close();
         System.out.println("Show time updated successfully");
     }
-// תחילת מיזוג
-public static void addRequest(Request req) {
-    Transaction transaction = null;
-    try (Session session = getSessionFactory().openSession()) {
-        transaction = session.beginTransaction();
-        session.save(req);
-        transaction.commit();
-        System.out.println("Request saved successfully");
-    } catch (Exception e) {
-        if (transaction != null) {
-            transaction.rollback();
+    public static List<Movie> getMoviesByOnlineStatus(boolean isOnline) {
+        try (Session session = getSessionFactory().openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
+            query.select(root).where(builder.equal(root.get("isOnline"), isOnline));
+            return session.createQuery(query).getResultList();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            return null;
         }
-        e.printStackTrace();
-        System.out.println("Failed to save the request");
     }
-}
+//    public static List<Movie> searchMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title, boolean isOnline) {
+//        try (Session session = getSessionFactory().openSession()) {
+//            session.beginTransaction();
+//
+//            CriteriaBuilder builder = session.getCriteriaBuilder();
+//            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+//            Root<Movie> root = query.from(Movie.class);
+//
+//            // התחלת הבנייה של השאילתה
+//            query.select(root);
+//
+//            // הוספת קריטריון חובה - סינון לפי אונליין או לא
+//            query.where(builder.equal(root.get("isOnline"), isOnline));
+//
+//            // הוספת תנאים נוספים לפי הקריטריונים שנבחרו
+//            if (cinema != null && !cinema.isEmpty()) {
+//                query.where(builder.equal(root.get("place"), cinema));
+//            }
+//            if (startDate != null && endDate != null) {
+//                query.where(builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate));
+//            }
+//            if (genre != null && !genre.isEmpty()) {
+//                query.where(builder.equal(root.get("genre"), genre));
+//            }
+//            if (title != null && !title.isEmpty()) {
+//                query.where(builder.like(root.get("title"), "%" + title + "%"));
+//            }
+//
+//            List<Movie> movies = session.createQuery(query).getResultList();
+//            session.getTransaction().commit();
+//
+//            return movies;
+//        } catch (Exception e) {
+//            System.err.println("Error fetching movies by advanced criteria: " + e.getMessage());
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
-public static List<Movie> getMoviesByOnlineStatus(boolean isOnline) {
-    try (Session session = getSessionFactory().openSession()) {
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
-        Root<Movie> root = query.from(Movie.class);
-        query.select(root).where(builder.equal(root.get("isOnline"), isOnline));
-        return session.createQuery(query).getResultList();
-    } catch (HibernateException e) {
-        e.printStackTrace();
-        return null;
+    public static List<Movie> searchMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title, boolean isOnline) {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
+
+            // התחלת הבנייה של השאילתה
+            query.select(root);
+
+            // הוספת קריטריון חובה - סינון לפי אונליין או לא
+            query.where(builder.equal(root.get("isOnline"), isOnline));
+
+            // הוספת תנאים נוספים לפי הקריטריונים שנבחרו
+            if (cinema != null && !cinema.isEmpty() && !"ALL".equals(cinema)) {
+                query.where(
+                        builder.and(
+                                builder.equal(root.get("isOnline"), isOnline),
+                                builder.equal(root.get("place"), cinema)
+                        )
+                );
+            }
+
+            if (startDate != null && endDate != null) {
+                query.where(
+                        builder.and(
+                                builder.equal(root.get("isOnline"), isOnline),
+                                builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate)
+                        )
+                );
+            }
+
+            if (genre != null && !genre.isEmpty() && !"ALL".equals(genre)) {
+                query.where(
+                        builder.and(
+                                builder.equal(root.get("isOnline"), isOnline),
+                                builder.equal(root.get("genre"), genre)
+                        )
+                );
+            }
+
+            if (title != null && !title.isEmpty()) {
+                query.where(
+                        builder.and(
+                                builder.equal(root.get("isOnline"), isOnline),
+                                builder.like(root.get("title"), "%" + title + "%")
+                        )
+                );
+            }
+
+            List<Movie> movies = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+
+            return movies;
+        } catch (Exception e) {
+            System.err.println("Error fetching movies by advanced criteria: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
-}
 
-public static List<Movie> searchMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title, boolean isOnline) {
-    try (Session session = getSessionFactory().openSession()) {
-        session.beginTransaction();
+    //    public static List<Movie> searchMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title) {
+//        try (Session session = getSessionFactory().openSession()) {
+//            session.beginTransaction();
+//
+//            CriteriaBuilder builder = session.getCriteriaBuilder();
+//            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+//            Root<Movie> root = query.from(Movie.class);
+//
+//            // התחלת הבנייה של השאילתה
+//            query.select(root);
+//
+//            // הוספת תנאים לפי הקריטריונים
+//            if (cinema != null && !cinema.isEmpty()) {
+//                query.where(builder.equal(root.get("place"), cinema));
+//            }
+//            if (startDate != null && endDate != null) {
+//                query.where(
+//                        builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate)
+//                );
+//            }
+//            if (genre != null && !genre.isEmpty()) {
+//                query.where(builder.equal(root.get("genre"), genre));
+//            }
+//            if (title != null && !title.isEmpty()) {
+//                query.where(builder.like(root.get("title"), "%" + title + "%"));
+//            }
+//
+//            List<Movie> movies = session.createQuery(query).getResultList();
+//            session.getTransaction().commit();
+//
+//            return movies;
+//        } catch (Exception e) {
+//            System.err.println("Error fetching movies by advanced criteria: " + e.getMessage());
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+    public static List<Movie> searchOnlineMoviesByCriteria(String genre, String title) {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
 
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
-        Root<Movie> root = query.from(Movie.class);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
 
-        // התחלת הבנייה של השאילתה
-        query.select(root).where(builder.equal(root.get("isOnline"), isOnline));
+            query.select(root).where(builder.equal(root.get("isOnline"), true));
 
-        // הוספת תנאים נוספים לפי הקריטריונים שנבחרו
-        if (cinema != null && !cinema.isEmpty() && !"ALL".equals(cinema)) {
-            query.where(
-                    builder.and(
-                            builder.equal(root.get("isOnline"), isOnline),
-                            builder.equal(root.get("place"), cinema)
-                    )
-            );
+            // הוספת תנאים לפי הקריטריונים
+            if (genre != null && !genre.isEmpty()) {
+                query.where(builder.and(
+                        builder.equal(root.get("genre"), genre),
+                        builder.equal(root.get("isOnline"), true)
+                ));
+            }
+            if (title != null && !title.isEmpty()) {
+                query.where(builder.and(
+                        builder.like(root.get("title"), "%" + title + "%"),
+                        builder.equal(root.get("isOnline"), true)
+                ));
+            }
+
+            List<Movie> movies = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+
+            return movies;
+        } catch (Exception e) {
+            System.err.println("Error fetching online movies by criteria: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
-
-        if (startDate != null && endDate != null) {
-            query.where(
-                    builder.and(
-                            builder.equal(root.get("isOnline"), isOnline),
-                            builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate)
-                    )
-            );
-        }
-
-        if (genre != null && !genre.isEmpty() && !"ALL".equals(genre)) {
-            query.where(
-                    builder.and(
-                            builder.equal(root.get("isOnline"), isOnline),
-                            builder.equal(root.get("genre"), genre)
-                    )
-            );
-        }
-
-        if (title != null && !title.isEmpty()) {
-            query.where(
-                    builder.and(
-                            builder.equal(root.get("isOnline"), isOnline),
-                            builder.like(root.get("title"), "%" + title + "%")
-                    )
-            );
-        }
-
-        List<Movie> movies = session.createQuery(query).getResultList();
-        session.getTransaction().commit();
-
-        return movies;
-    } catch (Exception e) {
-        System.err.println("Error fetching movies by advanced criteria: " + e.getMessage());
-        e.printStackTrace();
-        return null;
     }
-}
+    public static List<Movie> getMoviesByScreeningDate(LocalDate startDate, LocalDate endDate) {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
 
-public static List<Movie> searchOnlineMoviesByCriteria(String genre, String title) {
-    try (Session session = getSessionFactory().openSession()) {
-        session.beginTransaction();
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
 
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
-        Root<Movie> root = query.from(Movie.class);
+            // Filtering movies based on screening dates
+            if (startDate != null && endDate != null) {
+                query.select(root).where(builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate));
+            } else if (startDate != null) {
+                query.select(root).where(builder.greaterThanOrEqualTo(root.get("showtime").as(LocalDate.class), startDate));
+            } else if (endDate != null) {
+                query.select(root).where(builder.lessThanOrEqualTo(root.get("showtime").as(LocalDate.class), endDate));
+            } else {
+                query.select(root); // If no date criteria are provided, return all movies
+            }
 
-        query.select(root).where(builder.equal(root.get("isOnline"), true));
+            List<Movie> movies = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
 
-        // הוספת תנאים לפי הקריטריונים
-        if (genre != null && !genre.isEmpty()) {
-            query.where(builder.and(
-                    builder.equal(root.get("genre"), genre),
-                    builder.equal(root.get("isOnline"), true)
-            ));
+            return movies;
+        } catch (Exception e) {
+            System.err.println("Error fetching movies by screening date: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
-        if (title != null && !title.isEmpty()) {
-            query.where(builder.and(
-                    builder.like(root.get("title"), "%" + title + "%"),
-                    builder.equal(root.get("isOnline"), true)
-            ));
-        }
-
-        List<Movie> movies = session.createQuery(query).getResultList();
-        session.getTransaction().commit();
-
-        return movies;
-    } catch (Exception e) {
-        System.err.println("Error fetching online movies by criteria: " + e.getMessage());
-        e.printStackTrace();
-        return null;
     }
+
+
 }
-
-public static List<Movie> getMoviesByScreeningDate(LocalDate startDate, LocalDate endDate) {
-    try (Session session = getSessionFactory().openSession()) {
-        session.beginTransaction();
-
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
-        Root<Movie> root = query.from(Movie.class);
-
-        // סינון סרטים לפי תאריכי הקרנה
-        if (startDate != null && endDate != null) {
-            query.select(root).where(builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate));
-        } else if (startDate != null) {
-            query.select(root).where(builder.greaterThanOrEqualTo(root.get("showtime").as(LocalDate.class), startDate));
-        } else if (endDate != null) {
-            query.select(root).where(builder.lessThanOrEqualTo(root.get("showtime").as(LocalDate.class), endDate));
-        } else {
-            query.select(root); // אם לא סופקו קריטריונים, יש להחזיר את כל הסרטים
-        }
-
-        List<Movie> movies = session.createQuery(query).getResultList();
-        session.getTransaction().commit();
-
-        return movies;
-    } catch (Exception e) {
-        System.err.println("Error fetching movies by screening date: " + e.getMessage());
-        e.printStackTrace();
-        return null;
-    }
-}
-// סוף מיזוג
