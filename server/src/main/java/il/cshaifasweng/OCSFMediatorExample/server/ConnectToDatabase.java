@@ -2,10 +2,24 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
-import org.hibernate.*;
+
+import il.cshaifasweng.OCSFMediatorExample.entities.Request;
+import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
+import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
+import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.HibernateException;
+import org.hibernate.Transaction;
+
+import org.hibernate.*;
+
+
+
+
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,6 +29,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
+
+//this what loay added:
+import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
+import java.time.LocalDate;
+import javax.persistence.criteria.Order;
 
 public class ConnectToDatabase {
     private static SessionFactory sessionFactory;
@@ -26,6 +45,13 @@ public class ConnectToDatabase {
             configuration.addAnnotatedClass(User.class);
             configuration.addAnnotatedClass(purchaseCard.class);
 
+            configuration.addAnnotatedClass(Request.class);
+            configuration.addAnnotatedClass(PurchaseLink.class);
+            configuration.addAnnotatedClass(PackageCard.class);
+            configuration.addAnnotatedClass(Complaints.class);
+
+
+
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -36,6 +62,14 @@ public class ConnectToDatabase {
     public static void CreateDatabase() throws HibernateException {
         System.out.println("Data Creation is starting");
         createPurchases();
+
+        createRequests();
+        createPurchaseLinks();
+        createPackageCards();
+        createComplaints();
+
+        System.out.println("Initial data creation finished");
+
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
 
@@ -108,10 +142,14 @@ public class ConnectToDatabase {
             User manager = new User("man", "123", "Manager");
             User customer = new User("customer", "customer123", "Customer");
             User customerservice = new User("customerservice", "customerservice123", "CustomerService");
+            User adminhaifa = new User("adminha", "123", "admin haifa");
+            User adminnazareth = new User("adminna", "123", "admin nazareth");
             session.save(admin);
             session.save(manager);
             session.save(customer);
             session.save(customerservice);
+            session.save(adminhaifa);
+            session.save(adminnazareth);
 
             session.getTransaction().commit();
             System.out.println("Initial data creation finished");
@@ -205,6 +243,9 @@ public class ConnectToDatabase {
         }
     }
 
+
+    //adding purchases
+
     public static void addMovie(Movie movie) {
         Transaction transaction = null;
         try (Session session = getSessionFactory().openSession()) {
@@ -249,6 +290,7 @@ public class ConnectToDatabase {
         session.close();
     }
     // הוספת הפונקציה ליצירת רשומות purchaseCard
+    //adding purchases
     public static void createPurchases() {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -260,7 +302,8 @@ public class ConnectToDatabase {
                     1001,
                     1234,
                     "Inception",
-                    LocalDateTime.of(2024, 12, 24, 14, 30)
+                    LocalDateTime.of(2024, 12, 24, 14, 30),
+                    "loay@gmail.com"
             );
             session.save(purchase1);
             purchaseCard purchase2 = new purchaseCard(
@@ -270,7 +313,8 @@ public class ConnectToDatabase {
                     1002,
                     5678,
                     "The Dark Knight",
-                    LocalDateTime.of(2024, 12, 24, 20, 0)
+                    LocalDateTime.of(2024, 12, 24, 20, 0),
+                    "mohammed@gmail.com"
             );
             session.save(purchase2);
 
@@ -281,19 +325,213 @@ public class ConnectToDatabase {
                     1003,
                     1414,
                     "loay asaad",
-                    LocalDateTime.of(2025, 12, 24, 20, 0)
+                    LocalDateTime.of(2025, 12, 24, 20, 0),
+                    "nayef@gmail.com"
             );
             session.save(purchase3);
+            purchaseCard purchase4 = new purchaseCard(
+                    LocalDate.of(2024, 8, 1),
+                    "Yes Planet",
+                    60,
+                    1004,
+                    1414,
+                    "nayef zedan",
+                    LocalDateTime.of(2025, 12, 24, 20, 0),
+                    "nayef1@gmail.com"
+            );
+            session.save(purchase4);
+            purchaseCard purchase5 = new purchaseCard(
+                    LocalDate.of(2024, 8, 1),
+                    "Cinema City",
+                    25,
+                    1006,
+                    1414,
+                    "real madrid",
+                    LocalDateTime.of(2025, 11, 24, 20, 0),
+                    "madrid@gmail.com"
+            );
+            session.save(purchase5);
 
             session.getTransaction().commit();
             System.out.println("Sample purchases created successfully");
+
         } catch (HibernateException e) {
             System.err.println("Error creating sample purchases: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+   
+
+    public static void createPurchaseLinks() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            // Creating a sample PurchaseLink
+            PurchaseLink purchaseLink1 = new PurchaseLink(
+                    LocalDateTime.of(2024, 8, 17, 10, 0),  // purchaseTime
+                    1004,  // customerId
+                    9876,  // paymentCardLastFour
+                    "Avatar",  // movieTitle
+                    "example@example.com",  // customerMail
+                    50
+            );
+            session.save(purchaseLink1);
+
+            // You can add more PurchaseLink samples as needed
+            PurchaseLink purchaseLink2 = new PurchaseLink(
+                    LocalDateTime.of(2024, 8, 18, 15, 0),  // purchaseTime
+                    1005,  // customerId
+                    4321,  // paymentCardLastFour
+                    "Interstellar",  // movieTitle
+                    "sample@example.com",
+                    30// customerMail
+            );
+            session.save(purchaseLink2);
+
+            session.getTransaction().commit();
+            System.out.println("Sample purchase links created successfully");
+
+        } catch (HibernateException e) {
+            System.err.println("Error creating sample purchase links: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    public static void createPackageCards() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            // Creating a sample PackageCard
+            PackageCard packageCard1 = new PackageCard(
+                    LocalDate.of(2024, 8, 17),  // purchaseDate
+                    100.00,  // price
+                    1004,  // customerId
+                    "example@example.com",  // customerEmail
+                    9876  // paymentLastFourDigits
+            );
+            session.save(packageCard1);
+
+            // Adding another sample PackageCard
+            PackageCard packageCard2 = new PackageCard(
+                    LocalDate.of(2024, 8, 18),  // purchaseDate
+                    120.00,  // price
+                    1005,  // customerId
+                    "sample@example.com",  // customerEmail
+                    4321  // paymentLastFourDigits
+            );
+            session.save(packageCard2);
+
+            session.getTransaction().commit();
+            System.out.println("Sample package cards created successfully");
+
+        } catch (HibernateException e) {
+            System.err.println("Error creating sample package cards: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    public static void createComplaints() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            // Creating sample complaints
+            Complaints complaint1 = new Complaints(
+                    "user1@example.com",
+                    "Cinema City",
+                    "Long Queue",
+                    "The queue was too long and slow.",
+                    LocalDateTime.of(2024, 8, 15, 10, 30)
+            );
+            session.save(complaint1);
+
+            Complaints complaint2 = new Complaints(
+                    "user2@example.com",
+                    "Yes Planet",
+                    "Uncomfortable Seats",
+                    "The seats were very uncomfortable.",
+                    LocalDateTime.of(2024, 8, 16, 14, 45)
+            );
+            session.save(complaint2);
+
+            Complaints complaint3 = new Complaints(
+                    "user3@example.com",
+                    "",  // No branch provided, should use default value
+                    "Late Start",
+                    "The movie started 15 minutes late.",
+                    LocalDateTime.of(2024, 8, 17, 18, 00)
+            );
+            session.save(complaint3);
+
+            Complaints complaint4 = new Complaints(
+                    "user4@example.com",
+                    "Cinema City",
+                    "Poor Sound Quality",
+                    "The sound quality was poor and distorted.",
+                    LocalDateTime.of(2024, 8, 17, 20, 15)
+            );
+            session.save(complaint4);
+
+            Complaints complaint5 = new Complaints(
+                    "user5@example.com",
+                    "Yes Planet",
+                    "Rude Staff",
+                    "The staff was rude and unhelpful.",
+                    LocalDateTime.of(2024, 8, 2, 11, 20)
+            );
+            session.save(complaint5);
+            Complaints complaint6 = new Complaints(
+                    "user5@example.com",
+                    "Yes Planet",
+                    "Rude Staff",
+                    "The staff was rude and unhelpful.",
+                    LocalDateTime.of(2024, 8, 17, 11, 20)
+            );
+            session.save(complaint6);
+
+            session.getTransaction().commit();
+            System.out.println("Sample complaints created successfully");
+
+        } catch (HibernateException e) {
+            System.err.println("Error creating sample complaints: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    public static void createRequests() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            Request request1 = new Request(
+                    "Update Price",
+                    "Update Price movie 2 to:50"
+            );
+            session.save(request1);
+            Request request2 = new Request(
+                    "Update Price",
+                    "Update price movie 15 to:1000"
+            );
+            session.save(request2);
+            Request request3 = new Request(
+                    "Update Price",
+                    "The Shawshank Redemption, Id: 2, Showtime:2024-12-24T16, Place:00, Old price: 35.0, New price: 60.0"
+            );
+            session.save(request3);
+
+
+            session.getTransaction().commit();
+            System.out.println("Sample requests created successfully");
+        } catch (HibernateException e) {
+            System.err.println("Error creating sample requests: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+
     // הוספת הפונקציה להחזרת כל רכישות
+
     public static List<purchaseCard> getAllPurchasesOrderedByDate() throws Exception {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -302,7 +540,8 @@ public class ConnectToDatabase {
             CriteriaQuery<purchaseCard> query = builder.createQuery(purchaseCard.class);
             Root<purchaseCard> root = query.from(purchaseCard.class);
 
-            // סדר לפי תאריך הרכישה
+
+            // Order by purchase date
             query.select(root).orderBy(builder.asc(root.get("purchaseDate")));
 
             List<purchaseCard> purchases = session.createQuery(query).getResultList();
@@ -315,7 +554,126 @@ public class ConnectToDatabase {
         }
     }
 
-    public static void updateMovieShowtimeInDatabase(int movieId, LocalDateTime newShowtime) {
+    public static List<Complaints> getAllComplaintsOrderedByDate() throws Exception {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Complaints> query = builder.createQuery(Complaints.class);
+            Root<Complaints> root = query.from(Complaints.class);
+
+            // Order by complain date
+            query.select(root).orderBy(builder.asc(root.get("complainDate")));
+
+            List<Complaints> complaints = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return complaints;
+        } catch (Exception e) {
+            System.err.println("Error fetching complaints: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static List<PackageCard> getAllPackageCardsOrderedByDate() throws Exception {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<PackageCard> query = builder.createQuery(PackageCard.class);
+            Root<PackageCard> root = query.from(PackageCard.class);
+
+            // Order by purchase date
+            query.select(root).orderBy(builder.asc(root.get("purchaseDate")));
+
+            List<PackageCard> packageCards = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return packageCards;
+        } catch (Exception e) {
+            System.err.println("Error fetching package cards: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static List<PurchaseLink> getAllPurchaseLinksOrderedByDate() throws Exception {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<PurchaseLink> query = builder.createQuery(PurchaseLink.class);
+            Root<PurchaseLink> root = query.from(PurchaseLink.class);
+
+            // Order by purchase time
+            query.select(root).orderBy(builder.asc(root.get("purchaseTime")));
+
+            List<PurchaseLink> purchaseLinks = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return purchaseLinks;
+        } catch (Exception e) {
+            System.err.println("Error fetching purchase links: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    public static List<Request> getAllPriceChangeRequests() throws Exception {
+        System.out.println("we are on data base asking for the requests");
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Request> query = builder.createQuery(Request.class);
+            Root<Request> root = query.from(Request.class);
+
+            // Select all requests
+            query.select(root);
+
+            List<Request> requests = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return requests;
+        } catch (Exception e) {
+            System.err.println("Error fetching requests: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    public static void deleteRequestById(Long id) {
+        System.out.println("we are on connect to data base and we are deleting a request");
+        System.out.println(id);
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        Request request = session.get(Request.class, id);
+        if (request != null) {
+            session.delete(request);
+        } else {
+            System.out.println("Request with ID " + id + " not found.");
+        }
+        session.getTransaction().commit();
+        session.close();
+    }
+    public static void updateMoviePrice(int movieId, float newprice) {
+        Session session = ConnectToDatabase.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            // Retrieve the movie from the database
+            Movie movie = session.get(Movie.class, movieId);
+            if (movie == null) {
+                throw new Exception("Movie not found.");
+            }
+            // Update the showtime
+            movie.setPrice(newprice);
+            session.update(movie);
+            transaction.commit();
+        }catch (Exception e){
+            System.out.println("haha");
+            e.printStackTrace();
+        }
+
+
+
+    }
+   public static void updateMovieShowtimeInDatabase(int movieId, LocalDateTime newShowtime) {
         Session session = ConnectToDatabase.getSessionFactory().openSession();
         Transaction transaction = null;
 
@@ -351,45 +709,6 @@ public class ConnectToDatabase {
             return null;
         }
     }
-//    public static List<Movie> searchMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title, boolean isOnline) {
-//        try (Session session = getSessionFactory().openSession()) {
-//            session.beginTransaction();
-//
-//            CriteriaBuilder builder = session.getCriteriaBuilder();
-//            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
-//            Root<Movie> root = query.from(Movie.class);
-//
-//            // התחלת הבנייה של השאילתה
-//            query.select(root);
-//
-//            // הוספת קריטריון חובה - סינון לפי אונליין או לא
-//            query.where(builder.equal(root.get("isOnline"), isOnline));
-//
-//            // הוספת תנאים נוספים לפי הקריטריונים שנבחרו
-//            if (cinema != null && !cinema.isEmpty()) {
-//                query.where(builder.equal(root.get("place"), cinema));
-//            }
-//            if (startDate != null && endDate != null) {
-//                query.where(builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate));
-//            }
-//            if (genre != null && !genre.isEmpty()) {
-//                query.where(builder.equal(root.get("genre"), genre));
-//            }
-//            if (title != null && !title.isEmpty()) {
-//                query.where(builder.like(root.get("title"), "%" + title + "%"));
-//            }
-//
-//            List<Movie> movies = session.createQuery(query).getResultList();
-//            session.getTransaction().commit();
-//
-//            return movies;
-//        } catch (Exception e) {
-//            System.err.println("Error fetching movies by advanced criteria: " + e.getMessage());
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-
     public static List<Movie> searchMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title, boolean isOnline) {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -451,45 +770,7 @@ public class ConnectToDatabase {
             return null;
         }
     }
-
-    //    public static List<Movie> searchMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title) {
-//        try (Session session = getSessionFactory().openSession()) {
-//            session.beginTransaction();
-//
-//            CriteriaBuilder builder = session.getCriteriaBuilder();
-//            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
-//            Root<Movie> root = query.from(Movie.class);
-//
-//            // התחלת הבנייה של השאילתה
-//            query.select(root);
-//
-//            // הוספת תנאים לפי הקריטריונים
-//            if (cinema != null && !cinema.isEmpty()) {
-//                query.where(builder.equal(root.get("place"), cinema));
-//            }
-//            if (startDate != null && endDate != null) {
-//                query.where(
-//                        builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate)
-//                );
-//            }
-//            if (genre != null && !genre.isEmpty()) {
-//                query.where(builder.equal(root.get("genre"), genre));
-//            }
-//            if (title != null && !title.isEmpty()) {
-//                query.where(builder.like(root.get("title"), "%" + title + "%"));
-//            }
-//
-//            List<Movie> movies = session.createQuery(query).getResultList();
-//            session.getTransaction().commit();
-//
-//            return movies;
-//        } catch (Exception e) {
-//            System.err.println("Error fetching movies by advanced criteria: " + e.getMessage());
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-    public static List<Movie> searchOnlineMoviesByCriteria(String genre, String title) {
+   public static List<Movie> searchOnlineMoviesByCriteria(String genre, String title) {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
 
@@ -554,4 +835,8 @@ public class ConnectToDatabase {
     }
 
 
+   
 }
+
+
+

@@ -36,12 +36,15 @@ public class purchaseCard implements Serializable {
     @Column(name = "show_time", nullable = false)
     private LocalDateTime showTime;
 
+    @Column(name = "cost_mail", nullable = false)
+    private String costMail;
+
     // Default constructor
     public purchaseCard() {}
 
     // Constructor with parameters
     public purchaseCard(LocalDate purchaseDate, String branchName, float price, int customerId,
-                        int paymentCardLastFour, String movieTitle, LocalDateTime showTime) {
+                    int paymentCardLastFour, String movieTitle, LocalDateTime showTime, String costMail) {
         this.purchaseDate = purchaseDate;
         this.branchName = branchName;
         this.price = price;
@@ -49,6 +52,7 @@ public class purchaseCard implements Serializable {
         this.paymentCardLastFour = paymentCardLastFour;
         this.movieTitle = movieTitle;
         this.showTime = showTime;
+        this.costMail = costMail;
     }
 
 
@@ -125,4 +129,12 @@ public class purchaseCard implements Serializable {
         return String.format("Purchase Order ID: %d\nPurchase Date: %s\nBranch Name: %s\nPrice: %.2f\nCustomer ID: %d\nPayment Card Last Four: %d\nMovie Title: %s\nShow Time: %s",
                 this.orderId, this.purchaseDate, this.branchName, this.price, this.customerId, this.paymentCardLastFour, this.movieTitle, this.showTime);
     }
+
+    public String getCostMail() {
+        return costMail;
+    }
+    public void setCostMail(String costMail) {
+        this.costMail = costMail;
+    }
+
 }

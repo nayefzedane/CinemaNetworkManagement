@@ -2,14 +2,13 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
 
+import java.io.Serializable;
 @Entity
 @Table(name = "requests")
-public class Request {
-
+public class Request implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -46,10 +45,9 @@ public class Request {
 
     @Override
     public String toString() {
-        return "Request{" +
-                "id=" + id +
+        return "Request{" + "id=" + id +
                 ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+                ", description='" + description + '\'' + '}';
     }
 }
+

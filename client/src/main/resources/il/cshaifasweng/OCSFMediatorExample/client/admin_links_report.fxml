@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Label?>
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.AdminController" style="-fx-background-color: #2c3e50;">
+    <top>
+        <HBox spacing="10.0" alignment="center" style="-fx-padding: 10px;">
+            <ComboBox fx:id="monthComboBox" promptText="Select Month">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="January"/>
+                        <String fx:value="February"/>
+                        <String fx:value="March"/>
+                        <String fx:value="April"/>
+                        <String fx:value="May"/>
+                        <String fx:value="June"/>
+                        <String fx:value="July"/>
+                        <String fx:value="August"/>
+                        <String fx:value="September"/>
+                        <String fx:value="October"/>
+                        <String fx:value="November"/>
+                        <String fx:value="December"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <Button text="Get Purchase Link Report" onAction="#Link_Report"/>
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="purchaseLinkTableView">
+            <columns>
+                <TableColumn fx:id="link_id" text="Link ID" />
+                <TableColumn fx:id="movie_title_link" text="Movie Title" />
+                <TableColumn fx:id="customer_id" text="Customer ID" />
+                <TableColumn fx:id="purchase_time" text="Purchase Time" />
+                <TableColumn fx:id="customer_mail" text="Customer Mail" prefWidth="180" />
+                <TableColumn fx:id="price_link" text="Price" />
+            </columns>
+        </TableView>
+    </center>
+    <bottom>
+        <HBox spacing="20.0" alignment="center" style="-fx-padding: 10px;">
+            <Label text="Total Income for this Month: " style="-fx-text-fill: white;" />
+            <Label fx:id="totalIncomeLabel" text="0.00" style="-fx-text-fill: yellow;" />
+            <Region fx:id="spacer" HBox.hgrow="ALWAYS"/>
+            <Button text="Return" onAction="#handleReturn" />
+        </HBox>
+    </bottom>
+</BorderPane>
