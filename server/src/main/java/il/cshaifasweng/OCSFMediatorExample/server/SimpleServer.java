@@ -111,6 +111,26 @@ public class SimpleServer extends AbstractServer {
 
 			// Additional implementation if needed
 		}
+		//return ticket request
+		if (msgString.startsWith("Return Ticket")) {
+			String[] parts = msgString.split(",");
+			String type = parts[1].trim();  // Card or Link
+			String orderId = parts[2].trim();
+			String customerId = parts[3].trim();
+			if(type.equals("Purchase Card")){
+				type = "purchaseCard";
+			}
+			if(type.equals("Purchase Link")){
+				type = "PurchaseLink";
+			}
+
+			// Call the database function to handle return
+			String result = ConnectToDatabase.handleReturnTicket(type, orderId, customerId);
+			System.out.println(result);
+			// Send the result back to the client
+			client.sendToClient(result);
+		}
+
 
 
 		if (msgString.startsWith("login@")) {

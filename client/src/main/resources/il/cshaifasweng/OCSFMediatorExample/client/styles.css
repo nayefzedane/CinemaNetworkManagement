@@ -22,3 +22,15 @@
     -fx-background-color: #555; /* רקע כהה יותר בעת ריחוף */
     -fx-cursor: hand; /* מצביע עכבר משתנה ליד בעת ריחוף */
 }
+.anchor-pane {
+    -fx-padding: 20;
+}
+
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+}

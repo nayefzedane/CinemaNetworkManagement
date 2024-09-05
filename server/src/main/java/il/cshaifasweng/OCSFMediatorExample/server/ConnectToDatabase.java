@@ -347,7 +347,7 @@ public class ConnectToDatabase {
                     1006,
                     1414,
                     "real madrid",
-                    LocalDateTime.of(2025, 11, 24, 20, 0),
+                    LocalDateTime.of(2024, 9, 6, 1, 0),
                     "madrid@gmail.com"
             );
             session.save(purchase5);
@@ -651,6 +651,117 @@ public class ConnectToDatabase {
         session.getTransaction().commit();
         session.close();
     }
+    //handle return ticket method:
+    public static String handleReturnTicket(String type, String orderIdString, String customerIdString) {
+        // Convert orderId and customerId to int before searching
+        int orderId;
+        int customerId;
+        try {
+            orderId = Integer.parseInt(orderIdString);
+            customerId = Integer.parseInt(customerIdString);
+        } catch (NumberFormatException e) {
+            return "Return Ticket failed order id or Customer id wrong";
+        }
+
+        // Open the session and transaction
+        Session session = ConnectToDatabase.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        Object purchase = null;
+        float returnedValue = 0;
+        int linkId = orderId;
+
+        try {
+            if (type.equals("purchaseCard")) {
+                System.out.println("Searching for PurchaseCard with order_id: " + orderId);
+
+                // Search for the PurchaseCard by order_id
+                purchase = session.get(purchaseCard.class, orderId);  // orderId is the field from the database mapping
+                if (purchase == null) {
+                    System.out.println("PurchaseCard with order_id " + orderId + " not found.");
+                    session.getTransaction().rollback();
+                    return "Return Ticket failed order id or Customer id wrong";
+                }
+
+                purchaseCard card = (purchaseCard) purchase;
+                System.out.println("Found PurchaseCard: " + card);
+
+                // Check if customerId matches
+                if (card.getCustomerId() != customerId) {
+                    System.out.println("Customer ID does not match.");
+                    session.getTransaction().rollback();
+                    return "Return Ticket failed order id or Customer id wrong";
+                }
+
+                // Check the time conditions against showtime
+                LocalDateTime currentTime = LocalDateTime.now();
+                LocalDateTime showTime = card.getShowTime();
+                System.out.println(currentTime);
+                System.out.println(showTime);
+
+                if (currentTime.isBefore(showTime.minusHours(3))) {
+                    returnedValue = card.getPrice();  // Full refund
+                } else if (currentTime.isBefore(showTime.minusHours(1))) {
+                    returnedValue = card.getPrice() / 2;  // Half refund
+                } else {
+                    returnedValue = 0;  // No refund
+                }
+
+                session.delete(card);  // Delete the PurchaseCard
+                System.out.println("Deleted PurchaseCard: " + card);
+
+            } else if (type.equals("PurchaseLink")) {
+                System.out.println("Searching for PurchaseLink with order_id: " + linkId);
+
+                // Search for the PurchaseLink by order_id (adjust the field if necessary)
+                purchase = session.get(PurchaseLink.class, orderId);  // Adjust this to match the field name in PurchaseLink
+                if (purchase == null) {
+                    System.out.println("PurchaseLink with order_id " + orderId + " not found.");
+                    session.getTransaction().rollback();
+                    return "Return Ticket failed order id or Customer id wrong";
+                }
+
+                PurchaseLink link = (PurchaseLink) purchase;
+                System.out.println("Found PurchaseLink: " + link);
+
+                // Check if customerId matches
+                if (link.getCustomerId() != customerId) {
+                    System.out.println("Customer ID does not match.");
+                    session.getTransaction().rollback();
+                    return "Return Ticket failed order id or Customer id wrong";
+                }
+
+                // Check the time conditions against availableFrom
+                LocalDateTime currentTime = LocalDateTime.now();
+                LocalDateTime availableFrom = link.getAvailableFrom();
+
+                if (currentTime.isBefore(availableFrom.minusHours(1))) {
+                    returnedValue = link.getPrice() / 2;  // Half refund
+                } else {
+                    returnedValue = 0;  // No refund
+                }
+
+                session.delete(link);  // Delete the PurchaseLink
+                System.out.println("Deleted PurchaseLink: " + link);
+            }
+
+            // Commit the transaction
+            session.getTransaction().commit();
+            System.out.println("Transaction committed successfully.");
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            e.printStackTrace();
+            return "Return Ticket failed due to internal error.";
+        } finally {
+            session.close();
+        }
+
+        return "Return Ticket succeeded " + returnedValue;
+    }
+
+
+
+
     public static void updateMoviePrice(int movieId, float newprice) {
         Session session = ConnectToDatabase.getSessionFactory().openSession();
         Transaction transaction = null;

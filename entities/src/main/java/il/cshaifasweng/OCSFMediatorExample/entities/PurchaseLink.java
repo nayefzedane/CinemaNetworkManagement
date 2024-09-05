@@ -39,13 +39,13 @@ public class PurchaseLink implements Serializable {
     @Column(name = "unique_link", nullable = false)
     private String uniqueLink;
     @Column(name = "price", nullable = false)
-    private double price;
+    private float price;
 
     // Default constructor
     public PurchaseLink() {}
 
     // Constructor with parameters
-    public PurchaseLink(LocalDateTime purchaseTime, int customerId, int paymentCardLastFour, String movieTitle, String customerMail, double price) {
+    public PurchaseLink(LocalDateTime purchaseTime, int customerId, int paymentCardLastFour, String movieTitle, String customerMail, float price) {
         this.purchaseTime = purchaseTime;
         this.customerId = customerId;
         this.paymentCardLastFour = paymentCardLastFour;
@@ -153,11 +153,11 @@ public class PurchaseLink implements Serializable {
         this.uniqueLink = uniqueLink;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 }
