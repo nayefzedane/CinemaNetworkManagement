@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
+
 import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
 import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
@@ -14,12 +15,20 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 
+import org.hibernate.*;
+
+
+
+
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 
 //this what loay added:
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
@@ -35,10 +44,14 @@ public class ConnectToDatabase {
             configuration.addAnnotatedClass(Movie.class);
             configuration.addAnnotatedClass(User.class);
             configuration.addAnnotatedClass(purchaseCard.class);
+
             configuration.addAnnotatedClass(Request.class);
             configuration.addAnnotatedClass(PurchaseLink.class);
             configuration.addAnnotatedClass(PackageCard.class);
             configuration.addAnnotatedClass(Complaints.class);
+
+
+
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -49,28 +62,30 @@ public class ConnectToDatabase {
     public static void CreateDatabase() throws HibernateException {
         System.out.println("Data Creation is starting");
         createPurchases();
+
         createRequests();
         createPurchaseLinks();
         createPackageCards();
         createComplaints();
 
         System.out.println("Initial data creation finished");
+
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
 
             // הוספת סרטים לדוגמא עם כל השדות החדשים באמצעות הקונסטרקטור
             Movie movie1 = new Movie("Inception",
                     LocalDateTime.of(2024, 12, 24, 14, 30),  // Showtime
-                    LocalDateTime.of(2024, 12, 10, 0, 0),   // Release Date
+                    LocalDate.of(2024, 12, 10),   // Release Date
                     "Sci-Fi", 148, 8.8f, "Christopher Nolan",
                     "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
                     "images/background_login.png", "Cinema City",
-                    40.0f, true, 80, 3);
+                    40.0f, false, 80, 3);
             session.save(movie1);
 
             Movie movie2 = new Movie("The Shawshank Redemption",
                     LocalDateTime.of(2024, 12, 24, 16, 0),  // Showtime
-                    LocalDateTime.of(2024, 12, 5, 0, 0),    // Release Date
+                    LocalDate.of(2024, 12, 5),    // Release Date
                     "Drama", 142, 9.3f, "Frank Darabont",
                     "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
                     "images/background_login.png", "Cinema City",
@@ -79,7 +94,7 @@ public class ConnectToDatabase {
 
             Movie movie3 = new Movie("The Godfather",
                     LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDateTime.of(2024, 12, 3, 0, 0),    // Release Date
+                    LocalDate.of(2024, 12, 3),    // Release Date
                     "Crime", 175, 9.2f, "Francis Ford Coppola",
                     "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
                     "images/background_login.png", "Yes Planet",
@@ -88,7 +103,7 @@ public class ConnectToDatabase {
 
             Movie movie4 = new Movie("The Dark Knight",
                     LocalDateTime.of(2024, 12, 24, 20, 0),  // Showtime
-                    LocalDateTime.of(2024, 12, 7, 0, 0),    // Release Date
+                    LocalDate.of(2024, 12, 7),    // Release Date
                     "Action", 152, 9.0f, "Christopher Nolan",
                     "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.",
                     "images/background_login.png", "Yes Planet",
@@ -97,7 +112,7 @@ public class ConnectToDatabase {
 
             Movie movie5 = new Movie("Pulp Fiction",
                     LocalDateTime.of(2024, 12, 24, 22, 30),  // Showtime
-                    LocalDateTime.of(2024, 12, 1, 0, 0),     // Release Date
+                    LocalDate.of(2024, 12, 1),     // Release Date
                     "Crime", 154, 8.9f, "Quentin Tarantino",
                     "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
                     "images/background_login.png", "Cinema City",
@@ -106,7 +121,7 @@ public class ConnectToDatabase {
 
             Movie movie6 = new Movie("Schindler's List",
                     LocalDateTime.of(2024, 12, 24, 10, 30),  // Showtime
-                    LocalDateTime.of(2024, 11, 28, 0, 0),    // Release Date
+                    LocalDate.of(2024, 11, 28),    // Release Date
                     "Biography", 195, 8.9f, "Steven Spielberg",
                     "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
                     "images/background_login.png", "Yes Planet",
@@ -115,7 +130,7 @@ public class ConnectToDatabase {
 
             Movie movie7 = new Movie("Fight Club",
                     LocalDateTime.of(2024, 12, 24, 12, 15),  // Showtime
-                    LocalDateTime.of(2024, 12, 2, 0, 0),     // Release Date
+                    LocalDate.of(2024, 12, 2),     // Release Date
                     "Drama", 139, 8.8f, "David Fincher",
                     "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.",
                     "images/background_login.png", "Cinema City",
@@ -124,7 +139,7 @@ public class ConnectToDatabase {
 
             // הוספת משתמשים לדוגמא
             User admin = new User("admin", "admin123", "Admin");
-            User manager = new User("manager", "manager123", "Manager");
+            User manager = new User("man", "123", "Manager");
             User customer = new User("customer", "customer123", "Customer");
             User customerservice = new User("customerservice", "customerservice123", "CustomerService");
             User adminhaifa = new User("adminha", "123", "admin haifa");
@@ -228,6 +243,53 @@ public class ConnectToDatabase {
         }
     }
 
+
+    //adding purchases
+
+    public static void addMovie(Movie movie) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(movie);  // Save the movie object to the database
+            transaction.commit();
+            System.out.println("Movie added successfully: " + movie.getTitle());
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();  // Rollback in case of an error
+            }
+            System.err.println("Failed to add movie: " + movie.getTitle());
+            e.printStackTrace();  // Log the exception for debugging purposes
+        }
+    }
+
+    public static Long getMovieCountFromDatabase() {
+        try {
+            Session session = getSessionFactory().openSession();
+            Transaction tx = session.beginTransaction();
+            Long count = session.createQuery("SELECT COUNT(m) FROM Movie m", Long.class).getSingleResult();
+            tx.commit();
+            session.close();
+            return count;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void deleteMovieById(int id) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Movie movie = session.get(Movie.class, id);
+        if (movie != null) {
+            session.delete(movie);
+        } else {
+            System.out.println("Movie with ID " + id + " not found.");
+        }
+        session.getTransaction().commit();
+        session.close();
+    }
+    // הוספת הפונקציה ליצירת רשומות purchaseCard
     //adding purchases
     public static void createPurchases() {
         try (Session session = getSessionFactory().openSession()) {
@@ -298,6 +360,9 @@ public class ConnectToDatabase {
             e.printStackTrace();
         }
     }
+
+   
+
     public static void createPurchaseLinks() {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -463,6 +528,10 @@ public class ConnectToDatabase {
         }
     }
 
+
+
+    // הוספת הפונקציה להחזרת כל רכישות
+
     public static List<purchaseCard> getAllPurchasesOrderedByDate() throws Exception {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -470,6 +539,7 @@ public class ConnectToDatabase {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<purchaseCard> query = builder.createQuery(purchaseCard.class);
             Root<purchaseCard> root = query.from(purchaseCard.class);
+
 
             // Order by purchase date
             query.select(root).orderBy(builder.asc(root.get("purchaseDate")));
@@ -483,6 +553,7 @@ public class ConnectToDatabase {
             throw e;
         }
     }
+
     public static List<Complaints> getAllComplaintsOrderedByDate() throws Exception {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -545,8 +616,6 @@ public class ConnectToDatabase {
             throw e;
         }
     }
-
-
     public static List<Request> getAllPriceChangeRequests() throws Exception {
         System.out.println("we are on data base asking for the requests");
         try (Session session = getSessionFactory().openSession()) {
@@ -568,7 +637,6 @@ public class ConnectToDatabase {
             throw e;
         }
     }
-
     public static void deleteRequestById(Long id) {
         System.out.println("we are on connect to data base and we are deleting a request");
         System.out.println(id);
@@ -583,7 +651,6 @@ public class ConnectToDatabase {
         session.getTransaction().commit();
         session.close();
     }
-
     public static void updateMoviePrice(int movieId, float newprice) {
         Session session = ConnectToDatabase.getSessionFactory().openSession();
         Transaction transaction = null;
@@ -606,6 +673,169 @@ public class ConnectToDatabase {
 
 
     }
+   public static void updateMovieShowtimeInDatabase(int movieId, LocalDateTime newShowtime) {
+        Session session = ConnectToDatabase.getSessionFactory().openSession();
+        Transaction transaction = null;
+
+        try {
+            transaction = session.beginTransaction();
+
+            // Retrieve the movie from the database
+            Movie movie = session.get(Movie.class, movieId);
+            if (movie == null) {
+                throw new Exception("Movie not found.");
+            }
+
+            // Update the showtime
+            movie.setShowtime(newShowtime);
+            session.update(movie);
+
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        session.close();
+        System.out.println("Show time updated successfully");
+    }
+    public static List<Movie> getMoviesByOnlineStatus(boolean isOnline) {
+        try (Session session = getSessionFactory().openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
+            query.select(root).where(builder.equal(root.get("isOnline"), isOnline));
+            return session.createQuery(query).getResultList();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static List<Movie> searchMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title, boolean isOnline) {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
+
+            // התחלת הבנייה של השאילתה
+            query.select(root);
+
+            // הוספת קריטריון חובה - סינון לפי אונליין או לא
+            query.where(builder.equal(root.get("isOnline"), isOnline));
+
+            // הוספת תנאים נוספים לפי הקריטריונים שנבחרו
+            if (cinema != null && !cinema.isEmpty() && !"ALL".equals(cinema)) {
+                query.where(
+                        builder.and(
+                                builder.equal(root.get("isOnline"), isOnline),
+                                builder.equal(root.get("place"), cinema)
+                        )
+                );
+            }
+
+            if (startDate != null && endDate != null) {
+                query.where(
+                        builder.and(
+                                builder.equal(root.get("isOnline"), isOnline),
+                                builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate)
+                        )
+                );
+            }
+
+            if (genre != null && !genre.isEmpty() && !"ALL".equals(genre)) {
+                query.where(
+                        builder.and(
+                                builder.equal(root.get("isOnline"), isOnline),
+                                builder.equal(root.get("genre"), genre)
+                        )
+                );
+            }
+
+            if (title != null && !title.isEmpty()) {
+                query.where(
+                        builder.and(
+                                builder.equal(root.get("isOnline"), isOnline),
+                                builder.like(root.get("title"), "%" + title + "%")
+                        )
+                );
+            }
+
+            List<Movie> movies = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+
+            return movies;
+        } catch (Exception e) {
+            System.err.println("Error fetching movies by advanced criteria: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+   public static List<Movie> searchOnlineMoviesByCriteria(String genre, String title) {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
+
+            query.select(root).where(builder.equal(root.get("isOnline"), true));
+
+            // הוספת תנאים לפי הקריטריונים
+            if (genre != null && !genre.isEmpty()) {
+                query.where(builder.and(
+                        builder.equal(root.get("genre"), genre),
+                        builder.equal(root.get("isOnline"), true)
+                ));
+            }
+            if (title != null && !title.isEmpty()) {
+                query.where(builder.and(
+                        builder.like(root.get("title"), "%" + title + "%"),
+                        builder.equal(root.get("isOnline"), true)
+                ));
+            }
+
+            List<Movie> movies = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+
+            return movies;
+        } catch (Exception e) {
+            System.err.println("Error fetching online movies by criteria: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static List<Movie> getMoviesByScreeningDate(LocalDate startDate, LocalDate endDate) {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+            Root<Movie> root = query.from(Movie.class);
+
+            // Filtering movies based on screening dates
+            if (startDate != null && endDate != null) {
+                query.select(root).where(builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate));
+            } else if (startDate != null) {
+                query.select(root).where(builder.greaterThanOrEqualTo(root.get("showtime").as(LocalDate.class), startDate));
+            } else if (endDate != null) {
+                query.select(root).where(builder.lessThanOrEqualTo(root.get("showtime").as(LocalDate.class), endDate));
+            } else {
+                query.select(root); // If no date criteria are provided, return all movies
+            }
+
+            List<Movie> movies = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+
+            return movies;
+        } catch (Exception e) {
+            System.err.println("Error fetching movies by screening date: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+   
 }
 
 

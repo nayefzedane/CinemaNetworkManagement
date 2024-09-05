@@ -6,9 +6,11 @@ import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
 import il.cshaifasweng.OCSFMediatorExample.entities.PackageCard;
 import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
 import javafx.application.Platform;
-
+import il.cshaifasweng.OCSFMediatorExample.client.ContentManagerController;
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
+
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 
@@ -16,6 +18,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Request;
 
 public class SimpleClient extends AbstractClient {
 
+	static ContentManagerController contentManagerController;
 	private static SimpleClient client = null;
 	public static String newHost;
 	public static int newPort;
@@ -34,27 +37,117 @@ public class SimpleClient extends AbstractClient {
 		super(host, port);
 	}
 
+	public void setContentManagerController(ContentManagerController controller) {
+		this.contentManagerController = controller;
+	}
+
+	// הוספת פונקציה לשליחת בקשה לשרת לקבלת סרטים לפי הסטטוס של ONLINE
+	public void requestMoviesByOnlineStatus(boolean isOnline) {
+		try {
+			System.out.println("Requesting movies with online status: " + isOnline); // Debugging output
+			sendToServer("#getMoviesByOnlineStatus " + isOnline);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void requestMoviesByAdvancedCriteria(String cinema, LocalDate startDate, LocalDate endDate, String genre, String title, boolean isOnline) {
+		try {
+			StringBuilder request = new StringBuilder("#searchMoviesByAdvancedCriteria;");
+
+			if (cinema != null && !cinema.isEmpty()) {
+				request.append("cinema=").append(cinema).append(";");
+			}
+			if (startDate != null) {
+				request.append("startDate=").append(startDate.toString()).append(";");
+			}
+			if (endDate != null) {
+				request.append("endDate=").append(endDate.toString()).append(";");
+			}
+			if (genre != null && !genre.isEmpty()) {
+				request.append("genre=").append(genre).append(";");
+			}
+			if (title != null && !title.isEmpty()) {
+				request.append("title=").append(title).append(";");
+			}
+
+			request.append("isOnline=").append(isOnline).append(";");
+
+			System.out.println("Requesting movies by advanced criteria: " + request.toString()); // Debugging output
+			sendToServer(request.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void requestMoviesByCriteria(String cinema, LocalDate date, String title) {
+		try {
+			String request = "#searchMoviesByCriteria isOnline=false;";
+			if (cinema != null) {
+				request += "cinema=" + cinema + ";";
+			}
+			if (date != null) {
+				request += "date=" + date.toString() + ";";
+			}
+			if (title != null && !title.isEmpty()) {
+				request += "title=" + title + ";";
+			}
+			System.out.println("Requesting movies by criteria: " + request); // Debugging output
+			sendToServer(request);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// הוספת פונקציה לשליחת בקשה לשרת לפי קריטריונים של חיפוש לסרטים אונליין
+	public void requestOnlineMoviesByCriteria(String genre, String title) {
+		try {
+			String request = "#searchOnlineMoviesByCriteria ";
+			if (genre != null) {
+				request += "genre=" + genre + ";";
+			}
+			if (title != null && !title.isEmpty()) {
+				request += "title=" + title + ";";
+			}
+			System.out.println("Requesting online movies by criteria: " + request); // Debugging output
+			sendToServer(request);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	protected void handleMessageFromServer(Object msg) {
+
 		// Check if the message is a list
 		if (msg instanceof List<?>) {
 			List<?> list = (List<?>) msg;
 
 			// Check if it's a list of movies
 			if (!list.isEmpty() && list.get(0) instanceof Movie) {
-				List<Movie> movies = (List<Movie>) list;
-				System.out.println("Movies received from server: " + movies.size()); // Debugging output
-				Platform.runLater(() -> {
-					try {
-						CustomerController controller = (CustomerController) App.getController();
-						if (controller != null) {
-							controller.displayMovies(movies);
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
+				List<Movie> movies = (List<Movie>) msg;
+			  System.out.println("Movies received from server: " + movies.size()); // Debugging output
+			  Platform.runLater(() -> {
+				try {
+					MainWindowController mainController = (MainWindowController) App.getController();
+					Object activeController = mainController.getActiveController();
+
+					if (activeController instanceof OfflineMoviesController) {
+						OfflineMoviesController controller = (OfflineMoviesController) activeController;
+						controller.displayMovies(movies);
+						controller.setUpcomingMovies(movies);  // הוספת קריאה לפונקציה setUpcomingMovies
+					} else if (activeController instanceof OnlineMoviesController) {
+						((OnlineMoviesController) activeController).displayMovies(movies);
+					} else {
+						System.out.println("No appropriate controller found to display movies.");
 					}
-				});
-			}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			ContentManagerController controller = (ContentManagerController) App.getController();
+			controller.updateMovieTable(movies);
+      }
 
 			// Check if it's a list of purchase cards
 			else if (!list.isEmpty() && list.get(0) instanceof purchaseCard) {
@@ -109,6 +202,32 @@ public class SimpleClient extends AbstractClient {
 				});
 			}
 
+
+		// טיפול בקבלת רשימת סרטים מהשרת
+		if (msg instanceof List) {
+			List<Movie> movies = (List<Movie>) msg;
+			System.out.println("Movies received from server: " + movies.size()); // Debugging output
+			Platform.runLater(() -> {
+				try {
+					MainWindowController mainController = (MainWindowController) App.getController();
+					Object activeController = mainController.getActiveController();
+
+					if (activeController instanceof OfflineMoviesController) {
+						OfflineMoviesController controller = (OfflineMoviesController) activeController;
+						controller.displayMovies(movies);
+						controller.setUpcomingMovies(movies);  // הוספת קריאה לפונקציה setUpcomingMovies
+					} else if (activeController instanceof OnlineMoviesController) {
+						((OnlineMoviesController) activeController).displayMovies(movies);
+					} else {
+						System.out.println("No appropriate controller found to display movies.");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			ContentManagerController controller = (ContentManagerController) App.getController();
+			controller.updateMovieTable(movies);
+
 		}
 
 		// טיפול בתשובת ההתחברות מהשרת
@@ -124,7 +243,7 @@ public class SimpleClient extends AbstractClient {
 								App.setRoot("admin_dashboard");
 								break;
 							case "Manager":
-								App.setRoot("manager_dashboard");
+								App.setRoot("content_manager_dashboard");
 								break;
 							case "Customer":
 								App.setRoot("customer_dashboard");
@@ -159,6 +278,11 @@ public class SimpleClient extends AbstractClient {
 				} else if (response.equals("login_failed")) {
 					// הודעת שגיאה על כישלון בהתחברות
 					System.out.println("Login failed.");
+				} else if (response.startsWith("#movieCount")) {
+					int count = Integer.parseInt(response.split(":")[1]);
+					if (contentManagerController != null) {
+						contentManagerController.setMovieCount(count);
+					}
 				}
 			});
 		}
@@ -167,6 +291,11 @@ public class SimpleClient extends AbstractClient {
 	public static SimpleClient getClient() {
 		if (client == null) {
 			client = new SimpleClient(newHost, newPort);  // התחברות לשרת
+			try {
+				client.openConnection();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return client;
 	}

@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
+
 import java.io.Serializable;
 @Entity
 @Table(name = "requests")
@@ -10,6 +11,7 @@ public class Request implements Serializable{
     private Long id;
     @Column(name = "title", nullable = false)
     private String title;
+
     @Column(name = "description", nullable = false)
     private String description;
 
@@ -48,3 +50,4 @@ public class Request implements Serializable{
                 ", description='" + description + '\'' + '}';
     }
 }
+

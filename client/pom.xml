@@ -3,14 +3,18 @@
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<artifactId>OCSFMediatorExample</artifactId>
 		<groupId>il.cshaifasweng</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
+
 	<groupId>il.cshaifasweng.OCSFMediatorExample</groupId>
 	<artifactId>client</artifactId>
+
 	<dependencies>
+		<!-- JavaFX dependencies -->
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-base</artifactId>
@@ -30,21 +34,26 @@
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-graphics</artifactId>
 			<version>22</version>
-			<classifier>win</classifier>
+			<classifier>win</classifier> <!-- Windows specific -->
 		</dependency>
 
+		<!-- EventBus dependency -->
 		<dependency>
 			<groupId>org.greenrobot</groupId>
 			<artifactId>eventbus</artifactId>
 			<version>3.2.0</version>
 		</dependency>
+
+		<!-- Project dependencies -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>entities</artifactId>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<plugins>
+			<!-- JavaFX Maven Plugin -->
 			<plugin>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
@@ -53,6 +62,8 @@
 					<mainClass>il.cshaifasweng.OCSFMediatorExample.client.Main</mainClass>
 				</configuration>
 			</plugin>
+
+			<!-- Maven Shade Plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ContentManagerController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    <children>
+        <Label text="Update Movie Price" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+        <TableView fx:id="movieTable" prefHeight="400" prefWidth="600">
+            <columns>
+                <TableColumn fx:id="titleColumn" text="Title" />
+                <TableColumn fx:id="placeColumn" text="Place" />
+                <TableColumn fx:id="showtimeColumn" text="Showtime" />
+                <TableColumn fx:id="priceColumn" text="Price" />
+            </columns>
+        </TableView>
+
+        <HBox spacing="10">
+            <Label text="New Price:" />
+            <TextField fx:id="priceField" promptText="Enter new price"/>
+        </HBox>
+
+        <Button text="Update Price" onAction="#handleUpdatePrice" style="-fx-font-size: 14px;"/>
+        <Button text="Back" onAction="#handleBack" style="-fx-font-size: 14px;"/>
+    </children>
+</VBox>

@@ -12,6 +12,7 @@ import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -25,6 +26,7 @@ public class SimpleServer extends AbstractServer {
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) throws Exception {
 		String msgString = msg.toString();
+		System.out.println("Received message from client: " + msgString); // Debugging output
 
 		//handle the complaints report
 		if (msg.equals("request_complaints_report")) {
@@ -119,28 +121,172 @@ public class SimpleServer extends AbstractServer {
 			User user = ConnectToDatabase.getUserByCredentials(username, password);
 
 			if (user != null) {
-				System.out.println("User authenticated: " + username);  // הדפסה אם המשתמש אומת בהצלחה
+				System.out.println("User authenticated successfully: " + username);  // Debugging output for successful authentication
 				client.sendToClient("login_success@" + user.getRole());
 			} else {
-				System.out.println("User authentication failed: " + username);  // הדפסה אם המשתמש לא אומת
+				System.out.println("Authentication failed: " + username);  // Debugging output for failed authentication
 				client.sendToClient("login_failed");
 			}
 		} else if (msgString.startsWith("#warning")) {
-			Warning warning = new Warning("Warning from server!");
+			Warning warning = new Warning("Server Warning!");
 			client.sendToClient(warning);
 			System.out.format("Sent warning to client %s\n", client.getInetAddress().getHostAddress());
 		} else if (msgString.startsWith("get all movies")) {
 			List<Movie> movies = ConnectToDatabase.getAllMovies();
+			System.out.println("Sending all movies to client, total: " + movies.size()); // Debugging output
 			client.sendToClient(movies);
-		} else if (msgString.startsWith("Update time @")) {
-			String[] parts = msgString.split("@");
-			LocalTime time = LocalTime.parse(parts[1]);
+		} else if (msgString.startsWith("update showtime:")) {
+			msgString = msgString.substring("update showtime:".length());
+			String[] parts = msgString.split(":");
+			int movieId = Integer.parseInt(parts[0]);
+			String dateStr = parts[1];
+			int hour = Integer.parseInt(parts[2]);
+			int minute = Integer.parseInt(parts[3]);
 
-			// ממיר את LocalTime ל-LocalDateTime עם התאריך הנוכחי
-			LocalDateTime dateTime = LocalDateTime.now().with(time);
+			// Convert date and time
+			LocalDate date = LocalDate.parse(dateStr);
+			LocalTime time = LocalTime.of(hour, minute);
+			LocalDateTime newShowtime = LocalDateTime.of(date, time);
 
-			ConnectToDatabase.updateShowtime(parts[2], dateTime);
-			List<Movie> movies = ConnectToDatabase.getAllMovies();
+			// Update movie showtime in the database
+			ConnectToDatabase.updateMovieShowtimeInDatabase(movieId, newShowtime);
+		} else if (msgString.startsWith("id=")) {
+			String movieString = msg.toString();
+			String[] fields = movieString.split(";");
+			Movie movie = new Movie();
+
+			for (String field : fields) {
+				String[] keyValue = field.split("=");
+				String key = keyValue[0];
+				String value = keyValue[1];
+
+				switch (key) {
+					case "id":
+						movie.setId(Integer.parseInt(value));
+						break;
+					case "title":
+						movie.setTitle(value);
+						break;
+					case "showtime":
+						movie.setShowtime(LocalDateTime.parse(value));
+						break;
+					case "releaseDate":
+						movie.setReleaseDate(LocalDate.parse(value));
+						break;
+					case "genre":
+						movie.setGenre(value);
+						break;
+					case "duration":
+						movie.setDuration(Integer.parseInt(value));
+						break;
+					case "rating":
+						movie.setRating(Float.parseFloat(value));
+						break;
+					case "director":
+						movie.setDirector(value);
+						break;
+					case "description":
+						movie.setDescription(value);
+						break;
+					case "imagePath":
+						movie.setImagePath(value);
+						break;
+					case "place":
+						movie.setPlace(value);
+						break;
+					case "price":
+						movie.setPrice(Float.parseFloat(value));
+						break;
+					case "isOnline":
+						movie.setOnline(Boolean.parseBoolean(value));
+						break;
+					case "availableSeat":
+						movie.setAvailableSeat(Integer.parseInt(value));
+						break;
+					case "hallNumber":
+						movie.setHallNumber(Integer.parseInt(value));
+						break;
+					case "imageData":
+						movie.setImageData(value);
+						break;
+				}
+			}
+			ConnectToDatabase.addMovie(movie);
+
+		} else if (msgString.startsWith("#getMovieCount")) {
+			client.sendToClient("#movieCount:" + ConnectToDatabase.getMovieCountFromDatabase());
+		} else if (msgString.startsWith("delete movie ")) {
+			String movieId = msgString.substring("delete movie ".length());
+			ConnectToDatabase.deleteMovieById(Integer.parseInt(movieId));
+		} else if (msgString.startsWith("#getMoviesByOnlineStatus")) {
+			boolean isOnline = Boolean.parseBoolean(msgString.substring("#getMoviesByOnlineStatus".length()).trim());
+			List<Movie> movies = ConnectToDatabase.getMoviesByOnlineStatus(isOnline);
+			System.out.println("Movies fetched by online status (" + isOnline + "): " + movies.size()); // Debugging output
+			client.sendToClient(movies);
+		} else if (msgString.startsWith("#searchMoviesByAdvancedCriteria")) {
+			String[] criteria = msgString.substring("#searchMoviesByAdvancedCriteria;".length()).split(";");
+			String cinema = null;
+			LocalDate startDate = null;
+			LocalDate endDate = null;
+			String genre = null;
+			String title = null;
+			boolean isOnline = false;  // חיפוש תמידי לסרטים לא אונליין
+
+			for (String criterion : criteria) {
+				String[] keyValue = criterion.split("=");
+				switch (keyValue[0]) {
+					case "cinema":
+						cinema = keyValue[1];
+						break;
+					case "startDate":
+						startDate = LocalDate.parse(keyValue[1]);
+						break;
+					case "endDate":
+						endDate = LocalDate.parse(keyValue[1]);
+						break;
+					case "genre":
+						genre = keyValue[1];
+						break;
+					case "title":
+						title = keyValue[1];
+						break;
+				}
+			}
+
+			List<Movie> movies = ConnectToDatabase.searchMoviesByAdvancedCriteria(cinema, startDate, endDate, genre, title, isOnline);
+			System.out.println("Movies fetched by advanced criteria (non-online): " + movies.size()); // Debugging output
+			client.sendToClient(movies);
+		} else if (msgString.startsWith("#searchOnlineMoviesByCriteria")) {
+			String[] criteria = msgString.substring("#searchOnlineMoviesByCriteria ".length()).split(";");
+			String genre = null;
+			String title = null;
+
+			for (String criterion : criteria) {
+				String[] keyValue = criterion.split("=");
+				if (keyValue[0].equals("genre")) {
+					genre = keyValue[1];
+				} else if (keyValue[0].equals("title")) {
+					title = keyValue[1];
+				}
+			}
+
+			List<Movie> movies = ConnectToDatabase.searchOnlineMoviesByCriteria(genre, title);
+			System.out.println("Online movies fetched by criteria (Genre: " + genre + ", Title: " + title + "): " + movies.size()); // Debugging output
+			client.sendToClient(movies);
+		} else if (msgString.startsWith("#getMoviesByScreeningDate")) {
+			String[] dates = msgString.substring("#getMoviesByScreeningDate".length()).trim().split(";");
+			LocalDate startDate = null;
+			LocalDate endDate = null;
+
+			if (dates.length > 0 && !dates[0].isEmpty()) {
+				startDate = LocalDate.parse(dates[0]);
+			}
+			if (dates.length > 1 && !dates[1].isEmpty()) {
+				endDate = LocalDate.parse(dates[1]);
+			}
+
+			List<Movie> movies = ConnectToDatabase.getMoviesByScreeningDate(startDate, endDate);
+			System.out.println("Movies fetched by screening date: " + movies.size()); // Debugging output
 			client.sendToClient(movies);
 
 

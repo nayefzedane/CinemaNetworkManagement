@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ContentManagerController" spacing="20" alignment="CENTER">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Title -->
+    <Label text="Content Manager Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+
+    <Label fx:id="movieCountLabel" text="Movies in Database: " style="-fx-font-size: 14px;" />
+
+
+    <!-- Main Buttons -->
+    <GridPane hgap="20" vgap="20" alignment="CENTER">
+        <Button text="Add Movie" onAction="#handleGoTo" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Button text="Delete Movie" onAction="#handleGoTo" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Button text="Update Price" onAction="#handleGoTo" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Button text="Update Showtime" onAction="#handleGoTo" style="-fx-font-size: 16px; -fx-padding: 10px 20px;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    </GridPane>
+
+    <!-- Back Button -->
+    <Button text="Back" onAction="#handleBack" style="-fx-font-size: 14px; -fx-padding: 5px 15px; -fx-alignment: CENTER;"/>
+
+</VBox>

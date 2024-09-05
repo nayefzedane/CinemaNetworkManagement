@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OfflineMoviesController" stylesheets="@OfflineMovies.css">
+
+    <!-- כל שאר החלון הראשי -->
+    <ScrollPane fitToWidth="true">
+        <!-- תוכן החלון הראשי -->
+        <VBox spacing="60" alignment="center" style="-fx-background-color: #D3D3D3;">
+            <!-- כותרת ראשית לחלון -->
+            <Text text="Movies Page" styleClass="label-title"/>
+
+            <!-- הוספת מרווח גדול יותר לפני אזור הסרטים הקרובים -->
+            <VBox spacing="80" alignment="center"> <!-- מרווח גדול יותר למטה מהכותרת -->
+                <!-- אזור לסרט הקרוב עם אפשרות מעבר בין סרטים -->
+                <HBox fx:id="upcomingMovieBox" alignment="center" spacing="25">
+                    <Button fx:id="prevButton" text="◀" onAction="#showPreviousUpcomingMovie" styleClass="nav-button"/>
+
+                    <!-- האזור המורחב לתמונה עם תיאור הסרט -->
+                    <VBox alignment="CENTER" spacing="10">
+                        <!-- הרחבת התמונה והזזה שמאלה -->
+                        <ImageView fx:id="upcomingMovieImage" fitHeight="450" fitWidth="400" styleClass="upcoming-movie-image"/>
+                    </VBox>
+                    <VBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 20px;">
+                        <Text fx:id="upcomingMovieTitle" styleClass="upcoming-movie-title" textAlignment="LEFT"/>
+                        <Text fx:id="upcomingMovieDate" styleClass="upcoming-movie-date" textAlignment="LEFT"/>
+                        <Text fx:id="upcomingMovieDescription" wrappingWidth="200" textAlignment="LEFT"/> <!-- הסבר קצר על הסרט -->
+                    </VBox>
+
+                    <Button fx:id="nextButton" text="▶" onAction="#showNextUpcomingMovie" styleClass="nav-button"/>
+                </HBox>
+            </VBox>
+
+            <!-- תוצאות הסרטים הזמינים -->
+            <VBox spacing="40" alignment="center">
+                <!-- שינוי הטקסט לאנגלית, הגדלתו והדגשתו -->
+                <Text text="Available Movies" styleClass="label-header" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                <TilePane fx:id="movieTilePane" hgap="15" vgap="15" alignment="center" styleClass="movie-tile-pane"/>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+
+    <!-- כפתור החיפוש בפינה הימנית העליונה -->
+    <Button fx:id="searchButton" text="🔍" onAction="#toggleSearchWindow" styleClass="search-icon" StackPane.alignment="TOP_RIGHT"/>
+
+    <!-- חלון החיפוש -->
+    <VBox fx:id="searchWindow" spacing="10" maxWidth="250" maxHeight="250" styleClass="search-window" visible="false" managed="false" StackPane.alignment="TOP_RIGHT" translateY="60">
+        <!-- סידור מחדש של הקריטריונים -->
+        <TextField fx:id="searchField" promptText="Search by Movie Name" styleClass="search-field" maxWidth="200"/>
+        <DatePicker fx:id="startDatePicker" promptText="Start Date" styleClass="date-picker" maxWidth="200"/>
+        <DatePicker fx:id="endDatePicker" promptText="End Date" styleClass="date-picker" maxWidth="200"/>
+        <Button text="Reset Dates" onAction="#resetDates" styleClass="reset-button" maxWidth="200"/>
+        <ComboBox fx:id="cinemaComboBox" promptText="Select Cinema" styleClass="combo-box" maxWidth="200"/>
+        <ComboBox fx:id="genreComboBox" promptText="Select Genre" styleClass="combo-box" maxWidth="200"/>
+        <Button text="Search" onAction="#searchMovies" styleClass="nav-button" maxWidth="200"/>
+    </VBox>
+
+</StackPane>
