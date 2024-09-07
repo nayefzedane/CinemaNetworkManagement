@@ -3,7 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class BuyTicketPackage {
+public class BuyTicketPackageController {
 
     @FXML
     private Label buyTicketPackageLabel;

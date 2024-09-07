@@ -15,7 +15,7 @@ public class MainWindowController {
     private OnlineMoviesController onlineMoviesController;
     private LoginController loginController;
     private ReturnTicket returnTicketController;
-    private BuyTicketPackage buyTicketPackageController;
+    private BuyTicketPackageController buyTicketPackageController;
     private SubmitComplaint submitComplaintController;
 
     private Object activeController;
@@ -48,7 +48,7 @@ public class MainWindowController {
 
     public void showBuyTicketPackageWindow() {
         System.out.println("Loading Buy Ticket Package Window...");
-        loadWindow("buy_ticket_package.fxml", BuyTicketPackage.class);
+        loadWindow("buy_ticket_package.fxml", BuyTicketPackageController.class);
     }
 
     public void showSubmitComplaintWindow() {
@@ -88,7 +88,7 @@ public class MainWindowController {
         return returnTicketController;
     }
 
-    public BuyTicketPackage getBuyTicketPackageController() {
+    public BuyTicketPackageController getBuyTicketPackageController() {
         return buyTicketPackageController;
     }
 

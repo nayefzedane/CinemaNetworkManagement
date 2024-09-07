@@ -13,6 +13,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.text.Text;
 import javafx.scene.layout.VBox;
 
+import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -140,6 +141,11 @@ public class OfflineMoviesController {
 
                 StackPane imageContainer = new StackPane();
                 ImageView movieImage = new ImageView(new Image(movie.getImagePath()));
+                if (movie.getImageData() != null && movie.getImageData().length > 0) {
+                    // Convert byte array to Image
+                    ByteArrayInputStream inputStream = new ByteArrayInputStream(movie.getImageData());
+                    movieImage = new ImageView(new Image(inputStream));
+                }
                 movieImage.setFitHeight(250);
                 movieImage.setFitWidth(150);
                 movieImage.getStyleClass().add("movie-image");
@@ -201,6 +207,11 @@ public class OfflineMoviesController {
             Movie movie = upcomingMovies.get(currentUpcomingIndex);
             System.out.println("Updating display for movie: " + movie.getTitle() + " at index " + currentUpcomingIndex);
             upcomingMovieImage.setImage(new Image(movie.getImagePath()));
+            if (movie.getImageData() != null && movie.getImageData().length > 0) {
+                // Convert byte array to Image
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(movie.getImageData());
+                upcomingMovieImage.setImage(new Image(inputStream));
+            }
             upcomingMovieTitle.setText(movie.getTitle());
             upcomingMovieDate.setText(movie.getShowtime().toString());
             upcomingMovieDescription.setText(movie.getDescription());

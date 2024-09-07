@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.BuyTicketPackage"
-            prefHeight="400.0" prefWidth="600.0">
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.BuyTicketPackageController"
+      alignment="CENTER" spacing="15" padding="20">
 
-    <children>
-        <Label text="Buy Ticket Package Window" layoutX="200" layoutY="50"/>
-    </children>
-</AnchorPane>
+    <Label text="Buy Ticket Package" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="15" vgap="10">
+        <padding>
+            <Insets top="10" right="20" bottom="10" left="20"/>
+        </padding>
+
+        <Label text="Customer ID:"/>
+        <TextField fx:id="customerIdField" promptText="Enter Customer ID" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+        <Label text="Customer Email:"/>
+        <TextField fx:id="customerEmailField" promptText="Enter Email Address" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+        <Label text="Payment Last Four Digits:"/>
+        <TextField fx:id="paymentLastFourDigitsField" promptText="1234" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+    </GridPane>
+
+    <Button text="Buy Package" fx:id="buyPackageButton" maxWidth="150"/>
+
+</VBox>
