@@ -10,6 +10,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.HibernateException;
@@ -957,6 +958,24 @@ public class ConnectToDatabase {
             }
             e.printStackTrace();
             System.out.println("Failed to save the request");
+        }
+    }
+
+    public static PackageCard savePackageCard(PackageCard packageCard) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(packageCard);  // Save the PackageCard object, and Hibernate will generate the ID
+            transaction.commit();
+            System.out.println("PackageCard saved successfully");
+            return packageCard;  // Return the PackageCard object with the generated packageId
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("Failed to save the PackageCard");
+            return null;  // Return null in case of failure
         }
     }
 }

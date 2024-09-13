@@ -268,6 +268,10 @@ public class SimpleClient extends AbstractClient {
 				}
 			});
 		}
+		if(msg instanceof PackageCard){
+			BuyTicketPackageController.ShowReceipt((PackageCard) msg);
+			System.out.println("Recieved receipt frpm server sending to Controller");
+		}
 	}
 
 	public static SimpleClient getClient() {

@@ -70,7 +70,6 @@ public class SimpleServer extends AbstractServer {
 		}
 
 
-
 		if (msg.equals("request_price_change_requests")) {
 			System.out.println("we are on server and we are on request price change requests");
 			List<Request> requestsList = ConnectToDatabase.getAllPriceChangeRequests();
@@ -82,7 +81,7 @@ public class SimpleServer extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
-		if(msgString.startsWith("delete_request ")){
+		if (msgString.startsWith("delete_request ")) {
 			System.err.println("we are on server and we want to delete");
 			System.err.println(msgString);
 			String requestId = msgString.substring("delete_request ".length());
@@ -117,10 +116,10 @@ public class SimpleServer extends AbstractServer {
 			String type = parts[1].trim();  // Card or Link
 			String orderId = parts[2].trim();
 			String customerId = parts[3].trim();
-			if(type.equals("Purchase Card")){
+			if (type.equals("Purchase Card")) {
 				type = "purchaseCard";
 			}
-			if(type.equals("Purchase Link")){
+			if (type.equals("Purchase Link")) {
 				type = "PurchaseLink";
 			}
 
@@ -130,7 +129,6 @@ public class SimpleServer extends AbstractServer {
 			// Send the result back to the client
 			client.sendToClient(result);
 		}
-
 
 
 		if (msgString.startsWith("login@")) {
@@ -310,8 +308,7 @@ public class SimpleServer extends AbstractServer {
 			client.sendToClient(movies);
 
 
-		}
-		else if (msgString.startsWith("send request:")){
+		} else if (msgString.startsWith("send request:")) {
 
 			String[] parts = msgString.split(":");
 			String movieTitle = parts[1];
@@ -323,9 +320,25 @@ public class SimpleServer extends AbstractServer {
 
 			Request req = new Request();
 			req.setTitle("Price update request");
-			req.setDescription(movieTitle+", Id: "+movieId+", Old price: "+moviePrice+", New price: "+newPrice);
-			req.setDescription(movieTitle+", Id: "+movieId + ", Showtime: "+ movieShowtime + ", Place: " + moviePlace +", Old price: " +moviePrice+", New price: "+newPrice);
+			req.setDescription(movieTitle + ", Id: " + movieId + ", Showtime: " + movieShowtime + ", Place: " + moviePlace + ", Old price: " + moviePrice + ", New price: " + newPrice);
 			ConnectToDatabase.addRequest(req);
+		}
+		if (msg instanceof PackageCard) {
+			PackageCard packageCard = (PackageCard) msg;
+			System.out.println("Received PackageCard from client: " + packageCard.getCustomerEmail());
+
+			// Save the PackageCard to the database and retrieve the generated ID
+			PackageCard savedPackageCard = ConnectToDatabase.savePackageCard(packageCard);
+
+			if (savedPackageCard != null) {
+				try {
+					// Send the updated PackageCard (with generated ID) back to the client
+					client.sendToClient(savedPackageCard);
+					System.out.println("PackageCard sent back to client with ID: " + savedPackageCard.getPackageId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }
