@@ -108,9 +108,11 @@
     -fx-width: 100%; /* הכפתור יכסה את כל רוחב התמונה */
     -fx-text-alignment: center; /* טקסט במרכז הכפתור */
     -fx-translate-x: 0;
+    -fx-cursor: hand;
+    -fx-padding: 10px; /* הוספת ריווח פנימי */
 }
 
-
+/* אזור הסרטים הקרובים */
 .upcoming-movie-box {
     -fx-padding: 15px;
     -fx-background-color: linear-gradient(to right, #B0B0B0, #D3D3D3, #B0B0B0); /* גרדיאנט מצד לצד */
@@ -157,4 +159,37 @@
 
 .search-window.hidden {
     -fx-opacity: 0;
+}
+
+/* סגנון כללי לחלון הפרטים */
+.movie-details {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0);
+}
+
+.movie-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-padding-bottom: 10px;
+}
+
+.movie-description {
+    -fx-font-size: 18px;
+    -fx-text-fill: #666;
+    -fx-padding-bottom: 20px;
+}
+
+.movie-image {
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0);
+}
+
+.movie-info {
+    -fx-spacing: 15px;
 }

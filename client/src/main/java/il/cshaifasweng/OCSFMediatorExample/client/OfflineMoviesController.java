@@ -12,10 +12,19 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.text.Text;
 import javafx.scene.layout.VBox;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.scene.effect.GaussianBlur;
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.control.ScrollPane;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.io.ByteArrayInputStream;
 
 public class OfflineMoviesController {
 
@@ -58,8 +67,13 @@ public class OfflineMoviesController {
     @FXML
     private VBox searchWindow;
 
+    @FXML
+    private StackPane mainWindowRoot;
+
     private List<Movie> upcomingMovies;
     private int currentUpcomingIndex = 0;
+    private GaussianBlur blurEffect = new GaussianBlur(20); // טשטוש קבוע
+    private Stage detailsStage; // הגדרת stage כדי שניתן יהיה לסגור אותו מבחוץ
 
     @FXML
     public void initialize() {
@@ -147,7 +161,6 @@ public class OfflineMoviesController {
                 Button viewMoreButton = new Button("View More");
                 viewMoreButton.getStyleClass().add("view-more");
 
-                // להוסיף את הכפתור "View More" לתוך StackPane כדי להניח אותו מעל התמונה
                 imageContainer.getChildren().addAll(movieImage, viewMoreButton);
 
                 Text movieTitle = new Text(movie.getTitle());
@@ -156,13 +169,115 @@ public class OfflineMoviesController {
                 movieBox.getChildren().addAll(imageContainer, movieTitle);
                 movieTilePane.getChildren().add(movieBox);
 
-                // הוספת EventHandler לכפתור "View More"
                 viewMoreButton.setOnAction(event -> {
-                    // תוסיף כאן את הקוד לפתיחת חלון פרטים נוספים
-                    System.out.println("View more clicked for movie: " + movie.getTitle());
+                    showMovieDetails(movie);
                 });
             }
         }
+    }
+
+    private void showMovieDetails(Movie movie) {
+        // יצירת חלון חדש עם VBox שמכיל את כל הפרטים של הסרט
+        VBox movieDetailsBox = new VBox(20);
+        movieDetailsBox.getStyleClass().add("movie-details");
+
+        // יצירת כפתור סגירה
+        Button closeButton = new Button("X");
+        closeButton.getStyleClass().add("close-button");
+        closeButton.setOnAction(e -> {
+            detailsStage.close(); // סוגר את החלון
+            mainWindowRoot.setEffect(null); // הסרת הטשטוש
+        });
+
+        HBox titleBar = new HBox(closeButton);
+        titleBar.setAlignment(Pos.TOP_RIGHT); // הצבת כפתור הסגירה בצד ימין למעלה
+
+        // הוספת תמונת הסרט
+        ImageView movieImage;
+        if (movie.getImageData() != null) {
+            Image image = new Image(new ByteArrayInputStream(movie.getImageData()));
+            movieImage = new ImageView(image);
+        } else {
+            movieImage = new ImageView(new Image(movie.getImagePath()));
+        }
+        movieImage.setFitHeight(300);
+        movieImage.setFitWidth(400);
+        movieImage.getStyleClass().add("movie-image");
+
+        // פרטים נוספים של הסרט
+        Text movieTitle = new Text(movie.getTitle());
+        movieTitle.getStyleClass().add("movie-title");
+
+        Text movieDescription = new Text("Description: " + movie.getDescription());
+        movieDescription.getStyleClass().add("movie-description");
+        movieDescription.setWrappingWidth(400);
+
+        Text movieGenre = new Text("Genre: " + movie.getGenre());
+        Text movieShowtime = new Text("Showtime: " + movie.getShowtime());
+        Text movieReleaseDate = new Text("Release Date: " + movie.getReleaseDate());
+        Text movieDuration = new Text("Duration: " + movie.getDuration() + " minutes");
+        Text movieRating = new Text("Rating: " + movie.getRating());
+        Text movieDirector = new Text("Director: " + movie.getDirector());
+        Text moviePlace = new Text("Place: " + movie.getPlace());
+        Text moviePrice = new Text("Price: $" + movie.getPrice());
+        Text movieAvailableSeat = new Text("Available Seats: " + movie.getAvailableSeat());
+        Text movieHallNumber = new Text("Hall Number: " + movie.getHallNumber());
+        Text movieIsOnline = new Text("Available Online: " + (movie.isOnline() ? "Yes" : "No"));
+
+        // סידור הפרטים בתוך VBox
+        VBox movieInfo = new VBox(10,
+                movieTitle,
+                movieDescription,
+                movieGenre,
+                movieShowtime,
+                movieReleaseDate,
+                movieDuration,
+                movieRating,
+                movieDirector,
+                moviePlace,
+                moviePrice,
+                movieAvailableSeat,
+                movieHallNumber,
+                movieIsOnline
+        );
+        movieInfo.getStyleClass().add("movie-info");
+
+        // הוספת התמונה והפרטים ל-VBox
+        movieDetailsBox.getChildren().addAll(titleBar, movieImage, movieInfo);
+
+        // הוספת ScrollPane כדי לאפשר גלילה
+        ScrollPane scrollPane = new ScrollPane(movieDetailsBox);
+        scrollPane.setFitToWidth(true);  // התאמת התוכן לרוחב
+        scrollPane.setPannable(true);    // לאפשר גרירה עם העכבר
+
+        // יצירת חלון חדש עם התצוגה של פרטי הסרט
+        detailsStage = new Stage();
+        detailsStage.setTitle("Movie Details");
+
+        // קביעת גודל החלון, ואפשרות גלילה
+        Scene scene = new Scene(scrollPane, 700, 600);
+        scene.getStylesheets().add(getClass().getResource("OfflineMovies.css").toExternalForm());
+
+        // הוספת הטשטוש לחלון הראשי באופן מיידי
+        mainWindowRoot.setEffect(blurEffect);
+
+        // הסרת הטשטוש כשסוגרים את החלון
+        detailsStage.setOnCloseRequest(event -> mainWindowRoot.setEffect(null));
+
+        // סגירת החלון בלחיצה מחוץ לחלון
+        mainWindowRoot.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (detailsStage.isShowing() && !detailsStage.isFocused()) {
+                detailsStage.close();
+                mainWindowRoot.setEffect(null); // הסרת הטשטוש
+            }
+        });
+
+        // הגדרת החלון הדינאמי שיהיה קבוע ולא ניתן להזזה
+        detailsStage.initStyle(StageStyle.UNDECORATED);
+        detailsStage.setResizable(false); // לא ניתן לשנות גודל
+
+        detailsStage.setScene(scene);
+        detailsStage.show();
     }
 
     public void setUpcomingMovies(List<Movie> movies) {
@@ -172,8 +287,6 @@ public class OfflineMoviesController {
                 .limit(4) // Display max 4 upcoming movies
                 .collect(Collectors.toList());
 
-        System.out.println("Filtered " + upcomingMovies.size() + " upcoming movies.");
-
         currentUpcomingIndex = 0;
         updateUpcomingMovieDisplay();
     }
@@ -182,7 +295,6 @@ public class OfflineMoviesController {
     private void showNextUpcomingMovie() {
         if (upcomingMovies != null && !upcomingMovies.isEmpty()) {
             currentUpcomingIndex = (currentUpcomingIndex + 1) % upcomingMovies.size();
-            System.out.println("Showing next upcoming movie: Index " + currentUpcomingIndex);
             updateUpcomingMovieDisplay();
         }
     }
@@ -191,7 +303,6 @@ public class OfflineMoviesController {
     private void showPreviousUpcomingMovie() {
         if (upcomingMovies != null && !upcomingMovies.isEmpty()) {
             currentUpcomingIndex = (currentUpcomingIndex - 1 + upcomingMovies.size()) % upcomingMovies.size();
-            System.out.println("Showing previous upcoming movie: Index " + currentUpcomingIndex);
             updateUpcomingMovieDisplay();
         }
     }
@@ -199,7 +310,6 @@ public class OfflineMoviesController {
     private void updateUpcomingMovieDisplay() {
         if (upcomingMovies != null && !upcomingMovies.isEmpty()) {
             Movie movie = upcomingMovies.get(currentUpcomingIndex);
-            System.out.println("Updating display for movie: " + movie.getTitle() + " at index " + currentUpcomingIndex);
             upcomingMovieImage.setImage(new Image(movie.getImagePath()));
             upcomingMovieTitle.setText(movie.getTitle());
             upcomingMovieDate.setText(movie.getShowtime().toString());
@@ -211,25 +321,7 @@ public class OfflineMoviesController {
             upcomingMovieDescription.setVisible(true);
             prevButton.setVisible(true);
             nextButton.setVisible(true);
-
-            // בודקים אם הורה של ImageView הוא StackPane לפני שמנסים להוסיף את הכפתור
-            if (upcomingMovieImage.getParent() instanceof StackPane) {
-                StackPane imageContainer = (StackPane) upcomingMovieImage.getParent();
-                if (imageContainer.getChildren().size() == 1) {
-                    Button viewMoreButton = new Button("View More");
-                    viewMoreButton.getStyleClass().add("upcoming-view-more");
-                    imageContainer.getChildren().add(viewMoreButton);
-
-                    viewMoreButton.setOnAction(event -> {
-                        // תוסיף כאן את הקוד לפתיחת חלון פרטים נוספים לסרטים שיוצגו בקרוב
-                        System.out.println("View more clicked for upcoming movie: " + movie.getTitle());
-                    });
-                }
-            } else {
-                System.out.println("The parent of upcomingMovieImage is not a StackPane.");
-            }
         } else {
-            System.out.println("No upcoming movies to display.");
             upcomingMovieImage.setVisible(false);
             upcomingMovieTitle.setVisible(false);
             upcomingMovieDate.setVisible(false);

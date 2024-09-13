@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OfflineMoviesController" stylesheets="@OfflineMovies.css">
+<StackPane fx:id="mainWindowRoot" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OfflineMoviesController" stylesheets="@OfflineMovies.css">
 
     <!-- כל שאר החלון הראשי -->
     <ScrollPane fitToWidth="true">
