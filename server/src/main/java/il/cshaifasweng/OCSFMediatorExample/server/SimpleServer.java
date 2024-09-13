@@ -322,6 +322,16 @@ public class SimpleServer extends AbstractServer {
 			req.setTitle("Price update request");
 			req.setDescription(movieTitle + ", Id: " + movieId + ", Showtime: " + movieShowtime + ", Place: " + moviePlace + ", Old price: " + moviePrice + ", New price: " + newPrice);
 			ConnectToDatabase.addRequest(req);
+			//for checking the link is available
+		} else if(msgString.startsWith("CheckLink")){
+			System.out.println(msgString);
+			String message = msgString; //
+			String[] parts = message.split(":");
+			String link = parts[1];  // Extract the link part
+			String result = ConnectToDatabase.checkLinkByString(link);
+			System.out.println(result);
+			client.sendToClient(result);
+
 		}
 		if (msg instanceof PackageCard) {
 			PackageCard packageCard = (PackageCard) msg;
@@ -340,5 +350,6 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
+
 	}
 }

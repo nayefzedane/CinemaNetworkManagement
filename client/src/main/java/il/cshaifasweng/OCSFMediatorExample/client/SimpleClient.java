@@ -266,6 +266,12 @@ public class SimpleClient extends AbstractClient {
 				} else if (response.startsWith("Return Ticket failed")) {
 					ReturnTicket.showFailureAlert(response); // Show failure alert with the error message
 				}
+				else if (response.startsWith("Link available:")) {
+					WatchScreenController.showSuccessAlert(response);
+				}
+				else if (response.startsWith("Link not available:")) {
+					WatchScreenController.showFailureAlert(response);
+				}
 			});
 		}
 		if(msg instanceof PackageCard){

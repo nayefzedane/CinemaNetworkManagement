@@ -389,6 +389,15 @@ public class ConnectToDatabase {
                     30// customerMail
             );
             session.save(purchaseLink2);
+            PurchaseLink purchaseLink3 = new PurchaseLink(
+                    LocalDateTime.of(2024, 8, 18, 15, 0),  // purchaseTime
+                    1005,  // customerId
+                    4321,  // paymentCardLastFour
+                    "Red Dead Redemption 2",  // movieTitle
+                    "sample@example.com",
+                    30,"www.loay.com"// customerMail
+            );
+            session.save(purchaseLink3);
 
             session.getTransaction().commit();
             System.out.println("Sample purchase links created successfully");
@@ -978,6 +987,40 @@ public class ConnectToDatabase {
             return null;  // Return null in case of failure
         }
     }
+    public static String checkLinkByString(String link) {
+        System.out.println("We are on connect to database and we are checking the link");
+        System.out.println(link);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        // Use a query to find the PurchaseLink by the unique link value
+        Query query = session.createQuery("FROM PurchaseLink WHERE uniqueLink = :link");
+        query.setParameter("link", link);
+        PurchaseLink purchaseLink = (PurchaseLink) query.uniqueResult();
+
+        if (purchaseLink != null) {
+            // Check if the link is available
+            if (purchaseLink.isAvailable()) {
+                String movieTitle = purchaseLink.getMovieTitle(); // Get the movie title
+                session.getTransaction().commit();
+                session.close();
+                return "Link available: " + movieTitle;
+            } else {
+                session.getTransaction().commit();
+                session.close();
+                return "Link not available: out of time";
+            }
+        } else {
+            session.getTransaction().commit();
+            session.close();
+            return "Link not available: link not found.";
+        }
+    }
+
+
+
+
 }
 
 

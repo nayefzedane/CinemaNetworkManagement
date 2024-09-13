@@ -55,6 +55,10 @@ public class MainWindowController {
         System.out.println("Loading Submit Complaint Window...");
         loadWindow("submit_complaint.fxml", SubmitComplaint.class);
     }
+    public void showWathcingScreen() {
+        System.out.println("Loading wathcing movie Window...");
+        loadWindow("WatchScreen.fxml", WatchScreenController.class);
+    }
 
     // מתודה פרטית שמטפלת בטעינת קובץ FXML והחלפת התוכן בחלון המרכזי
     private void loadWindow(String fxmlFile, Class<?> controllerClass) {
