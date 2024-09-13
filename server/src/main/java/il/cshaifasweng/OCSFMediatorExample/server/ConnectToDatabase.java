@@ -15,7 +15,7 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
-
+import java.time.LocalDateTime;
 import org.hibernate.*;
 
 
@@ -254,6 +254,25 @@ public class ConnectToDatabase {
             session.save(movie);  // Save the movie object to the database
             transaction.commit();
             System.out.println("Movie added successfully: " + movie.getTitle());
+            try {
+                String movie_title = movie.getTitle();
+                LocalDateTime time = movie.getShowtime();
+                String branch = movie.getPlace();
+
+                List<PackageCard> packages = getAllPackageCardsOrderedByDate();
+                for (PackageCard packageCard : packages) {
+                    //
+                    String cost_mail = packageCard.getCustomerEmail(); //
+                    String name = packageCard.getName();
+                    EmailService.sendEmail(cost_mail, "Announcement of a new movie", "Hello " + name + " from Cinema City!\n We are happy to tell you about a new movie upcomming\n" +movie_title +"\n" + "is available on " + time +" in our " + branch + " branch.\nDont waste it.");
+
+
+
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();  // Rollback in case of an error
