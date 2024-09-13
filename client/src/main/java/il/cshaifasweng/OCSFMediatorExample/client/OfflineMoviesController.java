@@ -306,28 +306,47 @@ public class OfflineMoviesController {
             updateUpcomingMovieDisplay();
         }
     }
-
     private void updateUpcomingMovieDisplay() {
+        // בדיקה אם יש סרטים ברשימה
         if (upcomingMovies != null && !upcomingMovies.isEmpty()) {
+            // שליפת הסרט הנוכחי מתוך הרשימה על פי האינדקס הנוכחי
             Movie movie = upcomingMovies.get(currentUpcomingIndex);
+
+            // עדכון תמונת הסרט
             upcomingMovieImage.setImage(new Image(movie.getImagePath()));
+
+            // עדכון פרטי הסרט: כותרת, תאריך ותיאור
             upcomingMovieTitle.setText(movie.getTitle());
-            upcomingMovieDate.setText(movie.getShowtime().toString());
+            upcomingMovieDate.setText("Showtime: " + movie.getShowtime().toString()); // הוספת "Showtime"
             upcomingMovieDescription.setText(movie.getDescription());
 
+            // ווידוא שהאלמנטים נראים
             upcomingMovieImage.setVisible(true);
             upcomingMovieTitle.setVisible(true);
             upcomingMovieDate.setVisible(true);
             upcomingMovieDescription.setVisible(true);
+
+            // הפעלת כפתורי הניווט קדימה ואחורה
             prevButton.setVisible(true);
             nextButton.setVisible(true);
+
         } else {
+            // אם אין סרטים ברשימה, הסתרת כל האלמנטים
             upcomingMovieImage.setVisible(false);
             upcomingMovieTitle.setVisible(false);
             upcomingMovieDate.setVisible(false);
             upcomingMovieDescription.setVisible(false);
             prevButton.setVisible(false);
             nextButton.setVisible(false);
+        }
+    }
+
+
+    @FXML
+    private void onUpcomingViewMoreClicked() {
+        if (upcomingMovies != null && !upcomingMovies.isEmpty()) {
+            Movie movie = upcomingMovies.get(currentUpcomingIndex);
+            showMovieDetails(movie); // פתיחת חלון עם פרטי הסרט
         }
     }
 

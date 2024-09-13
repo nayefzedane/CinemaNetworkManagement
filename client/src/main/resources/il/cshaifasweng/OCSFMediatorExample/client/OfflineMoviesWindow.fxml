@@ -36,6 +36,9 @@
                         <Text fx:id="upcomingMovieTitle" styleClass="upcoming-movie-title" textAlignment="LEFT"/>
                         <Text fx:id="upcomingMovieDate" styleClass="upcoming-movie-date" textAlignment="LEFT"/>
                         <Text fx:id="upcomingMovieDescription" wrappingWidth="200" textAlignment="LEFT"/> <!-- הסבר קצר על הסרט -->
+
+                        <!-- כפתור VIEW MORE נוסף לסרט הקרוב -->
+                        <Button fx:id="upcomingMovieViewMoreButton" text="View More" onAction="#onUpcomingViewMoreClicked" styleClass="upcoming-view-more-button"/>
                     </VBox>
 
                     <Button fx:id="nextButton" text="▶" onAction="#showNextUpcomingMovie" styleClass="nav-button"/>
