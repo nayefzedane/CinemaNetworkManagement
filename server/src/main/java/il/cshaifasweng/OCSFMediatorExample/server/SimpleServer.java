@@ -340,9 +340,23 @@ public class SimpleServer extends AbstractServer {
 			// Save the PackageCard to the database and retrieve the generated ID
 			PackageCard savedPackageCard = ConnectToDatabase.savePackageCard(packageCard);
 
+
 			if (savedPackageCard != null) {
 				try {
-					// Send the updated PackageCard (with generated ID) back to the client
+					StringBuilder receiptMessage = new StringBuilder();
+					receiptMessage.append("Receipt:\n");
+					receiptMessage.append("=====================================\n");
+					receiptMessage.append("Package ID: ").append(packageCard.getPackageId()).append("\n");  // Package ID now correctly populated
+					receiptMessage.append("Name: ").append(packageCard.getName()).append("\n");
+					receiptMessage.append("Customer ID: ").append(packageCard.getCustomerId()).append("\n");
+					receiptMessage.append("Customer Email: ").append(packageCard.getCustomerEmail()).append("\n");
+					receiptMessage.append("Price: $").append(packageCard.getPrice()).append("\n");
+					receiptMessage.append("Remaining Tickets: ").append(packageCard.getRemainingEntries()).append("\n");
+					receiptMessage.append("Payment (Last 4 digits): ").append(packageCard.getPaymentLastFourDigits()).append("\n");
+					receiptMessage.append("Purchase Date: ").append(packageCard.getPurchaseDate()).append("\n");
+					receiptMessage.append("=====================================\n");
+					receiptMessage.append("Note: Please remember your purchase ID number ").append(packageCard.getPackageId()).append(", as it will be required when you buy movie tickets.\n");
+					EmailService.sendEmail(packageCard.getCustomerEmail(), "Package purchase receipt", receiptMessage.toString());
 					client.sendToClient(savedPackageCard);
 					System.out.println("PackageCard sent back to client with ID: " + savedPackageCard.getPackageId());
 				} catch (Exception e) {
