@@ -20,6 +20,10 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.geometry.Insets;
+import javafx.scene.control.TextField;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -224,6 +228,11 @@ public class OfflineMoviesController {
         Text movieHallNumber = new Text("Hall Number: " + movie.getHallNumber());
         Text movieIsOnline = new Text("Available Online: " + (movie.isOnline() ? "Yes" : "No"));
 
+        // כפתור "BUY"
+        Button buyButton = new Button("BUY");
+        buyButton.getStyleClass().add("buy-button");
+        buyButton.setOnAction(e -> openPaymentWindow(movie));  // פתיחת חלון התשלום
+
         // סידור הפרטים בתוך VBox
         VBox movieInfo = new VBox(10,
                 movieTitle,
@@ -238,7 +247,8 @@ public class OfflineMoviesController {
                 moviePrice,
                 movieAvailableSeat,
                 movieHallNumber,
-                movieIsOnline
+                movieIsOnline,
+                buyButton // הוספת כפתור BUY
         );
         movieInfo.getStyleClass().add("movie-info");
 
@@ -279,6 +289,54 @@ public class OfflineMoviesController {
         detailsStage.setScene(scene);
         detailsStage.show();
     }
+
+    private void openPaymentWindow(Movie movie) {
+        // יצירת Stage חדש עבור חלון התשלום
+        Stage paymentStage = new Stage();
+        paymentStage.setTitle("Payment Window");
+
+        // יצירת VBox לפריסת הפריטים
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(20));
+
+        // הוספת פרטים על הסרט
+        Label movieLabel = new Label("Movie: " + movie.getTitle());
+        Label cinemaLabel = new Label("Cinema: " + movie.getPlace());
+        Label priceLabel = new Label("Price: $" + movie.getPrice());
+
+        // הוספת שדה להזנת מספר המושב
+        Label seatLabel = new Label("Seat Number:");
+        TextField seatField = new TextField();
+
+        // כפתור לתשלום
+        Button payButton = new Button("Pay");
+
+        // פעולה שמתרחשת כאשר לוחצים על כפתור התשלום
+        payButton.setOnAction(event -> {
+            String seatNumber = seatField.getText();
+            if (!seatNumber.isEmpty()) {
+                System.out.println("Payment successful for seat: " + seatNumber);
+                paymentStage.close(); // סגירת החלון לאחר תשלום מוצלח
+            } else {
+                System.out.println("Please enter a seat number.");
+            }
+        });
+
+        // כפתור לסגירת החלון
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(e -> paymentStage.close());
+
+        // הוספת כל הפריטים ל-VBox
+        vbox.getChildren().addAll(movieLabel, cinemaLabel, priceLabel, seatLabel, seatField, payButton, closeButton);
+
+        // יצירת סצנה והצגת החלון בגודל גדול יותר
+        Scene paymentScene = new Scene(vbox, 600, 400); // גודל החלון 600x400 פיקסלים
+        paymentStage.setScene(paymentScene);
+        paymentStage.show();
+    }
+
+
+
 
     public void setUpcomingMovies(List<Movie> movies) {
         this.upcomingMovies = movies.stream()
@@ -340,7 +398,6 @@ public class OfflineMoviesController {
             nextButton.setVisible(false);
         }
     }
-
 
     @FXML
     private void onUpcomingViewMoreClicked() {

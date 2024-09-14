@@ -69,4 +69,5 @@
         <Button text="Search" onAction="#searchMovies" styleClass="nav-button" maxWidth="200"/>
     </VBox>
 
+
 </StackPane>
