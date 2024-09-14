@@ -14,17 +14,16 @@
     -fx-font-weight: bold;
     -fx-text-fill: #000; /* צבע טקסט כהה יותר לכותרת הראשית */
     -fx-padding: 20px 0; /* רווח מעל ומתחת לכותרת */
-    -fx-margin-bottom: 30px; /* מרווח מתחת לכותרת כדי להרחיק אותה מהאיזור הבא */
 }
 
 /* אנימציה לכותרת */
 .label-title {
-    -fx-transition: scale 0.5s ease-in-out, color 0.5s ease-in-out;
+    -fx-transition: -fx-transform 0.5s ease-in-out, -fx-text-fill 0.5s ease-in-out;
 }
 
 .label-title:hover {
-    -fx-scale-x: 1.1; /* הגדלת הכותרת ב-10% בממד X כשעוברים עליה עם העכבר */
-    -fx-scale-y: 1.1; /* הגדלת הכותרת ב-10% בממד Y כשעוברים עליה עם העכבר */
+    -fx-scale-x: 1.1; /* הגדלת הכותרת ב-10% בממד X */
+    -fx-scale-y: 1.1; /* הגדלת הכותרת ב-10% בממד Y */
     -fx-text-fill: #0078D7; /* שינוי צבע הכותרת לכחול */
 }
 
@@ -57,8 +56,6 @@
 .movie-tile-pane {
     -fx-padding: 15px;
     -fx-background-color: #D3D3D3; /* רקע אפור כהה אחיד */
-    -fx-border-radius: 0;
-    -fx-background-radius: 0;
     -fx-margin-top: 30px; /* מרווח מעל האזור של הסרטים הכללי */
 }
 
@@ -69,7 +66,6 @@
     -fx-pref-height: 300px; /* קביעת גובה מותאם לכל תמונה */
     -fx-transition: -fx-scale-x 0.3s ease, -fx-scale-y 0.3s ease;
     -fx-cursor: hand;
-    -fx-position: relative;
 }
 
 .movie-box:hover .movie-image {
@@ -85,7 +81,6 @@
 .movie-image {
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
-    -fx-position: relative;
 }
 
 .movie-title {
@@ -107,9 +102,6 @@
     -fx-bottom: 0; /* מיקום הכפתור בתחתית התמונה */
     -fx-width: 100%; /* הכפתור יכסה את כל רוחב התמונה */
     -fx-text-alignment: center; /* טקסט במרכז הכפתור */
-    -fx-translate-x: 0;
-    -fx-cursor: hand;
-    -fx-padding: 10px; /* הוספת ריווח פנימי */
 }
 
 /* אזור הסרטים הקרובים */
@@ -119,7 +111,7 @@
     -fx-border-color: #A9A9A9; /* צבע גבול כהה יותר */
     -fx-border-width: 5px 0; /* גבול עליון ותחתון */
     -fx-border-style: solid;
-    -fx-margin-bottom: 30px; /* מרווח מתחת לאזור הסרטים שיוצגו בקרוב */
+    -fx-margin-bottom: 30px; /* מרווח מתחת לאזור הסרטים הקרובים */
 }
 
 .upcoming-movie-title {
@@ -136,7 +128,6 @@
 }
 
 .upcoming-movie-image {
-    -fx-effect: none; /* ביטול אפקט צל */
     -fx-border-radius: 0;
     -fx-background-radius: 0;
 }
@@ -163,7 +154,7 @@
 
 /* סגנון כללי לחלון הפרטים */
 .movie-details {
-    -fx-background-color: white;
+    -fx-background-color: #848282; /* רקע אפור כהה */
     -fx-padding: 20px;
     -fx-border-color: black;
     -fx-border-width: 2px;
@@ -171,28 +162,32 @@
     -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0);
 }
 
+/* כל הכותרות בפרטי הסרט יהיו לבנות */
+.movie-title, .movie-description, .movie-info, .movie-genre, .movie-showtime, .movie-release-date {
+    -fx-text-fill: #FFFFFF; /* טקסט לבן */
+}
+
+/* עיצוב של כותרת הסרט */
 .movie-title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: #333;
+    -fx-text-fill: #FFFFFF; /* טקסט לבן */
     -fx-padding-bottom: 10px;
 }
 
+/* תיאור הסרט */
 .movie-description {
     -fx-font-size: 18px;
-    -fx-text-fill: #666;
     -fx-padding-bottom: 20px;
+    -fx-text-fill: #FFFFFF; /* טקסט לבן */
 }
 
-.movie-image {
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0);
-}
-
+/* כל שאר המידע של הסרט */
 .movie-info {
     -fx-spacing: 15px;
+    -fx-text-fill: #FFFFFF; /* טקסט לבן */
 }
+
 /* עיצוב לכפתור VIEW MORE באזור הסרטים הקרובים */
 .upcoming-view-more-button {
     -fx-font-size: 18px;
