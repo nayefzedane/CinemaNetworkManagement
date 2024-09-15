@@ -7,8 +7,8 @@ import java.util.Properties;
 public class EmailService {
     public static void sendEmail(String to, String subject, String body) {
         // Sender's email credentials
-        String from = "loayasaad95@gmail.com";
-        String password = "lxcjlfzozzsqnpqe";
+        String from = "starlightcinema100@gmail.com";
+        String password = "kxzqknfutttobupk";
 
         // SMTP properties
         Properties props = new Properties();
