@@ -99,7 +99,6 @@ public class SimpleClient extends AbstractClient {
 		}
 	}
 
-	// הוספת פונקציה לשליחת בקשה לשרת לפי קריטריונים של חיפוש לסרטים אונליין
 	public void requestOnlineMoviesByCriteria(String genre, String title) {
 		try {
 			String request = "#searchOnlineMoviesByCriteria ";
@@ -123,34 +122,8 @@ public class SimpleClient extends AbstractClient {
 		if (msg instanceof List<?>) {
 			List<?> list = (List<?>) msg;
 
-			// Check if it's a list of movies
-			if (!list.isEmpty() && list.get(0) instanceof Movie) {
-				List<Movie> movies = (List<Movie>) msg;
-				System.out.println("Movies received from server: " + movies.size()); // Debugging output
-				Platform.runLater(() -> {
-					try {
-						MainWindowController mainController = (MainWindowController) App.getController();
-						Object activeController = mainController.getActiveController();
-
-						if (activeController instanceof OfflineMoviesController) {
-							OfflineMoviesController controller = (OfflineMoviesController) activeController;
-							controller.displayMovies(movies);
-							controller.setUpcomingMovies(movies);  // הוספת קריאה לפונקציה setUpcomingMovies
-						} else if (activeController instanceof OnlineMoviesController) {
-							((OnlineMoviesController) activeController).displayMovies(movies);
-						} else {
-							System.out.println("No appropriate controller found to display movies.");
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				});
-				ContentManagerController controller = (ContentManagerController) App.getController();
-				controller.updateMovieTable(movies);
-			}
-
 			// Check if it's a list of purchase cards
-			else if (!list.isEmpty() && list.get(0) instanceof purchaseCard) {
+			if (!list.isEmpty() && list.get(0) instanceof purchaseCard) {
 				System.out.println("we are in simple client after we get back from server, purchase card");
 				List<purchaseCard> purchaseList = (List<purchaseCard>) list;
 				System.out.println("Purchase report received from server: " + purchaseList.size()); // Debugging output
@@ -197,6 +170,30 @@ public class SimpleClient extends AbstractClient {
 					AdminController controller = (AdminController) App.getController();
 					controller.updateComplaintsList(complaintsList);
 				});
+			} else {
+				// Check if it's a list of movies
+				List<Movie> movies = (List<Movie>) msg;
+				System.out.println("Movies received from server: " + movies.size()); // Debugging output
+				Platform.runLater(() -> {
+					try {
+						MainWindowController mainController = (MainWindowController) App.getController();
+						Object activeController = mainController.getActiveController();
+
+						if (activeController instanceof OfflineMoviesController) {
+							OfflineMoviesController controller = (OfflineMoviesController) activeController;
+							controller.displayMovies(movies);
+							controller.setUpcomingMovies(movies);  // הוספת קריאה לפונקציה setUpcomingMovies
+						} else if (activeController instanceof OnlineMoviesController) {
+							((OnlineMoviesController) activeController).displayMovies(movies);
+						} else {
+							System.out.println("No appropriate controller found to display movies.");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				});
+				ContentManagerController controller = (ContentManagerController) App.getController();
+				controller.updateMovieTable(movies);
 			}
 
 		}

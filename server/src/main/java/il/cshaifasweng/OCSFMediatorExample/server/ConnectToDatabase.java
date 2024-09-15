@@ -137,6 +137,68 @@ public class ConnectToDatabase {
                     "images/background_login.png", "Cinema City",
                     38.0f, true, 90, 3);
             session.save(movie7);
+            Movie movie8 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie8);
+
+            Movie movie9 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie9);
+
+            Movie movie10 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie10);
+
+            Movie movie11 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie11);
+
+            Movie movie12 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie12);
+
+            Movie movie13 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie13);
+
+            Movie movie14 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie14);
 
             // הוספת משתמשים לדוגמא
             User admin = new User("admin", "admin123", "Admin");
