@@ -10,11 +10,12 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
-
+import java.time.LocalDateTime;
 import org.hibernate.*;
 
 
@@ -315,6 +316,25 @@ public class ConnectToDatabase {
             session.save(movie);  // Save the movie object to the database
             transaction.commit();
             System.out.println("Movie added successfully: " + movie.getTitle());
+            try {
+                String movie_title = movie.getTitle();
+                LocalDateTime time = movie.getShowtime();
+                String branch = movie.getPlace();
+
+                List<PackageCard> packages = getAllPackageCardsOrderedByDate();
+                for (PackageCard packageCard : packages) {
+                    //
+                    String cost_mail = packageCard.getCustomerEmail(); //
+                    String name = packageCard.getName();
+                    EmailService.sendEmail(cost_mail, "Announcement of a new movie", "Hello " + name + " from Cinema City!\n We are happy to tell you about a new movie upcomming\n" +movie_title +"\n" + "is available on " + time +" in our " + branch + " branch.\nDont waste it.");
+
+
+
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();  // Rollback in case of an error
@@ -409,7 +429,7 @@ public class ConnectToDatabase {
                     1006,
                     1414,
                     "real madrid",
-                    LocalDateTime.of(2025, 11, 24, 20, 0),
+                    LocalDateTime.of(2024, 9, 6, 1, 0),
                     "madrid@gmail.com"
             );
             session.save(purchase5);
@@ -450,6 +470,15 @@ public class ConnectToDatabase {
                     30// customerMail
             );
             session.save(purchaseLink2);
+            PurchaseLink purchaseLink3 = new PurchaseLink(
+                    LocalDateTime.of(2024, 8, 18, 15, 0),  // purchaseTime
+                    1005,  // customerId
+                    4321,  // paymentCardLastFour
+                    "Red Dead Redemption 2",  // movieTitle
+                    "sample@example.com",
+                    30,"www.loay.com"// customerMail
+            );
+            session.save(purchaseLink3);
 
             session.getTransaction().commit();
             System.out.println("Sample purchase links created successfully");
@@ -713,6 +742,117 @@ public class ConnectToDatabase {
         session.getTransaction().commit();
         session.close();
     }
+    //handle return ticket method:
+    public static String handleReturnTicket(String type, String orderIdString, String customerIdString) {
+        // Convert orderId and customerId to int before searching
+        int orderId;
+        int customerId;
+        try {
+            orderId = Integer.parseInt(orderIdString);
+            customerId = Integer.parseInt(customerIdString);
+        } catch (NumberFormatException e) {
+            return "Return Ticket failed order id or Customer id wrong";
+        }
+
+        // Open the session and transaction
+        Session session = ConnectToDatabase.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        Object purchase = null;
+        float returnedValue = 0;
+        int linkId = orderId;
+
+        try {
+            if (type.equals("purchaseCard")) {
+                System.out.println("Searching for PurchaseCard with order_id: " + orderId);
+
+                // Search for the PurchaseCard by order_id
+                purchase = session.get(purchaseCard.class, orderId);  // orderId is the field from the database mapping
+                if (purchase == null) {
+                    System.out.println("PurchaseCard with order_id " + orderId + " not found.");
+                    session.getTransaction().rollback();
+                    return "Return Ticket failed order id or Customer id wrong";
+                }
+
+                purchaseCard card = (purchaseCard) purchase;
+                System.out.println("Found PurchaseCard: " + card);
+
+                // Check if customerId matches
+                if (card.getCustomerId() != customerId) {
+                    System.out.println("Customer ID does not match.");
+                    session.getTransaction().rollback();
+                    return "Return Ticket failed order id or Customer id wrong";
+                }
+
+                // Check the time conditions against showtime
+                LocalDateTime currentTime = LocalDateTime.now();
+                LocalDateTime showTime = card.getShowTime();
+                System.out.println(currentTime);
+                System.out.println(showTime);
+
+                if (currentTime.isBefore(showTime.minusHours(3))) {
+                    returnedValue = card.getPrice();  // Full refund
+                } else if (currentTime.isBefore(showTime.minusHours(1))) {
+                    returnedValue = card.getPrice() / 2;  // Half refund
+                } else {
+                    returnedValue = 0;  // No refund
+                }
+
+                session.delete(card);  // Delete the PurchaseCard
+                System.out.println("Deleted PurchaseCard: " + card);
+
+            } else if (type.equals("PurchaseLink")) {
+                System.out.println("Searching for PurchaseLink with order_id: " + linkId);
+
+                // Search for the PurchaseLink by order_id (adjust the field if necessary)
+                purchase = session.get(PurchaseLink.class, orderId);  // Adjust this to match the field name in PurchaseLink
+                if (purchase == null) {
+                    System.out.println("PurchaseLink with order_id " + orderId + " not found.");
+                    session.getTransaction().rollback();
+                    return "Return Ticket failed order id or Customer id wrong";
+                }
+
+                PurchaseLink link = (PurchaseLink) purchase;
+                System.out.println("Found PurchaseLink: " + link);
+
+                // Check if customerId matches
+                if (link.getCustomerId() != customerId) {
+                    System.out.println("Customer ID does not match.");
+                    session.getTransaction().rollback();
+                    return "Return Ticket failed order id or Customer id wrong";
+                }
+
+                // Check the time conditions against availableFrom
+                LocalDateTime currentTime = LocalDateTime.now();
+                LocalDateTime availableFrom = link.getAvailableFrom();
+
+                if (currentTime.isBefore(availableFrom.minusHours(1))) {
+                    returnedValue = link.getPrice() / 2;  // Half refund
+                } else {
+                    returnedValue = 0;  // No refund
+                }
+
+                session.delete(link);  // Delete the PurchaseLink
+                System.out.println("Deleted PurchaseLink: " + link);
+            }
+
+            // Commit the transaction
+            session.getTransaction().commit();
+            System.out.println("Transaction committed successfully.");
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            e.printStackTrace();
+            return "Return Ticket failed due to internal error.";
+        } finally {
+            session.close();
+        }
+
+        return "Return Ticket succeeded " + returnedValue;
+    }
+
+
+
+
     public static void updateMoviePrice(int movieId, float newprice) {
         Session session = ConnectToDatabase.getSessionFactory().openSession();
         Transaction transaction = null;
@@ -895,9 +1035,73 @@ public class ConnectToDatabase {
             return null;
         }
     }
+    public static void addRequest(Request req) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(req);
+            transaction.commit();
+            System.out.println("Request saved successfully");
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("Failed to save the request");
+        }
+    }
+
+    public static PackageCard savePackageCard(PackageCard packageCard) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(packageCard);  // Save the PackageCard object, and Hibernate will generate the ID
+            transaction.commit();
+            System.out.println("PackageCard saved successfully");
+            return packageCard;  // Return the PackageCard object with the generated packageId
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("Failed to save the PackageCard");
+            return null;  // Return null in case of failure
+        }
+    }
+    public static String checkLinkByString(String link) {
+        System.out.println("We are on connect to database and we are checking the link");
+        System.out.println(link);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        // Use a query to find the PurchaseLink by the unique link value
+        Query query = session.createQuery("FROM PurchaseLink WHERE uniqueLink = :link");
+        query.setParameter("link", link);
+        PurchaseLink purchaseLink = (PurchaseLink) query.uniqueResult();
+
+        if (purchaseLink != null) {
+            // Check if the link is available
+            if (purchaseLink.isAvailable()) {
+                String movieTitle = purchaseLink.getMovieTitle(); // Get the movie title
+                session.getTransaction().commit();
+                session.close();
+                return "Link available: " + movieTitle;
+            } else {
+                session.getTransaction().commit();
+                session.close();
+                return "Link not available: out of time";
+            }
+        } else {
+            session.getTransaction().commit();
+            session.close();
+            return "Link not available: link not found.";
+        }
+    }
 
 
-   
+
+
 }
 
 

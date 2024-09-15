@@ -19,6 +19,7 @@ import javafx.stage.StageStyle;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 public class OnlineMoviesController {
@@ -94,8 +95,15 @@ public class OnlineMoviesController {
             movieTilePane.getChildren().add(noMoviesText);  // Display a "No movies found" message
         } else {
             for (Movie movie : movies) {
-                VBox movieBox = new VBox(5);  // Container for each movie
-                ImageView movieImage = new ImageView(new Image(movie.getImagePath()));  // Movie image
+
+                VBox movieBox = new VBox(5);
+                ImageView movieImage = new ImageView(new Image(movie.getImagePath()));
+                if (movie.getImageData() != null && movie.getImageData().length > 0) {
+                    // Convert byte array to Image
+                    ByteArrayInputStream inputStream = new ByteArrayInputStream(movie.getImageData());
+                    movieImage = new ImageView(new Image(inputStream));
+                }
+
                 movieImage.setFitHeight(150);
                 movieImage.setFitWidth(100);
                 Text movieTitle = new Text(movie.getTitle());  // Movie title

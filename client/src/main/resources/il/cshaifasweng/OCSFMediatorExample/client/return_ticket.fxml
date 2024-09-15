@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -12,6 +9,26 @@
             prefHeight="400.0" prefWidth="600.0">
 
     <children>
-        <Label text="Return Ticket Window" layoutX="200" layoutY="50"/>
+        <!-- Title Label -->
+        <Label text="Return Ticket Window" layoutX="180.0" layoutY="50.0" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+        <!-- Order ID Field -->
+        <Label text="Order ID:" layoutX="150.0" layoutY="120.0"/>
+        <TextField fx:id="orderIdField" layoutX="250.0" layoutY="115.0" promptText="Enter Order ID"/>
+
+        <!-- Customer ID Field -->
+        <Label text="Customer ID:" layoutX="150.0" layoutY="170.0"/>
+        <TextField fx:id="customerIdField" layoutX="250.0" layoutY="165.0" promptText="Enter Customer ID"/>
+
+        <!-- Purchase Type Selection -->
+        <Label text="Select Purchase Type:" layoutX="150.0" layoutY="220.0"/>
+        <HBox layoutX="270.0" layoutY="220.0" spacing="20.0">
+            <RadioButton fx:id="purchaseCardOption" text="Purchase Card"/>
+            <RadioButton fx:id="purchaseLinkOption" text="Purchase Link"/>
+        </HBox>
+
+        <!-- Submit Button -->
+        <Button fx:id="submitButton" text="Submit" layoutX="260.0" layoutY="280.0" onAction="#handleReturnTicket"/>
+
     </children>
 </AnchorPane>

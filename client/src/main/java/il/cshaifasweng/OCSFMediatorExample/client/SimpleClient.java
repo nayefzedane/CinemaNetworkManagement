@@ -255,7 +255,25 @@ public class SimpleClient extends AbstractClient {
 						contentManagerController.setMovieCount(count);
 					}
 				}
+				// Handle the return ticket message
+				else if (response.startsWith("Return Ticket succeeded")) {
+					String[] parts = response.split(" ");
+					float refundAmount = Float.parseFloat(parts[3]); // extract the refund amount
+					ReturnTicket.showSuccessAlert(refundAmount); // Show success alert with the refund amount
+				} else if (response.startsWith("Return Ticket failed")) {
+					ReturnTicket.showFailureAlert(response); // Show failure alert with the error message
+				}
+				else if (response.startsWith("Link available:")) {
+					WatchScreenController.showSuccessAlert(response);
+				}
+				else if (response.startsWith("Link not available:")) {
+					WatchScreenController.showFailureAlert(response);
+				}
 			});
+		}
+		if(msg instanceof PackageCard){
+			BuyTicketPackageController.ShowReceipt((PackageCard) msg);
+			System.out.println("Recieved receipt frpm server sending to Controller");
 		}
 	}
 
