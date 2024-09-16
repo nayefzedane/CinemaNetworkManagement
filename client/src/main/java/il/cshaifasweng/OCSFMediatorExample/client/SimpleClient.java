@@ -147,7 +147,8 @@ public class SimpleClient extends AbstractClient {
 					AdminController controller = (AdminController) App.getController();
 					controller.updatePackageList(packageCardList);
 				});
-			} else if (!list.isEmpty() && list.get(0) instanceof Request) {
+			}
+			if (!list.isEmpty() && list.get(0) instanceof Request) {
 				System.out.println("on simple client requests");
 				List<Request> requests = (List<Request>) list;
 				System.out.println("Price change requests received from server: " + requests.size());
@@ -163,14 +164,16 @@ public class SimpleClient extends AbstractClient {
 
 					}
 				});
-			} else if (!list.isEmpty() && list.get(0) instanceof Complaints) {
+			}
+			if (!list.isEmpty() && list.get(0) instanceof Complaints) {
 				System.out.println("Client: Received complaints report from server");
 				List<Complaints> complaintsList = (List<Complaints>) list;
 				Platform.runLater(() -> {
 					AdminController controller = (AdminController) App.getController();
 					controller.updateComplaintsList(complaintsList);
 				});
-			} else {
+			}
+			if (!list.isEmpty() && list.get(0) instanceof Movie) {
 				// Check if it's a list of movies
 				List<Movie> movies = (List<Movie>) msg;
 				System.out.println("Movies received from server: " + movies.size()); // Debugging output
