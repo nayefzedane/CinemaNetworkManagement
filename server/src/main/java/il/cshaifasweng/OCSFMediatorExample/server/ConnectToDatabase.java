@@ -80,8 +80,8 @@ public class ConnectToDatabase {
                     LocalDate.of(2024, 12, 10),   // Release Date
                     "Sci-Fi", 148, 8.8f, "Christopher Nolan",
                     "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
-                    "images/background_login.png", "Cinema City",
-                    40.0f, false, 80, 3);
+                    "images/Inception.png", "Cinema City",
+                    40.0f, false, 2);
             session.save(movie1);
 
             Movie movie2 = new Movie("The Shawshank Redemption",
@@ -385,7 +385,10 @@ public class ConnectToDatabase {
                     1234,
                     "Inception",
                     LocalDateTime.of(2024, 12, 24, 14, 30),
-                    "loay@gmail.com"
+                    "loay@gmail.com",
+                    "loay",
+                    "no seat",
+                    0
             );
             session.save(purchase1);
             purchaseCard purchase2 = new purchaseCard(
@@ -396,7 +399,10 @@ public class ConnectToDatabase {
                     5678,
                     "The Dark Knight",
                     LocalDateTime.of(2024, 12, 24, 20, 0),
-                    "mohammed@gmail.com"
+                    "mohammed@gmail.com",
+                    "mohammad",
+                    "no seat",
+                    0
             );
             session.save(purchase2);
 
@@ -408,7 +414,11 @@ public class ConnectToDatabase {
                     1414,
                     "loay asaad",
                     LocalDateTime.of(2025, 12, 24, 20, 0),
-                    "nayef@gmail.com"
+                    "nayef@gmail.com",
+                    "nayef",
+                    "no seat",
+                    0
+
             );
             session.save(purchase3);
             purchaseCard purchase4 = new purchaseCard(
@@ -419,7 +429,10 @@ public class ConnectToDatabase {
                     1414,
                     "nayef zedan",
                     LocalDateTime.of(2025, 12, 24, 20, 0),
-                    "nayef1@gmail.com"
+                    "nayef1@gmail.com",
+                    "nayef",
+                    "no seat",
+                    0
             );
             session.save(purchase4);
             purchaseCard purchase5 = new purchaseCard(
@@ -430,7 +443,10 @@ public class ConnectToDatabase {
                     1414,
                     "real madrid",
                     LocalDateTime.of(2024, 9, 6, 1, 0),
-                    "madrid@gmail.com"
+                    "madrid@gmail.com",
+                    "madrid",
+                    "no seat",
+                    0
             );
             session.save(purchase5);
 
@@ -1068,6 +1084,62 @@ public class ConnectToDatabase {
             return null;  // Return null in case of failure
         }
     }
+    public static purchaseCard savePurchaseCard(purchaseCard purchaseCard) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+
+            // Retrieve the movie by ID
+            Movie movie = session.get(Movie.class, purchaseCard.getMovieId());
+            if (movie == null) {
+                System.out.println("Movie with ID " + purchaseCard.getMovieId() + " not found.");
+                return null;
+            }
+
+            // Parse the seat string from the purchaseCard to find the row and column
+            String seatString = purchaseCard.getSeat(); // Example: "Seat 2-3"
+            String[] seatParts = seatString.split(" ")[1].split("-");
+            int seatRow = Integer.parseInt(seatParts[0]) - 1;  // Convert to 0-based index
+            int seatCol = Integer.parseInt(seatParts[1]) - 1;  // Convert to 0-based index
+
+            // Get the hall map and update the seat to 1 (taken)
+            int[][] hallMap = movie.getHallMap();
+            if (hallMap[seatRow][seatCol] == 0) {  // Check if the seat is available
+                hallMap[seatRow][seatCol] = 1;  // Mark the seat as taken
+                movie.setHallMap(hallMap);  // Update the hall map
+            } else {
+                System.out.println("Seat " + seatString + " is already taken.");
+                return null;  // Seat is already taken, return null or handle as needed
+            }
+
+            // Decrease the available seats
+            int availableSeats = movie.getAvailableSeat();
+            if (availableSeats > 0) {
+                movie.setAvailableSeat(availableSeats - 1);  // Decrease by 1
+            } else {
+                System.out.println("No available seats left.");
+                return null;  // No seats left, return null or handle as needed
+            }
+
+            // Save the updated movie
+            session.update(movie);
+
+            // Save the purchaseCard
+            session.save(purchaseCard);
+            transaction.commit();
+            System.out.println("purchaseCard saved successfully and seat updated.");
+            return purchaseCard;  // Return the purchaseCard object with the generated ID
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("Failed to save the purchaseCard or update the movie.");
+            return null;  // Return null in case of failure
+        }
+    }
+
+
     public static String checkLinkByString(String link) {
         System.out.println("We are on connect to database and we are checking the link");
         System.out.println(link);

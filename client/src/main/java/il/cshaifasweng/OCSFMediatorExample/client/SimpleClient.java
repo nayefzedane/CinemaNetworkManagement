@@ -275,6 +275,10 @@ public class SimpleClient extends AbstractClient {
 			BuyTicketPackageController.ShowReceipt((PackageCard) msg);
 			System.out.println("Recieved receipt frpm server sending to Controller");
 		}
+		if (msg instanceof purchaseCard) {
+			OfflineMoviesController.ShowReceipt((purchaseCard) msg);  // Adapt this to the correct controller
+			System.out.println("Received receipt from server, sending to Controller");
+		}
 	}
 
 	public static SimpleClient getClient() {

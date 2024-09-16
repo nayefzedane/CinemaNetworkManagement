@@ -1,35 +1,31 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.scene.layout.VBox;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.effect.GaussianBlur;
 import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.io.ByteArrayInputStream;
+import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 
 public class OfflineMoviesController {
 
@@ -237,7 +233,12 @@ public class OfflineMoviesController {
         // כפתור "BUY"
         Button buyButton = new Button("BUY");
         buyButton.getStyleClass().add("buy-button");
-        buyButton.setOnAction(e -> openPaymentWindow(movie));  // פתיחת חלון התשלום
+        buyButton.setOnAction(e -> {
+            detailsStage.close();  // Close the movie details window
+
+            openPaymentWindow(movie);  // Open the payment window
+        });
+
 
         // סידור הפרטים בתוך VBox
         VBox movieInfo = new VBox(10,
@@ -297,49 +298,194 @@ public class OfflineMoviesController {
     }
 
     private void openPaymentWindow(Movie movie) {
-        // יצירת Stage חדש עבור חלון התשלום
+        // Create a new Stage for the payment window
         Stage paymentStage = new Stage();
-        paymentStage.setTitle("Payment Window");
+        paymentStage.setTitle("Choose your seat");
 
-        // יצירת VBox לפריסת הפריטים
-        VBox vbox = new VBox(10);
+        // Create a VBox to  the items
+        VBox vbox = new VBox(20);  // More spacing between elements
         vbox.setPadding(new Insets(20));
 
-        // הוספת פרטים על הסרט
-        Label movieLabel = new Label("Movie: " + movie.getTitle());
-        Label cinemaLabel = new Label("Cinema: " + movie.getPlace());
-        Label priceLabel = new Label("Price: $" + movie.getPrice());
+        // Create a title label
+        Label titleLabel = new Label("Please choose your seat");
+        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");  // Styling the title
 
-        // הוספת שדה להזנת מספר המושב
-        Label seatLabel = new Label("Seat Number:");
-        TextField seatField = new TextField();
+        // Create a GridPane to represent the seat map
+        GridPane seatGrid = new GridPane();
+        seatGrid.setPadding(new Insets(10));
+        seatGrid.setHgap(10);
+        seatGrid.setVgap(10);
 
-        // כפתור לתשלום
-        Button payButton = new Button("Pay");
+        // Get the seat map from the movie object
+        int[][] hallMap = movie.getHallMap();
 
-        // פעולה שמתרחשת כאשר לוחצים על כפתור התשלום
-        payButton.setOnAction(event -> {
-            String seatNumber = seatField.getText();
-            if (!seatNumber.isEmpty()) {
-                System.out.println("Payment successful for seat: " + seatNumber);
-                paymentStage.close(); // סגירת החלון לאחר תשלום מוצלח
-            } else {
-                System.out.println("Please enter a seat number.");
+        // Set row and column constraints to make buttons fill the space
+        for (int row = 0; row < hallMap.length; row++) {
+            RowConstraints rowConstraints = new RowConstraints();
+            rowConstraints.setPercentHeight(100.0 / hallMap.length); // Distribute row height equally
+            seatGrid.getRowConstraints().add(rowConstraints);
+        }
+
+        for (int col = 0; col < hallMap[0].length; col++) {
+            ColumnConstraints colConstraints = new ColumnConstraints();
+            colConstraints.setPercentWidth(100.0 / hallMap[0].length); // Distribute column width equally
+            seatGrid.getColumnConstraints().add(colConstraints);
+        }
+
+        // Loop through the 2D array to create buttons for each seat
+        for (int row = 0; row < hallMap.length; row++) {
+            for (int col = 0; col < hallMap[row].length; col++) {
+                String seatText = "Seat " + (row + 1) + "-" + (col + 1);
+                Button seatButton = new Button(seatText);
+
+                // Set the button size to fill its grid cell
+                seatButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+                // Set the color of the button based on seat availability
+                if (hallMap[row][col] == 1) {
+                    seatButton.setStyle("-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-font-weight: bold;"); // Better red with white text
+                    seatButton.setDisable(true); // Disable taken seats
+                } else {
+                    seatButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"); // Green for available
+                }
+
+                // Handle seat selection
+                seatButton.setOnAction(event -> {
+                    String selectedSeat = seatText;
+                    System.out.println("Selected Seat: " + selectedSeat);
+
+                    // Open a new screen for user details (to be implemented later)
+                    openUserDetailsWindow(selectedSeat, movie);
+
+                    paymentStage.close();  // Close the seat selection window
+                });
+
+                // Add the seat button to the grid
+                seatGrid.add(seatButton, col, row);
+            }
+        }
+
+        // Add the title and grid to the VBox
+        vbox.getChildren().addAll(titleLabel, seatGrid);
+        // הסרת הטשטוש כשסוגרים את החלון
+        paymentStage.setOnCloseRequest(event -> mainWindowRoot.setEffect(null));
+
+        // סגירת החלון בלחיצה מחוץ לחלון
+        mainWindowRoot.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (paymentStage.isShowing() && !paymentStage.isFocused()) {
+                paymentStage.close();
+                mainWindowRoot.setEffect(null); // הסרת הטשטוש
             }
         });
 
-        // כפתור לסגירת החלון
-        Button closeButton = new Button("Close");
-        closeButton.setOnAction(e -> paymentStage.close());
-
-        // הוספת כל הפריטים ל-VBox
-        vbox.getChildren().addAll(movieLabel, cinemaLabel, priceLabel, seatLabel, seatField, payButton, closeButton);
-
-        // יצירת סצנה והצגת החלון בגודל גדול יותר
-        Scene paymentScene = new Scene(vbox, 600, 400); // גודל החלון 600x400 פיקסלים
+        // Create a scene and show the window with larger size
+        Scene paymentScene = new Scene(vbox, 800, 600); // Increased window size
         paymentStage.setScene(paymentScene);
         paymentStage.show();
     }
+
+
+
+
+
+    private void openUserDetailsWindow(String seatNumber, Movie movie) {
+        Stage detailsStage = new Stage();
+        detailsStage.setTitle("Enter your details");
+
+        // Create input fields for user details
+        Label seatLabel = new Label("You selected: " + seatNumber);
+        Label nameLabel = new Label("Name:");
+        TextField nameField = new TextField();
+
+        Label customerIdLabel = new Label("Customer ID:");
+        TextField customerIdField = new TextField();
+
+        Label customerEmailLabel = new Label("Email:");
+        TextField customerEmailField = new TextField();
+
+        Label cardNumberLabel = new Label("Card Number (16 digits):");
+        TextField fullCardNumberField = new TextField();
+
+        // Label for movie price (from the selected movie)
+        Label priceLabel = new Label("Price: $" + movie.getPrice());
+
+        // Create a button to handle ticket purchase
+        Button buyTicketButton = new Button("Buy Ticket");
+
+        // Action when the button is clicked
+        buyTicketButton.setOnAction(event -> {
+            // Retrieve data from fields
+            String name = nameField.getText();
+            String customerIdStr = customerIdField.getText();
+            String customerEmail = customerEmailField.getText();
+            String fullCardNumber = fullCardNumberField.getText();
+
+            // Validate the input (example: check if fields are empty or if the card number is valid)
+            if (name.isEmpty() || customerIdStr.isEmpty() || customerEmail.isEmpty() || fullCardNumber.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Please fill in all fields.");
+                return;
+            }
+
+            if (!fullCardNumber.matches("\\d{16}")) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Card number must be 16 digits.");
+                return;
+            }
+
+            int customerId;
+            try {
+                customerId = Integer.parseInt(customerIdStr);
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Customer ID must be a valid number.");
+                return;
+            }
+
+            // Extract the last 4 digits from the full card number
+            String lastFourDigits = fullCardNumber.substring(fullCardNumber.length() - 4);
+
+            // Set the purchase date as the current date
+            LocalDate purchaseDate = LocalDate.now();
+
+            // Use the movie's price for this ticket
+            float price = movie.getPrice();
+            //public purchaseCard(LocalDate purchaseDate, String branchName, float price, int customerId,
+            //                    int paymentCardLastFour, String movieTitle, LocalDateTime showTime, String costMail)
+            // Create a new Ticket entity (assuming you have a Ticket class)
+            purchaseCard ticket = new purchaseCard(purchaseDate, movie.getPlace(), price, customerId, Integer.parseInt(lastFourDigits),movie.getTitle() ,movie.getShowtime(),customerEmail,name, seatNumber, movie.getId());
+
+            // Send the Ticket to the server
+            try {
+                SimpleClient.getClient().sendToServer(ticket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Close the window after successful purchase
+            detailsStage.close();
+            mainWindowRoot.setEffect(null);
+        });
+
+        // Layout for the form
+        VBox vbox = new VBox(10, seatLabel, nameLabel, nameField, customerIdLabel, customerIdField, customerEmailLabel, customerEmailField,
+                cardNumberLabel, fullCardNumberField, priceLabel, buyTicketButton);
+        vbox.setPadding(new Insets(20));
+        // הסרת הטשטוש כשסוגרים את החלון
+        detailsStage.setOnCloseRequest(event -> mainWindowRoot.setEffect(null));
+
+        // סגירת החלון בלחיצה מחוץ לחלון
+        mainWindowRoot.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (detailsStage.isShowing() && !detailsStage.isFocused()) {
+                detailsStage.close();
+                mainWindowRoot.setEffect(null); // הסרת הטשטוש
+            }
+        });
+
+        // Create the scene and show the details window
+        Scene detailsScene = new Scene(vbox, 400, 400);
+        detailsStage.setScene(detailsScene);
+        detailsStage.show();
+    }
+
+
 
 
 
@@ -433,4 +579,44 @@ public class OfflineMoviesController {
             searchWindow.getStyleClass().add("hidden");
         }
     }
+    // Helper method to show alerts
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    public static void ShowReceipt(purchaseCard purchaseCard) {
+        StringBuilder receiptMessage = new StringBuilder();
+        receiptMessage.append("Receipt:\n");
+        receiptMessage.append("=====================================\n");
+        receiptMessage.append("Purchase ID: ").append(purchaseCard.getOrderId()).append("\n");  // Purchase ID
+        receiptMessage.append("Name: ").append(purchaseCard.getName()).append("\n");
+        receiptMessage.append("Customer ID: ").append(purchaseCard.getCustomerId()).append("\n");
+        receiptMessage.append("Customer Email: ").append(purchaseCard.getCostMail()).append("\n");
+        receiptMessage.append("Price: $").append(purchaseCard.getPrice()).append("\n");
+        receiptMessage.append("Movie Title: ").append(purchaseCard.getMovieTitle()).append("\n");
+        receiptMessage.append("Branch Name: ").append(purchaseCard.getBranchName()).append("\n");
+        receiptMessage.append("Seat: ").append(purchaseCard.getSeat()).append("\n");
+        receiptMessage.append("Showtime: ").append(purchaseCard.getShowTime()).append("\n");
+        receiptMessage.append("Payment (Last 4 digits): ").append(purchaseCard.getPaymentCardLastFour()).append("\n");
+        receiptMessage.append("Purchase Date: ").append(purchaseCard.getPurchaseDate()).append("\n");
+        receiptMessage.append("=====================================\n");
+
+        // Ensure the alert dialog is shown on the JavaFX Application Thread
+        Platform.runLater(() -> {
+            System.out.println(receiptMessage.toString());
+            // Show the receipt in an alert dialog
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Ticket Purchase Receipt");
+            alert.setHeaderText(null);  // Optional: remove header text
+            alert.setContentText(receiptMessage.toString());
+            alert.showAndWait();  // Use showAndWait to block until the user closes the alert
+        });
+        SimpleClient client = SimpleClient.getClient();
+        System.out.println("Requesting all movies that are not online.");
+        client.requestMoviesByOnlineStatus(false);
+
+    }
+
 }
