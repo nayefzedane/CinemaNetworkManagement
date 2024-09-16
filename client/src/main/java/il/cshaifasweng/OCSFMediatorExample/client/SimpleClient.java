@@ -173,14 +173,21 @@ public class SimpleClient extends AbstractClient {
 					controller.updateComplaintsList(complaintsList);
 				});
 			}
-			if (!list.isEmpty() && list.get(0) instanceof Movie) {
+			else {
+				//trying this:
+				MainWindowController mainController = (MainWindowController) App.getController();
+				Object activeController = mainController.getActiveController();
+				if (activeController instanceof AdminController) {
+					AdminController controller= (AdminController) activeController;
+					controller.showAlert("error", "no tickets found");
+					return;
+				}
 				// Check if it's a list of movies
 				List<Movie> movies = (List<Movie>) msg;
 				System.out.println("Movies received from server: " + movies.size()); // Debugging output
 				Platform.runLater(() -> {
 					try {
-						MainWindowController mainController = (MainWindowController) App.getController();
-						Object activeController = mainController.getActiveController();
+
 
 						if (activeController instanceof OfflineMoviesController) {
 							OfflineMoviesController controller = (OfflineMoviesController) activeController;

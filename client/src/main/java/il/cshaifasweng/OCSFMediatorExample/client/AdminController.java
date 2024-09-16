@@ -567,7 +567,8 @@ public class AdminController {
         initialize_requests();
     }
 
-    private void showAlert(String title, String content) {
+
+    public void showAlert(String title, String content) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
