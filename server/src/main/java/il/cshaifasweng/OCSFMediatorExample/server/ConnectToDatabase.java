@@ -799,6 +799,26 @@ public class ConnectToDatabase {
                     session.getTransaction().rollback();
                     return "Return Ticket failed order id or Customer id wrong";
                 }
+                //updating the seats on the movie:
+                // Retrieve the movie by ID
+                Movie movie = session.get(Movie.class, card.getMovieId());
+                if (movie == null) {
+                    session.getTransaction().rollback();
+                    return "Movie not found for the given purchase.";
+                }
+
+                // Update the seat back to available in the hall map
+                String seatString = card.getSeat();  // Example: "Seat 2-3"
+                String[] seatParts = seatString.split(" ")[1].split("-");
+                int seatRow = Integer.parseInt(seatParts[0]) - 1;  // Convert to 0-based index
+                int seatCol = Integer.parseInt(seatParts[1]) - 1;  // Convert to 0-based index
+
+                int[][] hallMap = movie.getHallMap();
+                if (hallMap[seatRow][seatCol] == 1) {  // Check if the seat is currently taken
+                    hallMap[seatRow][seatCol] = 0;  // Mark the seat as available
+                    movie.setHallMap(hallMap);  // Update the hall map
+                    movie.setAvailableSeat(movie.getAvailableSeat() + 1);  // Increase available seats by 1
+                }
 
                 // Check the time conditions against showtime
                 LocalDateTime currentTime = LocalDateTime.now();
@@ -813,6 +833,7 @@ public class ConnectToDatabase {
                 } else {
                     returnedValue = 0;  // No refund
                 }
+                session.update(movie);  // Update the movie after seat is returned
 
                 session.delete(card);  // Delete the PurchaseCard
                 System.out.println("Deleted PurchaseCard: " + card);
