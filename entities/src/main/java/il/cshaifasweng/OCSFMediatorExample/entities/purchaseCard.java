@@ -38,13 +38,18 @@ public class purchaseCard implements Serializable {
 
     @Column(name = "cost_mail", nullable = false)
     private String costMail;
-
+    @Column(name = "name", nullable = false)
+    private String name;
+    @Column(name = "seat", nullable = false)
+    private String seat;
+    @Column(name = "movieId", nullable = false)
+    private int movieId;
     // Default constructor
     public purchaseCard() {}
 
     // Constructor with parameters
     public purchaseCard(LocalDate purchaseDate, String branchName, float price, int customerId,
-                    int paymentCardLastFour, String movieTitle, LocalDateTime showTime, String costMail) {
+                    int paymentCardLastFour, String movieTitle, LocalDateTime showTime, String costMail, String name,  String seat, int movieId) {
         this.purchaseDate = purchaseDate;
         this.branchName = branchName;
         this.price = price;
@@ -53,6 +58,9 @@ public class purchaseCard implements Serializable {
         this.movieTitle = movieTitle;
         this.showTime = showTime;
         this.costMail = costMail;
+        this.name = name;
+        this.seat = seat;
+        this.movieId = movieId;
     }
 
 
@@ -137,4 +145,14 @@ public class purchaseCard implements Serializable {
         this.costMail = costMail;
     }
 
+    public String getSeat() {
+        return seat;
+    }
+    public void setSeat(String seat) {this.seat = seat;}
+    public String getName() {return this.name;}
+    public void setName(String name) {this.name = name;}
+
+    public int getMovieId() {
+        return movieId;
+    }
 }

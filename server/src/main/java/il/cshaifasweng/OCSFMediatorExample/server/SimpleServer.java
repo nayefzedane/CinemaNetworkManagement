@@ -364,6 +364,41 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
+		if (msg instanceof purchaseCard) {
+			purchaseCard purchaseCard = (purchaseCard) msg;
+			System.out.println("Received purchaseCard from client: " + purchaseCard.getCostMail());
+
+			// Save the purchaseCard to the database and retrieve the generated ID
+			purchaseCard savedPurchaseCard = ConnectToDatabase.savePurchaseCard(purchaseCard);
+
+			if (savedPurchaseCard != null) {
+				try {
+					StringBuilder receiptMessage = new StringBuilder();
+					receiptMessage.append("Receipt:\n");
+					receiptMessage.append("=====================================\n");
+					receiptMessage.append("Purchase ID: ").append(savedPurchaseCard.getOrderId()).append("\n");  // Use purchase ID here
+					receiptMessage.append("Name: ").append(savedPurchaseCard.getName()).append("\n");
+					receiptMessage.append("Customer ID: ").append(savedPurchaseCard.getCustomerId()).append("\n");
+					receiptMessage.append("Customer Email: ").append(savedPurchaseCard.getCostMail()).append("\n");
+					receiptMessage.append("Price: $").append(savedPurchaseCard.getPrice()).append("\n");
+					receiptMessage.append("Movie Title: ").append(savedPurchaseCard.getMovieTitle()).append("\n");
+					receiptMessage.append("Branch Name: ").append(savedPurchaseCard.getBranchName()).append("\n");
+					receiptMessage.append("Seat: ").append(savedPurchaseCard.getSeat()).append("\n");
+					receiptMessage.append("Showtime: ").append(savedPurchaseCard.getShowTime()).append("\n");
+					receiptMessage.append("Payment (Last 4 digits): ").append(savedPurchaseCard.getPaymentCardLastFour()).append("\n");
+					receiptMessage.append("Purchase Date: ").append(savedPurchaseCard.getPurchaseDate()).append("\n");
+					receiptMessage.append("=====================================\n");
+					EmailService.sendEmail(savedPurchaseCard.getCostMail(), "Ticket Purchase Receipt", receiptMessage.toString());
+
+					client.sendToClient(savedPurchaseCard);
+					System.out.println("purchaseCard sent back to client with ID: " + savedPurchaseCard.getCustomerId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+
 
 	}
 }

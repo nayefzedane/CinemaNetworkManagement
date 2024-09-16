@@ -95,13 +95,13 @@ public class ReturnTicket {
         }).start();
     }
     // Show success alert with refund value, but after 2 seconds delay
-    public static void showSuccessAlert(float refundAmount) {
+    public static void showSuccessAlert(String message) {
         PauseTransition delay = new PauseTransition(Duration.seconds(2));  // Create a 2-second delay
         delay.setOnFinished(event -> {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Ticket Returned Successfully");
             alert.setHeaderText(null);
-            alert.setContentText("You have returned your ticket successfully. You will receive a refund of " + refundAmount + ".");
+            alert.setContentText(message);
             alert.show();  // Use show() instead of showAndWait() to avoid blocking the UI thread
         });
         delay.play();  // Start the delay
