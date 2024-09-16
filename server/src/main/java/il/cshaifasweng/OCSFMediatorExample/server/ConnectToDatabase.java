@@ -478,7 +478,7 @@ public class ConnectToDatabase {
 
             // You can add more PurchaseLink samples as needed
             PurchaseLink purchaseLink2 = new PurchaseLink(
-                    LocalDateTime.of(2024, 8, 18, 15, 0),  // purchaseTime
+                    LocalDateTime.of(2024, 9, 16, 21, 0),  // purchaseTime
                     1005,  // customerId
                     4321,  // paymentCardLastFour
                     "Interstellar",  // movieTitle
@@ -487,7 +487,7 @@ public class ConnectToDatabase {
             );
             session.save(purchaseLink2);
             PurchaseLink purchaseLink3 = new PurchaseLink(
-                    LocalDateTime.of(2024, 8, 18, 15, 0),  // purchaseTime
+                    LocalDateTime.of(2024, 9, 16, 22, 0),  // purchaseTime
                     1005,  // customerId
                     4321,  // paymentCardLastFour
                     "Red Dead Redemption 2",  // movieTitle
@@ -776,6 +776,7 @@ public class ConnectToDatabase {
 
         Object purchase = null;
         float returnedValue = 0;
+        String returnedPercentage = " ";
         int linkId = orderId;
 
         try {
@@ -790,14 +791,25 @@ public class ConnectToDatabase {
                     return "Return Ticket failed order id or Customer id wrong";
                 }
 
+
+
                 purchaseCard card = (purchaseCard) purchase;
                 System.out.println("Found PurchaseCard: " + card);
+
+
 
                 // Check if customerId matches
                 if (card.getCustomerId() != customerId) {
                     System.out.println("Customer ID does not match.");
                     session.getTransaction().rollback();
                     return "Return Ticket failed order id or Customer id wrong";
+                }
+                LocalDateTime currentTime = LocalDateTime.now();
+                LocalDateTime showTime = card.getShowTime();
+                System.out.println(currentTime);
+                System.out.println(showTime);
+                if(currentTime.isAfter(showTime)){
+                    return ("Return Ticket failed because you are out of time, the movie is already displayed on: " + card.getShowTime());
                 }
                 //updating the seats on the movie:
                 // Retrieve the movie by ID
@@ -821,17 +833,17 @@ public class ConnectToDatabase {
                 }
 
                 // Check the time conditions against showtime
-                LocalDateTime currentTime = LocalDateTime.now();
-                LocalDateTime showTime = card.getShowTime();
-                System.out.println(currentTime);
-                System.out.println(showTime);
+
 
                 if (currentTime.isBefore(showTime.minusHours(3))) {
                     returnedValue = card.getPrice();  // Full refund
+                    returnedPercentage = "100%";
                 } else if (currentTime.isBefore(showTime.minusHours(1))) {
                     returnedValue = card.getPrice() / 2;  // Half refund
+                    returnedPercentage = "50%";
                 } else {
                     returnedValue = 0;  // No refund
+                    returnedPercentage = "0%";
                 }
                 session.update(movie);  // Update the movie after seat is returned
 
@@ -863,10 +875,12 @@ public class ConnectToDatabase {
                 LocalDateTime currentTime = LocalDateTime.now();
                 LocalDateTime availableFrom = link.getAvailableFrom();
 
+
                 if (currentTime.isBefore(availableFrom.minusHours(1))) {
                     returnedValue = link.getPrice() / 2;  // Half refund
+                    returnedPercentage = "50%";
                 } else {
-                    returnedValue = 0;  // No refund
+                    return "Return Ticket failed because you are out of time"; // No refund
                 }
 
                 session.delete(link);  // Delete the PurchaseLink
@@ -884,7 +898,7 @@ public class ConnectToDatabase {
             session.close();
         }
 
-        return "Return Ticket succeeded " + returnedValue;
+        return "Return Ticket succeeded, you will receive a refund of " +returnedPercentage+" which is: " + returnedValue;
     }
 
 
