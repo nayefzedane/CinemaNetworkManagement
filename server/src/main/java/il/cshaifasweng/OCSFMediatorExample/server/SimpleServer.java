@@ -402,6 +402,46 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
+		if (msg instanceof PurchaseLink) {
+			PurchaseLink purchaseLink = (PurchaseLink) msg;
+			System.out.println("Received PurchaseLink from client: " + purchaseLink.getCustomerMail());
+
+			// Save the PurchaseLink to the database and retrieve the generated ID
+			PurchaseLink savedPurchaseLink = ConnectToDatabase.savePurchaseLink(purchaseLink);
+
+			if (savedPurchaseLink != null) {
+				try {
+					StringBuilder receiptMessage = new StringBuilder();
+					receiptMessage.append("Purchase Link Receipt:\n");
+					receiptMessage.append("=====================================\n");
+					receiptMessage.append("Purchase ID: ").append(savedPurchaseLink.getLinkId()).append("\n");
+					receiptMessage.append("Name: ").append(savedPurchaseLink.getName()).append("\n");
+					receiptMessage.append("Customer ID: ").append(savedPurchaseLink.getCustomerId()).append("\n");
+					receiptMessage.append("Customer Email: ").append(savedPurchaseLink.getCustomerMail()).append("\n");
+					receiptMessage.append("Price: $").append(savedPurchaseLink.getPrice()).append("\n");
+					receiptMessage.append("Payment (Last 4 digits): ").append(savedPurchaseLink.getPaymentCardLastFour()).append("\n");
+					receiptMessage.append("Purchase Date: ").append(savedPurchaseLink.getPurchaseTime()).append("\n");
+					receiptMessage.append("Purchase Link: ").append(savedPurchaseLink.getUniqueLink()).append("\n");
+					receiptMessage.append("Available from: ").append(purchaseLink.getAvailableFrom()).append("\n");
+					receiptMessage.append("=====================================\n");
+					receiptMessage.append("Note: Please remember your purchase ID number ").append(savedPurchaseLink.getLinkId()).append(", as it may be required for future transactions.\n");
+
+					// Send receipt email to customer
+					EmailService.sendEmail(savedPurchaseLink.getCustomerMail(), "Purchase Link Receipt", receiptMessage.toString());
+
+					// Send the saved PurchaseLink back to the client
+					client.sendToClient(receiptMessage.toString());
+					System.out.println("PurchaseLink receipt sent back to client with ID: " + savedPurchaseLink.getLinkId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}else{
+				client.sendToClient("failed Purchase Link buy");
+			}
+		}
+
+
+
 		if (msg instanceof purchaseCard) {
 			purchaseCard purchaseCard = (purchaseCard) msg;
 			System.out.println("Received purchaseCard from client: " + purchaseCard.getCostMail());

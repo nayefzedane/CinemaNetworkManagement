@@ -1122,6 +1122,23 @@ public class ConnectToDatabase {
             return null;  // Return null in case of failure
         }
     }
+    public static PurchaseLink savePurchaseLink(PurchaseLink purchaseLink) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(purchaseLink);
+            transaction.commit();
+            System.out.println("PurchaseLink saved successfully");
+            return purchaseLink;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("Failed to save the PurchaseLink");
+            return null;
+        }
+    }
     public static purchaseCard savePurchaseCard(purchaseCard purchaseCard) {
         Transaction transaction = null;
         try (Session session = getSessionFactory().openSession()) {
