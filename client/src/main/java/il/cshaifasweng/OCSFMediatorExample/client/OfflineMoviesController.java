@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.io.ByteArrayInputStream;
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
+import javafx.util.Duration;
 
 public class OfflineMoviesController {
     String currentScene = " "; // this variable will save if we are on buy with cash or buy with package
@@ -714,6 +716,17 @@ public class OfflineMoviesController {
         SimpleClient client = SimpleClient.getClient();
         System.out.println("Requesting all movies that are not online.");
         client.requestMoviesByOnlineStatus(false);
+    }
+    public static void showFailureAlert(String errorMessage) {
+        PauseTransition delay = new PauseTransition(Duration.seconds(2));  // Create a 2-second delay
+        delay.setOnFinished(event -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Failed to Enter with Package Card");
+            alert.setHeaderText(null);
+            alert.setContentText(errorMessage);
+            alert.show();  // Use show() instead of showAndWait() to avoid blocking the UI thread
+        });
+        delay.play();  // Start the delay
     }
 
 }
