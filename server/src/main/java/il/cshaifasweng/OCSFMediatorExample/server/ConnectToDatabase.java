@@ -27,6 +27,7 @@ import javax.persistence.criteria.Root;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 
@@ -35,7 +36,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 import java.time.LocalDate;
 import javax.persistence.criteria.Order;
 
-public class ConnectToDatabase {
+public class    ConnectToDatabase {
     private static SessionFactory sessionFactory;
 
     private static SessionFactory getSessionFactory() throws HibernateException {
@@ -262,6 +263,22 @@ public class ConnectToDatabase {
         }
     }
 
+    // Method to insert a complaint into the database using Hibernate
+    public static void insertComplaint(Complaints complaint) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) { // Assuming getSessionFactory() is correctly set up
+            transaction = session.beginTransaction(); // Begin the transaction
+            session.save(complaint);  // Save the complaint object to the database
+            transaction.commit(); // Commit the transaction
+            System.out.println("Complaint added successfully: " + complaint.getComplainTitle());
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();  // Rollback the transaction in case of an error
+            }
+            System.err.println("Failed to add complaint: " + complaint.getComplainTitle());
+            e.printStackTrace();  // Log the exception for debugging purposes
+        }
+    }
     public static Long getMovieCountFromDatabase() {
         try {
             Session session = getSessionFactory().openSession();
@@ -915,38 +932,68 @@ public class ConnectToDatabase {
             return null;
         }
     }
+
     public static List<Movie> getMoviesByScreeningDate(LocalDate startDate, LocalDate endDate) {
+        return null;
+    }
+
+    public static Complaints getComplaintById(int complaintId) {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
-
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
-            Root<Movie> root = query.from(Movie.class);
-
-            // Filtering movies based on screening dates
-            if (startDate != null && endDate != null) {
-                query.select(root).where(builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate));
-            } else if (startDate != null) {
-                query.select(root).where(builder.greaterThanOrEqualTo(root.get("showtime").as(LocalDate.class), startDate));
-            } else if (endDate != null) {
-                query.select(root).where(builder.lessThanOrEqualTo(root.get("showtime").as(LocalDate.class), endDate));
-            } else {
-                query.select(root); // If no date criteria are provided, return all movies
-            }
-
-            List<Movie> movies = session.createQuery(query).getResultList();
+            Complaints complaint = session.get(Complaints.class, complaintId);
             session.getTransaction().commit();
-
-            return movies;
+            return complaint;
         } catch (Exception e) {
-            System.err.println("Error fetching movies by screening date: " + e.getMessage());
+            System.err.println("Error fetching complaint by ID: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
     }
 
+    // Method to update a complaint in the database
+    public static boolean updateComplaint(Complaints complaint) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.update(complaint);  // Update the complaint object in the database
+            transaction.commit();
+            System.out.println("Complaint updated successfully: ID = " + complaint.getId());
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();  // Rollback in case of an error
+            }
+            System.err.println("Error updating complaint: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 
-   
+    public static List<Complaints> getUnansweredComplaints() {
+        try (Session session = getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Complaints> query = builder.createQuery(Complaints.class);
+            Root<Complaints> root = query.from(Complaints.class);
+
+            // Filter complaints that have no answer (assuming "answer" is the field)
+            query.select(root).where(
+                    builder.or(
+                            builder.isNull(root.get("answer")), // Field is null
+                            builder.equal(root.get("answer"), "") // Field is empty
+                    )
+            );
+
+            List<Complaints> complaintsList = session.createQuery(query).getResultList();
+            session.getTransaction().commit();
+            return complaintsList;
+        } catch (Exception e) {
+            System.err.println("Error fetching unanswered complaints: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
 
 

@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SubmitComplaint"
-            prefHeight="400.0" prefWidth="600.0">
 
-    <children>
-        <Label text="Submit Complaint Window" layoutX="200" layoutY="50"/>
-    </children>
+<AnchorPane prefHeight="638.0" prefWidth="580.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SubmitComplaint">
+    <Label fx:id="submitComplaintLabel" layoutX="200" layoutY="50" text="Submit Complaint Window" />
+    <TextField fx:id="complainMail" alignment="CENTER" layoutX="78.0" layoutY="90.0" prefHeight="31.0" prefWidth="211.0" promptText="Enter The Mail" />
+    <TextField fx:id="complainTitle" alignment="CENTER" layoutX="78.0" layoutY="187.0" prefHeight="37.0" prefWidth="211.0" promptText="Title" />
+    <TextField fx:id="complainText" alignment="CENTER" layoutX="78.0" layoutY="240.0" prefHeight="108.0" prefWidth="211.0" promptText="Context" />
+    <MenuButton fx:id="selectedBranch" layoutX="142.0" layoutY="136.0" mnemonicParsing="false" text="Branch">
+        <items>
+            <MenuItem fx:id="buttonCinemaCity" mnemonicParsing="false" onAction="#handleCinemaCitySelection" text="Cinema City" />
+            <MenuItem fx:id="buttonYesPlanet" mnemonicParsing="false" onAction="#handleYesPlanetSelection" text="Yes Planet" />
+        </items>
+    </MenuButton>
+<!--    <Button fx:id="complainSearch" layoutX="475.0" layoutY="24.0"  onAction="#toggleSearchWindow" styleClass="search-icon" text="🔍" />-->
+    <Button id="submitComplain1" layoutX="142.0" layoutY="361.0" mnemonicParsing="false" onAction="#submitComplaint" text="Submit" />
+
 </AnchorPane>

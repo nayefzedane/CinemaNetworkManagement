@@ -190,14 +190,34 @@ public class SimpleClient extends AbstractClient {
 
 					}
 				});
+				// to check here later if reports not working again
 			} else if (!list.isEmpty() && list.get(0) instanceof Complaints) {
 				System.out.println("Client: Received complaints report from server");
 				List<Complaints> complaintsList = (List<Complaints>) list;
 				Platform.runLater(() -> {
-					AdminController controller = (AdminController) App.getController();
-					controller.updateComplaintsList(complaintsList);
+					try {
+						// Retrieve the active controller from your application
+						Object controller = CustomerServiceController.getActiveController();
+
+						// Check if the controller is an instance of ComplainsHandle
+						if (controller instanceof ComplainsHandle) {
+							ComplainsHandle complaintController = (ComplainsHandle) controller;
+							complaintController.handleReceivedComplaints(complaintsList);
+						} else {
+							AdminController controller1 = (AdminController) App.getController();
+							controller1.updateComplaintsList(complaintsList);
+							// Handle the case when the active controller is not ComplainsHandle
+							System.out.println("Error: Active controller is not an instance of ComplainsHandle.");
+							// Optionally, show an alert or log the error
+						//	showAlert("Error", "The active controller is not suitable to handle complaints.");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					//	showAlert("Error", "Failed to display complaints.");
+					}
 				});
 			}
+
 
 		}
 
@@ -281,8 +301,6 @@ public class SimpleClient extends AbstractClient {
 		}
 		return client;
 	}
-
-
 
 
 
