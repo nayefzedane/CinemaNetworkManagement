@@ -1205,6 +1205,94 @@ public class ConnectToDatabase {
             return "Link not available: link not found.";
         }
     }
+    public static String processPackageCard(int customerId, int packageId, int movieId, String seat) {
+        // Open the session and transaction
+        Session session = ConnectToDatabase.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        try {
+            // Retrieve the PackageCard by packageId and customerId
+            PackageCard packageCard = (PackageCard) session.createQuery(
+                            "FROM PackageCard WHERE packageId = :packageId AND customerId = :customerId")
+                    .setParameter("packageId", packageId)
+                    .setParameter("customerId", customerId)
+                    .uniqueResult();
+
+            if (packageCard == null) {
+                session.getTransaction().rollback();
+                return "PackageCard or Customer ID is invalid.";
+            }
+
+            // Retrieve the movie by ID
+            Movie movie = session.get(Movie.class, movieId);
+            if (movie == null) {
+                session.getTransaction().rollback();
+                return "Movie with ID " + movieId + " not found.";
+            }
+
+            // Parse the seat string to find the row and column
+            String[] seatParts = seat.split(" ")[1].split("-");
+            int seatRow = Integer.parseInt(seatParts[0]) - 1;  // Convert to 0-based index
+            int seatCol = Integer.parseInt(seatParts[1]) - 1;  // Convert to 0-based index
+
+            // Get the hall map and update the seat to 1 (taken)
+            int[][] hallMap = movie.getHallMap();
+            if (hallMap[seatRow][seatCol] == 0) {  // Check if the seat is available
+                hallMap[seatRow][seatCol] = 1;  // Mark the seat as taken
+                movie.setHallMap(hallMap);  // Update the hall map
+                movie.setAvailableSeat(movie.getAvailableSeat() - 1);  // Decrease available seats by 1
+            } else {
+                session.getTransaction().rollback();
+                return "Seat " + seat + " is already taken.";
+            }
+
+            // Use the package (decrease the remaining entries)
+            boolean success = packageCard.usePackage();  // Decrease remaining entries by 1
+            if (!success) {
+                session.getTransaction().rollback();
+                return "No remaining entries in the package.";
+            }
+
+            // Save the updated movie and package card
+            session.update(movie);
+            session.update(packageCard);
+            session.getTransaction().commit();
+            //prepare the recipe
+            String receiptMessage = String.format(
+                    "Receipt:\n" +
+                            "=====================================\n" +
+                            "Name: %s\n" +
+                            "Customer Email: %s\n" +
+                            "Remaining Entries: %d\n" +
+                            "Movie Title: %s\n" +
+                            "Showtime: %s\n" +
+                            "Place: %s\n" +
+                            "Hall Number: %d\n",
+
+                    packageCard.getName(),
+                    packageCard.getCustomerEmail(),
+                    packageCard.getRemainingEntries(),
+                    movie.getTitle(),
+                    movie.getShowtime().toString(),
+                    movie.getPlace(),
+                    movie.getHallNumber()
+            );
+
+            // Return the message and include the email at the start for easy fetching
+            return "Email:" + packageCard.getCustomerEmail() + ":" + receiptMessage;
+
+
+
+
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            e.printStackTrace();
+            return "Failed to process package due to an internal error.";
+        } finally {
+            session.close();
+        }
+    }
+
 
 
 

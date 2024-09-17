@@ -129,6 +129,41 @@ public class SimpleServer extends AbstractServer {
 			// Send the result back to the client
 			client.sendToClient(result);
 		}
+		//buy with package:
+		if (msgString.startsWith("PackageCardRequest:")) {
+			// Remove the prefix and split the remaining part of the message by ":"
+			String[] parts = msgString.substring("PackageCardRequest:".length()).split(":");
+
+			// Ensure that we have the correct number of parts
+			if (parts.length == 4) {
+				// Extract the individual values
+				int customerId = Integer.parseInt(parts[0]);  // Customer ID
+				String packageId = parts[1];                  // Package Card ID
+				String seatNumber = parts[2];                 // Seat number
+				int movieId = Integer.parseInt(parts[3]);     // Movie ID
+
+				// Now you have the values in separate variables
+				System.out.println("Customer ID: " + customerId);
+				System.out.println("Package Card ID: " + packageId);
+				System.out.println("Seat Number: " + seatNumber);
+				System.out.println("Movie ID: " + movieId);
+				String answer = ConnectToDatabase.processPackageCard(customerId, Integer.parseInt(packageId), movieId, seatNumber);
+				System.out.println(answer);
+
+				String[] partsPackage = answer.split(":", 3);  // Split into 3 parts: "Email", email, and the receipt
+				String email = partsPackage[1];  // This is the customer's email
+				String receiptMessage = partsPackage[2];  // This is the full receipt message
+				receiptMessage = receiptMessage + seatNumber + "\n=====================================\n";
+
+				System.out.println("Email to send to: " + email);
+				System.out.println("Receipt Message: " + receiptMessage);
+				EmailService.sendEmail(email, "Package entrie receipt", receiptMessage);
+				client.sendToClient("PackageCardUse:" + receiptMessage);
+
+			} else {
+				System.out.println("Invalid PackageCardRequest format.");
+			}
+		}
 
 
 		if (msgString.startsWith("login@")) {

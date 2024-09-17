@@ -278,6 +278,14 @@ public class SimpleClient extends AbstractClient {
 				else if (response.startsWith("Link not available:")) {
 					WatchScreenController.showFailureAlert(response);
 				}
+				else if(response.startsWith("PackageCardUse:")){
+					// Split the message into two parts: "PackageCardUse:" and the receipt message
+					String receiptMessage = response.split("PackageCardUse:", 2)[1];
+					// Now you have just the receipt message
+					System.out.println("Received receipt message: " + receiptMessage);
+					OfflineMoviesController.showPackageBuyReceipt(receiptMessage);
+
+				}
 			});
 		}
 		if(msg instanceof PackageCard){

@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 
 public class OfflineMoviesController {
+    String currentScene = " "; // this variable will save if we are on buy with cash or buy with package
 
     @FXML
     private TilePane movieTilePane;
@@ -235,9 +236,23 @@ public class OfflineMoviesController {
         buyButton.getStyleClass().add("buy-button");
         buyButton.setOnAction(e -> {
             detailsStage.close();  // Close the movie details window
+            currentScene = "cash";
 
             openPaymentWindow(movie);  // Open the payment window
         });
+        //buy with package:
+        Button packageButton = new Button("I have Package Card");
+        packageButton.getStyleClass().add("buy-button");
+        packageButton.setOnAction(e -> {
+            detailsStage.close();  // Close the movie details window
+            currentScene = "package";
+
+            openPaymentWindow(movie);  // Open the payment window
+        });
+        HBox buttonBox = new HBox(10, buyButton, packageButton);  // Add spacing of 10 between buttons
+        buttonBox.setAlignment(Pos.CENTER_RIGHT);  // Align the buttons to the right
+
+
 
 
         // סידור הפרטים בתוך VBox
@@ -255,7 +270,8 @@ public class OfflineMoviesController {
                 movieAvailableSeat,
                 movieHallNumber,
                 movieIsOnline,
-                buyButton // הוספת כפתור BUY
+                buttonBox  // Adding both buttons horizontally
+
         );
         movieInfo.getStyleClass().add("movie-info");
 
@@ -355,7 +371,12 @@ public class OfflineMoviesController {
                     System.out.println("Selected Seat: " + selectedSeat);
 
                     // Open a new screen for user details (to be implemented later)
-                    openUserDetailsWindow(selectedSeat, movie);
+                    if(currentScene.equals("cash")){
+                        openUserDetailsWindow(selectedSeat, movie);
+                    }
+                    if(currentScene.equals("package")){
+                        openPackageDetailsWindow(selectedSeat, movie);
+                    }
 
                     paymentStage.close();  // Close the seat selection window
                 });
@@ -484,6 +505,68 @@ public class OfflineMoviesController {
         detailsStage.setScene(detailsScene);
         detailsStage.show();
     }
+    //function after the user clicked enter with package button:
+    private void openPackageDetailsWindow(String seatNumber, Movie movie) {
+        Stage detailsStage = new Stage();
+        detailsStage.setTitle("Enter your Package Details");
+
+        // Create input fields for user details
+        Label seatLabel = new Label("You selected: " + seatNumber);
+        Label customerIdLabel = new Label("Customer ID:");
+        TextField customerIdField = new TextField();
+
+        Label packageIdLabel = new Label("Package Card ID:");
+        TextField packageIdField = new TextField();
+
+        // Create a button to submit package details
+        Button submitButton = new Button("Submit");
+
+        // Action when the button is clicked
+        submitButton.setOnAction(event -> {
+            // Retrieve data from fields
+            String customerIdStr = customerIdField.getText();
+            String packageIdStr = packageIdField.getText();
+
+            // Validate the input (example: check if fields are empty)
+            if (customerIdStr.isEmpty() || packageIdStr.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Please fill in all fields.");
+                return;
+            }
+
+            int customerId;
+            try {
+                customerId = Integer.parseInt(customerIdStr);
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Customer ID must be a valid number.");
+                return;
+            }
+
+            // Send the package details to the server
+            try {
+                SimpleClient.getClient().sendToServer("PackageCardRequest:" + customerId + ":" + packageIdStr + ":" + seatNumber + ":" + movie.getId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Close the window after sending the request
+            detailsStage.close();
+            mainWindowRoot.setEffect(null);
+        });
+
+        // Layout for the form
+        VBox vbox = new VBox(10, seatLabel, customerIdLabel, customerIdField, packageIdLabel, packageIdField, submitButton);
+        vbox.setPadding(new Insets(20));
+        // סגירת החלון בלחיצה מחוץ לחלון
+        // Use setOnCloseRequest and setOnHidden to ensure blur is removed
+        detailsStage.setOnCloseRequest(event -> mainWindowRoot.setEffect(null));
+        detailsStage.setOnHidden(event -> mainWindowRoot.setEffect(null));
+
+        // Create the scene and show the details window
+        Scene detailsScene = new Scene(vbox, 400, 300);
+        detailsStage.setScene(detailsScene);
+        detailsStage.show();
+    }
+
 
 
 
@@ -609,7 +692,7 @@ public class OfflineMoviesController {
             // Show the receipt in an alert dialog
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Ticket Purchase Receipt");
-            alert.setHeaderText(null);  // Optional: remove header text
+            alert.setHeaderText("Receipt");  // Optional: remove header text
             alert.setContentText(receiptMessage.toString());
             alert.showAndWait();  // Use showAndWait to block until the user closes the alert
         });
@@ -617,6 +700,20 @@ public class OfflineMoviesController {
         System.out.println("Requesting all movies that are not online.");
         client.requestMoviesByOnlineStatus(false);
 
+    }
+    public static void showPackageBuyReceipt(String message){
+        Platform.runLater(() -> {
+            System.out.println(message);
+            // Show the receipt in an alert dialog
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Entering with package Receipt");
+            alert.setHeaderText("Receipt");  // Optional: remove header text
+            alert.setContentText(message);
+            alert.showAndWait();  // Use showAndWait to block until the user closes the alert
+        });
+        SimpleClient client = SimpleClient.getClient();
+        System.out.println("Requesting all movies that are not online.");
+        client.requestMoviesByOnlineStatus(false);
     }
 
 }
