@@ -101,7 +101,7 @@ public class SubmitComplaint {
             // Send the complaint to the server
             SimpleClient.getClient().sendToServer(complaint);
             // Show success message after successful submission
-            showAlert("Success", "Complaint submitted successfully!");
+            showAlert("Success", "Complaint submitted successfully!,Your complaint will get respond in 24h");
             clearFields();
         } catch (IOException e) {
             // Show error message if the complaint submission fails

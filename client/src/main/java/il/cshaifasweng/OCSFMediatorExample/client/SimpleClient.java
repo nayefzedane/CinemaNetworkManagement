@@ -196,24 +196,23 @@ public class SimpleClient extends AbstractClient {
 				List<Complaints> complaintsList = (List<Complaints>) list;
 				Platform.runLater(() -> {
 					try {
-						// Retrieve the active controller from your application
-						Object controller = CustomerServiceController.getActiveController();
+						Object controller = App.getController();
 
-						// Check if the controller is an instance of ComplainsHandle
-						if (controller instanceof ComplainsHandle) {
-							ComplainsHandle complaintController = (ComplainsHandle) controller;
-							complaintController.handleReceivedComplaints(complaintsList);
+						// Check if the controller is an AdminController
+						if (controller instanceof AdminController) {
+							AdminController adminController = (AdminController) controller;
+							System.out.println("Error: 1");
+							adminController.updateComplaintsList(complaintsList); // Use the appropriate method for AdminController
+						} else if (controller instanceof CustomerServiceController) {
+							CustomerServiceController customerServiceController = (CustomerServiceController) controller;
+							System.out.println("Error: 2");
+							customerServiceController.handleReceivedComplaints(complaintsList); // Use the appropriate method for CustomerServiceController
 						} else {
-							AdminController controller1 = (AdminController) App.getController();
-							controller1.updateComplaintsList(complaintsList);
-							// Handle the case when the active controller is not ComplainsHandle
-							System.out.println("Error: Active controller is not an instance of ComplainsHandle.");
-							// Optionally, show an alert or log the error
-						//	showAlert("Error", "The active controller is not suitable to handle complaints.");
+							System.out.println("Error: The active controller is not an instance of AdminController or CustomerServiceController.");
+							System.out.println("Actual controller type: " + controller.getClass().getName());
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
-					//	showAlert("Error", "Failed to display complaints.");
 					}
 				});
 			}

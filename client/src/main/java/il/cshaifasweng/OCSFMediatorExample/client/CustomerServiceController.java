@@ -1,112 +1,199 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 public class CustomerServiceController {
 
-     static Object activeController;
-    private ComplainsHandle complainsHandle;
-   private HandleComplainsInquiries handleComplainsInquiries;
-
+    @FXML
+    private ListView<String> complaintsListView;  // ListView to display unanswered complaints
 
     @FXML
-    private StackPane contentPane;
+    private VBox detailsVBox;  // VBox that displays complaint details
 
-  //  @FXML
+    @FXML
+    private Label emailLabel;
+
+    @FXML
+    private Label titleLabel;
+
+    @FXML
+    private TextArea contentTextArea;
+
+    @FXML
+    private Label branchLabel;
+
+    @FXML
+    private Label timeSubmittedLabel;
+
+    @FXML
+    private TextArea answerTextArea;
+
+    @FXML
+    private TextField compensationField;
+
+    //
+    //   private List<Complaints> unansweredComplaints;  // List to hold the complaints fetched from the database
+    private Complaints selectedComplaint;  // The currently selected complaint
 
     @FXML
     public void initialize() {
-        if (contentPane != null) {
-            System.out.println("contentPane initialized successfully.");
-        } else {
-            System.err.println("contentPane is not initialized properly.");
-        }
-    }
-
-    // private void handleComplaints() {
-      //  showAlert("Handle Complaints", "This feature is under development.");
-   // }
-
-   // @FXML
-    //private void handleInquiries() {
-      //  showAlert("View Customer Inquiries", "This feature is under development.");
-  // }
-
-
-    @FXML
-    public void handleComplaints() {
-        System.out.println("Loading ComplainsHandle...");
-        loadWindow("/il/cshaifasweng/OCSFMediatorExample/client/ComplainsHandle.fxml", ComplainsHandle.class);
+        // Add necessary initialization code here, e.g., loading initial data
+        detailsVBox.setVisible(false);
+        System.out.println("ComplainsHandle initialized.");
     }
 
     @FXML
-    public void handleInquiries() {
-        System.out.println("Loading HandleComplainsInquiries...");
-        loadWindow("/il/cshaifasweng/OCSFMediatorExample/client/HandleComplainsInquiries.fxml", HandleComplainsInquiries.class);
-    }
-
-
-
-    private void loadWindow(String fxmlFile, Class<?> controllerClass) {
+    public void loadUnansweredComplaints() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-
-            if (contentPane == null) {
-                System.err.println("Error: contentPane is not initialized.");
-                return;
-            }
-
-            // Clear existing content from the contentPane
-            System.out.println("Children count before clear: " + contentPane.getChildren().size());
-            contentPane.getChildren().clear();
-            System.out.println("Children count after clear: " + contentPane.getChildren().size());
-            // Force layout to ensure old content is removed
-            contentPane.layout();
-
-            // Load the new FXML and add it to the contentPane
-            contentPane.getChildren().add(loader.load());
-
-            // Ensure only one node exists in the contentPane
-            if (contentPane.getChildren().size() > 1) {
-                System.err.println("Warning: More than one node found in contentPane after loading new content.");
-            }
-
-            // Set the active controller
-            activeController = loader.getController();
-
-            System.out.println("Loaded " + controllerClass.getName() + ": " + activeController.getClass().getName());
-
+            // Send a request to the server to get unanswered complaints
+            SimpleClient.getClient().sendToServer("getUnansweredComplaints");
         } catch (IOException e) {
-            System.err.println("Failed to load FXML file: " + fxmlFile);
-            e.printStackTrace();
-        } catch (Exception e) {
-            System.err.println("Unexpected error while loading: " + fxmlFile);
+            showAlert("Error", "Failed to send request to server.");
             e.printStackTrace();
         }
     }
 
-    public static Object getActiveController() {
-        return activeController;
+
+    public void handleReceivedComplaints(List<Complaints> complaints) {
+        complaintsListView.getItems().clear(); // Clear existing complaints in the list
+        if (complaints == null || complaints.isEmpty()) {
+            showAlert("Info", "No complaints found.");
+            return;
+        }
+        for (Complaints complaint : complaints) {
+            String complaintDetails = "ID: " + complaint.getId() + "\n" +
+                  //  "Email: " + complaint.getMail() + "\n" +
+                    "Title: " + complaint.getComplainTitle() + "\n" +
+                  //  "Content: " + complaint.getComplainText() + "\n" +
+                    "Branch: " + complaint.getBranch() + "\n" +
+                    "Time Submitted: " + complaint.getComplainDate();
+            complaintsListView.getItems().add(complaintDetails);
+        }
+
+        complaintsListView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.intValue() >= 0) {
+                selectedComplaint = complaints.get(newValue.intValue());
+                showComplaintDetails(selectedComplaint);
+            }
+        });
     }
 
-    public ComplainsHandle getComplainsHandle() {
-        return complainsHandle;
+    private void showComplaintDetails(Complaints complaint) {
+        emailLabel.setText(complaint.getMail());
+        titleLabel.setText(complaint.getComplainTitle());
+        contentTextArea.setText(complaint.getComplainText());
+        branchLabel.setText(complaint.getBranch());
+        timeSubmittedLabel.setText(complaint.getComplainDate().toString());
+
+        // Make the VBox visible when a complaint is selected
+        detailsVBox.setVisible(true);
     }
-    public HandleComplainsInquiries getHandleComplainsInquiries(){
-        return handleComplainsInquiries;
-    }
+
+
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+
+    }
+    @FXML
+    private void submitAnswerAndCompensation() {
+        if (selectedComplaint == null) {
+            showAlert("Error", "Please select a complaint from the list.");
+            return;
+        }
+
+        String answer = answerTextArea.getText().trim();
+        String compensationStr = compensationField.getText().trim();
+
+        if (answer.isEmpty()) {
+            showAlert("Error", "Answer cannot be empty.");
+            return;
+        }
+
+        double compensation;
+        try {
+            compensation = Double.parseDouble(compensationStr);
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Please enter a valid compensation amount.");
+            return;
+        }
+
+        // Update the selected complaint with the answer and compensation
+        selectedComplaint.setAnswer(answer);
+        selectedComplaint.setFinancialCompensation(compensation);
+        selectedComplaint.setComplainDate(LocalDateTime.now());
+
+        // Send the updated complaint to the server for processing
+        sendUpdatedComplaintToServer(selectedComplaint);
+    }
+
+    // Method to send the updated complaint to the server
+    private void sendUpdatedComplaintToServer(Complaints complaint) {
+        if (complaint == null) {
+            showAlert("Error", "No complaint selected.");
+            return;
+        }
+
+        // Create the update message with a specific format
+        String msg = "updateComplaint;" + complaint.getId() + ";" +
+                complaint.getAnswer() + ";" +
+                complaint.getFinancialCompensation() + ";" +
+                complaint.getComplainDate();
+
+        try {
+            // Send the message to the server via SimpleClient
+            SimpleClient.getClient().sendToServer(msg);
+
+            removeComplaintFromList(complaint);
+
+            showAlert("Success", "Complaint sent to server for updating.");
+            clearComplaintDetails();
+        } catch (IOException e) {
+            showAlert("Error", "Failed to send update to server.");
+            e.printStackTrace();
+        }
+    }
+
+    private void removeComplaintFromList(Complaints complaint) {
+        int selectedIndex = complaintsListView.getSelectionModel().getSelectedIndex();
+        if (selectedIndex >= 0) {
+            complaintsListView.getItems().remove(selectedIndex);
+        }
+    }
+
+    private void clearComplaintDetails() {
+        emailLabel.setText("");
+        titleLabel.setText("");
+        contentTextArea.clear();
+        branchLabel.setText("");
+        timeSubmittedLabel.setText("");
+        answerTextArea.clear();
+        compensationField.clear();
+        detailsVBox.setVisible(false);
+    }
+    @FXML
+    private void handleBack() {
+        try {
+            App.goBack();  // חזרה לחלון הקודם
+        } catch (IOException e) {
+            showAlert("Error" ,"Failed to load the previous screen." + e.getMessage());
+        }
     }
 }

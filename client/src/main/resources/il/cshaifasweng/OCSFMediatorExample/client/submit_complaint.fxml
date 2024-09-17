@@ -7,19 +7,36 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
+<AnchorPane prefHeight="638.0" prefWidth="580.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SubmitComplaint"
+            style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-border-color: #dee2e6; -fx-border-radius: 10; -fx-background-radius: 10;">
 
-<AnchorPane prefHeight="638.0" prefWidth="580.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SubmitComplaint">
-    <Label fx:id="submitComplaintLabel" layoutX="200" layoutY="50" text="Submit Complaint Window" />
-    <TextField fx:id="complainMail" alignment="CENTER" layoutX="78.0" layoutY="90.0" prefHeight="31.0" prefWidth="211.0" promptText="Enter The Mail" />
-    <TextField fx:id="complainTitle" alignment="CENTER" layoutX="78.0" layoutY="187.0" prefHeight="37.0" prefWidth="211.0" promptText="Title" />
-    <TextField fx:id="complainText" alignment="CENTER" layoutX="78.0" layoutY="240.0" prefHeight="108.0" prefWidth="211.0" promptText="Context" />
-    <MenuButton fx:id="selectedBranch" layoutX="142.0" layoutY="136.0" mnemonicParsing="false" text="Branch">
+    <Label fx:id="submitComplaintLabel" layoutX="150.0" layoutY="30.0" text="Submit Complaint Window"
+           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #343a40;" />
+
+    <TextField fx:id="complainMail" alignment="CENTER" layoutX="50.0" layoutY="80.0" prefHeight="35.0" prefWidth="480.0"
+               promptText="Enter Your Email"
+               style="-fx-border-color: #ced4da; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 5;" />
+
+    <TextField fx:id="complainTitle" alignment="CENTER" layoutX="50.0" layoutY="130.0" prefHeight="35.0" prefWidth="480.0"
+               promptText="Title of Your Complaint"
+               style="-fx-border-color: #ced4da; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 5;" />
+
+    <TextField fx:id="complainText" alignment="CENTER" layoutX="50.0" layoutY="180.0" prefHeight="100.0" prefWidth="480.0"
+               promptText="Describe Your Complaint"
+               style="-fx-border-color: #ced4da; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 5;" />
+
+    <MenuButton fx:id="selectedBranch" layoutX="50.0" layoutY="300.0" mnemonicParsing="false" text="Branch"
+                style="-fx-background-color: #ffffff; -fx-border-color: #ced4da; -fx-border-radius: 5; -fx-padding: 5;">
         <items>
-            <MenuItem fx:id="buttonCinemaCity" mnemonicParsing="false" onAction="#handleCinemaCitySelection" text="Cinema City" />
-            <MenuItem fx:id="buttonYesPlanet" mnemonicParsing="false" onAction="#handleYesPlanetSelection" text="Yes Planet" />
+            <MenuItem fx:id="buttonCinemaCity" mnemonicParsing="false" onAction="#handleCinemaCitySelection" text="Cinema City"
+                      style="-fx-font-size: 12px; -fx-text-fill: #343a40;" />
+            <MenuItem fx:id="buttonYesPlanet" mnemonicParsing="false" onAction="#handleYesPlanetSelection" text="Yes Planet"
+                      style="-fx-font-size: 12px; -fx-text-fill: #343a40;" />
         </items>
     </MenuButton>
-<!--    <Button fx:id="complainSearch" layoutX="475.0" layoutY="24.0"  onAction="#toggleSearchWindow" styleClass="search-icon" text="🔍" />-->
-    <Button id="submitComplain1" layoutX="142.0" layoutY="361.0" mnemonicParsing="false" onAction="#submitComplaint" text="Submit" />
+
+    <Button fx:id="submitComplain1" layoutX="200.0" layoutY="400.0" mnemonicParsing="false" onAction="#submitComplaint" text="Submit Complaint"
+            style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-border-radius: 5; -fx-padding: 8 16;" />
 
 </AnchorPane>
