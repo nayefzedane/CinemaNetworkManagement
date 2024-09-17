@@ -149,16 +149,19 @@ public class SimpleServer extends AbstractServer {
 				System.out.println("Movie ID: " + movieId);
 				String answer = ConnectToDatabase.processPackageCard(customerId, Integer.parseInt(packageId), movieId, seatNumber);
 				System.out.println(answer);
+				if(answer.startsWith("Error")) //if buying with package failed
+					client.sendToClient(answer);
+				else{//if entering with package succeded
+					String[] partsPackage = answer.split(":", 3);  // Split into 3 parts: "Email", email, and the receipt
+					String email = partsPackage[1];  // This is the customer's email
+					String receiptMessage = partsPackage[2];  // This is the full receipt message
+					receiptMessage = receiptMessage + seatNumber + "\n=====================================\n";
 
-				String[] partsPackage = answer.split(":", 3);  // Split into 3 parts: "Email", email, and the receipt
-				String email = partsPackage[1];  // This is the customer's email
-				String receiptMessage = partsPackage[2];  // This is the full receipt message
-				receiptMessage = receiptMessage + seatNumber + "\n=====================================\n";
-
-				System.out.println("Email to send to: " + email);
-				System.out.println("Receipt Message: " + receiptMessage);
-				EmailService.sendEmail(email, "Package entrie receipt", receiptMessage);
-				client.sendToClient("PackageCardUse:" + receiptMessage);
+					System.out.println("Email to send to: " + email);
+					System.out.println("Receipt Message: " + receiptMessage);
+					EmailService.sendEmail(email, "Package entrie receipt", receiptMessage);
+					client.sendToClient("PackageCardUse:" + receiptMessage);
+				}
 
 			} else {
 				System.out.println("Invalid PackageCardRequest format.");

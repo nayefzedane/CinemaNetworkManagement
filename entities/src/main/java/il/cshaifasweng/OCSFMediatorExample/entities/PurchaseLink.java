@@ -40,12 +40,15 @@ public class PurchaseLink implements Serializable {
     private String uniqueLink;
     @Column(name = "price", nullable = false)
     private float price;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     // Default constructor
     public PurchaseLink() {}
 
     // Constructor with parameters
-    public PurchaseLink(LocalDateTime purchaseTime, int customerId, int paymentCardLastFour, String movieTitle, String customerMail, float price) {
+    public PurchaseLink(String name, LocalDateTime purchaseTime, int customerId, int paymentCardLastFour, String movieTitle, String customerMail, float price) {
+        this.name = name;
         this.purchaseTime = purchaseTime;
         this.customerId = customerId;
         this.paymentCardLastFour = paymentCardLastFour;
@@ -59,7 +62,8 @@ public class PurchaseLink implements Serializable {
     }
     //constructor to check the that the checking if the link valid feature is valid so would put a link handly
     //also i will put his time from the time its created and not after 3 hours
-    public PurchaseLink(LocalDateTime purchaseTime, int customerId, int paymentCardLastFour, String movieTitle, String customerMail, float price, String uniqueLink) {
+    public PurchaseLink(String name, LocalDateTime purchaseTime, int customerId, int paymentCardLastFour, String movieTitle, String customerMail, float price, String uniqueLink) {
+        this.name = name;
         this.purchaseTime = purchaseTime;
         this.customerId = customerId;
         this.paymentCardLastFour = paymentCardLastFour;

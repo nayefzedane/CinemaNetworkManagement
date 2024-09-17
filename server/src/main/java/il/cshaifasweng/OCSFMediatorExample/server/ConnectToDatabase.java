@@ -467,6 +467,7 @@ public class ConnectToDatabase {
 
             // Creating a sample PurchaseLink
             PurchaseLink purchaseLink1 = new PurchaseLink(
+                    "ahmad",
                     LocalDateTime.of(2024, 8, 17, 10, 0),  // purchaseTime
                     1004,  // customerId
                     9876,  // paymentCardLastFour
@@ -478,6 +479,7 @@ public class ConnectToDatabase {
 
             // You can add more PurchaseLink samples as needed
             PurchaseLink purchaseLink2 = new PurchaseLink(
+                    "mohammad",
                     LocalDateTime.of(2024, 9, 16, 21, 0),  // purchaseTime
                     1005,  // customerId
                     4321,  // paymentCardLastFour
@@ -487,6 +489,7 @@ public class ConnectToDatabase {
             );
             session.save(purchaseLink2);
             PurchaseLink purchaseLink3 = new PurchaseLink(
+                    "loay",
                     LocalDateTime.of(2024, 9, 16, 22, 0),  // purchaseTime
                     1005,  // customerId
                     4321,  // paymentCardLastFour
@@ -1220,14 +1223,14 @@ public class ConnectToDatabase {
 
             if (packageCard == null) {
                 session.getTransaction().rollback();
-                return "PackageCard or Customer ID is invalid.";
+                return "Error, PackageCard or Customer ID is invalid.";
             }
 
             // Retrieve the movie by ID
             Movie movie = session.get(Movie.class, movieId);
             if (movie == null) {
                 session.getTransaction().rollback();
-                return "Movie with ID " + movieId + " not found.";
+                return "Error, Movie with ID " + movieId + " not found.";
             }
 
             // Parse the seat string to find the row and column
@@ -1243,14 +1246,14 @@ public class ConnectToDatabase {
                 movie.setAvailableSeat(movie.getAvailableSeat() - 1);  // Decrease available seats by 1
             } else {
                 session.getTransaction().rollback();
-                return "Seat " + seat + " is already taken.";
+                return "Error, Seat " + seat + " is already taken.";
             }
 
             // Use the package (decrease the remaining entries)
             boolean success = packageCard.usePackage();  // Decrease remaining entries by 1
             if (!success) {
                 session.getTransaction().rollback();
-                return "No remaining entries in the package.";
+                return "Error, No remaining entries in the package.";
             }
 
             // Save the updated movie and package card
@@ -1287,7 +1290,7 @@ public class ConnectToDatabase {
         } catch (Exception e) {
             session.getTransaction().rollback();
             e.printStackTrace();
-            return "Failed to process package due to an internal error.";
+            return "Error, Failed to process package due to an internal error.";
         } finally {
             session.close();
         }
