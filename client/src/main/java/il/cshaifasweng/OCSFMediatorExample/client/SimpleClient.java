@@ -164,13 +164,32 @@ public class SimpleClient extends AbstractClient {
 
 					}
 				});
+
 			}
 			if (!list.isEmpty() && list.get(0) instanceof Complaints) {
+
 				System.out.println("Client: Received complaints report from server");
 				List<Complaints> complaintsList = (List<Complaints>) list;
 				Platform.runLater(() -> {
-					AdminController controller = (AdminController) App.getController();
-					controller.updateComplaintsList(complaintsList);
+					try {
+						Object controller = App.getController();
+
+						// Check if the controller is an AdminController
+						if (controller instanceof AdminController) {
+							AdminController adminController = (AdminController) controller;
+							System.out.println("Error: 1");
+							adminController.updateComplaintsList(complaintsList); // Use the appropriate method for AdminController
+						} else if (controller instanceof CustomerServiceController) {
+							CustomerServiceController customerServiceController = (CustomerServiceController) controller;
+							System.out.println("Error: 2");
+							customerServiceController.handleReceivedComplaints(complaintsList); // Use the appropriate method for CustomerServiceController
+						} else {
+							System.out.println("Error: The active controller is not an instance of AdminController or CustomerServiceController.");
+							System.out.println("Actual controller type: " + controller.getClass().getName());
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				});
 			}
 			else {
@@ -205,6 +224,7 @@ public class SimpleClient extends AbstractClient {
 				ContentManagerController controller = (ContentManagerController) App.getController();
 				controller.updateMovieTable(movies);
 			}
+
 
 		}
 
@@ -245,17 +265,20 @@ public class SimpleClient extends AbstractClient {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					try{ // this function is to know whether it is the admin or one of the branches admin, because we made the same controller for all of them
-						System.out.println("we are setting the view type now:");
-						AdminController controller  = (AdminController) App.getController();
-						if (controller != null) {
-							controller.setViewType(role);
+					if (role.equals("Admin") || role.equals("admin haifa") || role.equals("admin nazareth")){
+						try{ // this function is to know whether it is the admin or one of the branches admin, because we made the same controller for all of them
+							System.out.println("we are setting the view type now:");
+							AdminController controller  = (AdminController) App.getController();
+							if (controller != null) {
+								controller.setViewType(role);
+							}
+
+						} catch(Exception e){
+							e.printStackTrace();
+
 						}
-
-					} catch(Exception e){
-						e.printStackTrace();
-
 					}
+
 				} else if (response.equals("login_failed")) {
 					// הודעת שגיאה על כישלון בהתחברות
 					System.out.println("Login failed.");
@@ -316,5 +339,5 @@ public class SimpleClient extends AbstractClient {
 
 
 
-
 }
+
