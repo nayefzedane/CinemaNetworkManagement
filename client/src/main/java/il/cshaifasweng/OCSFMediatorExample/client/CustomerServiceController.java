@@ -44,8 +44,7 @@ public class CustomerServiceController {
     @FXML
     private TextField compensationField;
 
-    //
-    //   private List<Complaints> unansweredComplaints;  // List to hold the complaints fetched from the database
+    private List<Complaints> complaintList;  // List to store the fetched complaints
     private Complaints selectedComplaint;  // The currently selected complaint
 
     @FXML
@@ -69,15 +68,15 @@ public class CustomerServiceController {
 
     public void handleReceivedComplaints(List<Complaints> complaints) {
         complaintsListView.getItems().clear(); // Clear existing complaints in the list
+        complaintList = complaints;  // Store the list of complaints
+
         if (complaints == null || complaints.isEmpty()) {
             showAlert("Info", "No complaints found.");
             return;
         }
         for (Complaints complaint : complaints) {
             String complaintDetails = "ID: " + complaint.getId() + "\n" +
-                  //  "Email: " + complaint.getMail() + "\n" +
                     "Title: " + complaint.getComplainTitle() + "\n" +
-                  //  "Content: " + complaint.getComplainText() + "\n" +
                     "Branch: " + complaint.getBranch() + "\n" +
                     "Time Submitted: " + complaint.getComplainDate();
             complaintsListView.getItems().add(complaintDetails);
@@ -85,7 +84,7 @@ public class CustomerServiceController {
 
         complaintsListView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.intValue() >= 0) {
-                selectedComplaint = complaints.get(newValue.intValue());
+                selectedComplaint = complaintList.get(newValue.intValue());
                 showComplaintDetails(selectedComplaint);
             }
         });
@@ -102,16 +101,14 @@ public class CustomerServiceController {
         detailsVBox.setVisible(true);
     }
 
-
-
     private void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-
     }
+
     @FXML
     private void submitAnswerAndCompensation() {
         if (selectedComplaint == null) {
@@ -161,10 +158,9 @@ public class CustomerServiceController {
             // Send the message to the server via SimpleClient
             SimpleClient.getClient().sendToServer(msg);
 
-            removeComplaintFromList(complaint);
-
             showAlert("Success", "Complaint sent to server for updating.");
-            clearComplaintDetails();
+            removeComplaintFromList(complaint);  // Remove only the answered complaint
+            selectNextComplaint();  // Select the next one
         } catch (IOException e) {
             showAlert("Error", "Failed to send update to server.");
             e.printStackTrace();
@@ -175,6 +171,7 @@ public class CustomerServiceController {
         int selectedIndex = complaintsListView.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0) {
             complaintsListView.getItems().remove(selectedIndex);
+            complaintList.remove(selectedIndex);  // Make sure to remove the complaint from the complaintList as well
         }
     }
 
@@ -188,12 +185,30 @@ public class CustomerServiceController {
         compensationField.clear();
         detailsVBox.setVisible(false);
     }
+
+    private void selectNextComplaint() {
+        int selectedIndex = complaintsListView.getSelectionModel().getSelectedIndex();
+
+        // Ensure that the current selection index points to the correct next item
+        if (selectedIndex >= complaintsListView.getItems().size()) {
+            selectedIndex = complaintsListView.getItems().size() - 1;
+        }
+
+        if (selectedIndex >= 0 && !complaintsListView.getItems().isEmpty()) {
+            complaintsListView.getSelectionModel().select(selectedIndex);
+            selectedComplaint = complaintList.get(selectedIndex);  // Select the next complaint in the list
+            showComplaintDetails(selectedComplaint);  // Display the details of the newly selected complaint
+        } else {
+            clearComplaintDetails();  // If no complaints remain, clear the details
+        }
+    }
+
     @FXML
     private void handleBack() {
         try {
             App.goBack();  // חזרה לחלון הקודם
         } catch (IOException e) {
-            showAlert("Error" ,"Failed to load the previous screen." + e.getMessage());
+            showAlert("Error", "Failed to load the previous screen." + e.getMessage());
         }
     }
 }
