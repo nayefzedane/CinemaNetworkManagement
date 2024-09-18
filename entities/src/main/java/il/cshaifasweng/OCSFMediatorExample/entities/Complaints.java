@@ -28,7 +28,7 @@ public class Complaints implements Serializable {
     private String answer = "";  // Default value
 
     @Column(name = "financial_compensation", nullable = false)
-    private int financialCompensation = 0;  // Default value
+    private double financialCompensation = 0;  // Default value
 
     @Column(name = "complain_date", nullable = false)
     private LocalDateTime complainDate;
@@ -94,11 +94,11 @@ public class Complaints implements Serializable {
         this.answer = answer;
     }
 
-    public int getFinancialCompensation() {
+    public double getFinancialCompensation() {
         return financialCompensation;
     }
 
-    public void setFinancialCompensation(int financialCompensation) {
+    public void setFinancialCompensation(double financialCompensation) {
         this.financialCompensation = financialCompensation;
     }
 

@@ -26,9 +26,29 @@ public class SimpleServer extends AbstractServer {
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) throws Exception {
 		String msgString = msg.toString();
+		// Check if the message is an instance of Complaints
+		if (msg instanceof Complaints) {
+			// Cast the incoming message to Complaints
+			Complaints complaint = (Complaints) msg;
+
+			// Print or log the received complaint (optional for debugging)
+			System.out.println("Received complaint from client: " + complaint.toString());
+
+			// Save the complaint to the database using ConnectToDatabase
+			//ConnectToDatabase dbHandler = new ConnectToDatabase();
+			ConnectToDatabase.insertComplaint(complaint); // Assuming you have this method defined in ConnectToDatabase
+
+			// Send a response back to the client (optional)
+			client.sendToClient("Complaint received and saved successfully.");
+		} else {
+			// Handle other types of messages if needed
+			System.out.println("Received unknown message type.");
+		}
+
 		System.out.println("Received message from client: " + msgString); // Debugging output
 
 		//handle the complaints report
+
 		if (msg.equals("request_complaints_report")) {
 			System.out.println("Server: Handling request for complaints report");
 			List<Complaints> complaintsList = ConnectToDatabase.getAllComplaintsOrderedByDate();
@@ -161,12 +181,72 @@ public class SimpleServer extends AbstractServer {
 					System.out.println("Receipt Message: " + receiptMessage);
 					EmailService.sendEmail(email, "Package entrie receipt", receiptMessage);
 					client.sendToClient("PackageCardUse:" + receiptMessage);
-				}
-
-			} else {
+				} else {
 				System.out.println("Invalid PackageCardRequest format.");
+			  }
+		 }
+
+
+// Moaawiayh worked here
+		if (msgString.equals("getUnansweredComplaints")) {
+			// Fetch only complaints with no answer
+			List<Complaints> unansweredComplaints = ConnectToDatabase.getUnansweredComplaints();
+
+			try {
+				// Send the list of unanswered complaints back to the client
+				client.sendToClient(unansweredComplaints);
+			} catch (IOException e) {
+				System.err.println("Failed to send unanswered complaints to client: " + e.getMessage());
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("Unhandled message: " + msgString);
+		}
+
+
+		if (msgString.startsWith("updateComplaint")) {
+			String[] parts = msgString.split(";");
+			if (parts.length >= 5) {
+				try {
+					int complaintId = Integer.parseInt(parts[1]);
+					String answer = parts[2];
+					double compensation = Double.parseDouble(parts[3]);
+					String timeSubmitted = parts[4];
+
+					// Fetch and update the complaint in the database
+					Complaints complaint = ConnectToDatabase.getComplaintById(complaintId);
+					if (complaint != null) {
+						complaint.setAnswer(answer);
+						complaint.setFinancialCompensation(compensation);
+						complaint.setComplainDate(LocalDateTime.parse(timeSubmitted));
+						boolean success = ConnectToDatabase.updateComplaint(complaint);
+
+						// Send response back to client
+						if (success) {
+							client.sendToClient("updateComplaintResponse;success");
+						} else {
+							client.sendToClient("updateComplaintResponse;failure");
+						}
+					} else {
+						client.sendToClient("updateComplaintResponse;not_found");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					try {
+						client.sendToClient("updateComplaintResponse;error");
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
+				}
+			} else {
+				System.out.println("Invalid updateComplaint message format.");
 			}
 		}
+
+// till here **************************
+
+			
+
 
 
 		if (msgString.startsWith("login@")) {
