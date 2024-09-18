@@ -245,17 +245,20 @@ public class SimpleClient extends AbstractClient {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					try{ // this function is to know whether it is the admin or one of the branches admin, because we made the same controller for all of them
-						System.out.println("we are setting the view type now:");
-						AdminController controller  = (AdminController) App.getController();
-						if (controller != null) {
-							controller.setViewType(role);
+					if (role.equals("Admin") || role.equals("admin haifa") || role.equals("admin nazareth")){
+						try{ // this function is to know whether it is the admin or one of the branches admin, because we made the same controller for all of them
+							System.out.println("we are setting the view type now:");
+							AdminController controller  = (AdminController) App.getController();
+							if (controller != null) {
+								controller.setViewType(role);
+							}
+
+						} catch(Exception e){
+							e.printStackTrace();
+
 						}
-
-					} catch(Exception e){
-						e.printStackTrace();
-
 					}
+
 				} else if (response.equals("login_failed")) {
 					// הודעת שגיאה על כישלון בהתחברות
 					System.out.println("Login failed.");
