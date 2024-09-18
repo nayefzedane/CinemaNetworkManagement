@@ -20,6 +20,9 @@ public class PackageCard implements Serializable {
     @Column(name = "purchase_date", nullable = false)
     private LocalDate purchaseDate;
 
+    @Column(name = "customer_name", nullable = false)
+    private String name = "no name yet";
+
     @Column(name = "price", nullable = false)
     private double price;
 
@@ -36,6 +39,15 @@ public class PackageCard implements Serializable {
     public PackageCard() {}
 
     // Constructor with parameters
+    public PackageCard(LocalDate purchaseDate, double price, int customerId,
+                       String customerEmail, int paymentLastFourDigits, String name) {
+        this.name = name;
+        this.purchaseDate = purchaseDate;
+        this.price = price;
+        this.customerId = customerId;
+        this.customerEmail = customerEmail;
+        this.paymentLastFourDigits = paymentLastFourDigits;
+    }
     public PackageCard(LocalDate purchaseDate, double price, int customerId,
                        String customerEmail, int paymentLastFourDigits) {
         this.purchaseDate = purchaseDate;
@@ -60,6 +72,14 @@ public class PackageCard implements Serializable {
 
     public void setRemainingEntries(int remainingEntries) {
         this.remainingEntries = remainingEntries;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocalDate getPurchaseDate() {

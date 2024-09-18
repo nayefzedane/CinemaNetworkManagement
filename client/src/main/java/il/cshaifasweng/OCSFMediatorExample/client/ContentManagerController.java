@@ -132,7 +132,9 @@ public class ContentManagerController {
                 SimpleClient.getClient().sendToServer(movie.toString());
                 clearForm();
             } else {
-                System.err.println("Failed to load image data. Movie not sent.");
+                Movie movie = new Movie(title, showtime, releaseDate, director, description, price, isOnline, genre, duration, rating);
+                SimpleClient.getClient().sendToServer(movie.toString());
+                clearForm();
             }
 
             // Show a confirmation message

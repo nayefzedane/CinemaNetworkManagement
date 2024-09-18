@@ -57,14 +57,90 @@ public class Movie implements Serializable {
 
     @Column(name = "hallNumber", nullable = false)
     private int hallNumber = 1;  // ברירת מחדל - אולם מספר 1
+    @Transient  // Do not persist this field directly
+    private int[][] hallMap;  // This is the 2D int array
+
+    @Column(name = "hallMap", nullable = false)
+    private String hallMapString = "default";  // String to store the serialized 2D array
 
     @Lob
     @Column(name = "image_data", columnDefinition="LONGBLOB")
     private byte[] imageData;
+    @Column(name = "producer", nullable = false)
+    private String producer = "Unknown";  // ברירת מחדל - מפיק לא ידוע
+
+    @Column(name = "leading_actors", nullable = false)
+    private String leadingActors = "Unknown";  // ברירת מחדל - שחקנים ראשיים לא ידועים
 
     // קונסטרקטור ברירת מחדל
     public Movie() {}
+    public Movie(String title, LocalDateTime showtime, LocalDate releaseDate, String genre, int duration, float rating, String director, String description, String imagePath, String place, float price, boolean isOnline, int hallNumber, String producer, String leadingActors) {
+        this.title = title;
+        this.showtime = showtime;
+        this.releaseDate = releaseDate;
+        this.genre = genre;
+        this.duration = duration;
+        this.rating = rating;
+        this.director = director;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.place = place;
+        this.price = price;
+        this.isOnline = isOnline;
+        this.hallNumber = hallNumber;
+        this.producer = producer;  // הגדרת המפיק
+        this.leadingActors = leadingActors;  // הגדרת השחקנים הראשיים
 
+        if (hallNumber == 1) {
+            this.availableSeat = 25;
+            this.hallMap = new int[5][5];
+        }
+        if (hallNumber == 2) {
+            this.availableSeat = 36;
+            this.hallMap = new int[6][6];
+        }
+        for (int i = 0; i < hallMap.length; i++) {  // matrix.length נותן את מספר השורות
+            for (int j = 0; j < hallMap[i].length; j++) {  // matrix[i].length נותן את מספר העמודות בשורה i
+                hallMap[i][j] = 0;
+            }
+        }
+
+        // המרת המערך הדו-ממדי למחרוזת כדי לשמור בבסיס הנתונים
+        this.hallMapString = convertArrayToString(hallMap);
+    }
+
+    //added by loay for testing
+    public Movie(String title, LocalDateTime showtime, LocalDate releaseDate, String genre, int duration, float rating, String director, String description, String imagePath, String place, float price, boolean isOnline, int hallNumber) {
+        this.title = title;
+        this.showtime = showtime;
+        this.releaseDate = releaseDate;
+        this.genre = genre;
+        this.duration = duration;
+        this.rating = rating;
+        this.director = director;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.place = place;
+        this.price = price;
+        this.isOnline = isOnline;
+        this.hallNumber = hallNumber;
+        if (hallNumber == 1){
+            this.availableSeat = 25;
+            this.hallMap = new int[5][5];
+        }
+        if (hallNumber == 2){
+            this.availableSeat = 36;
+            this.hallMap = new int[6][6];
+        }
+        for (int i = 0; i < hallMap.length; i++) {  // matrix.length gives the number of rows
+            for (int j = 0; j < hallMap[i].length; j++) {  // matrix[i].length gives the number of columns in row i
+                hallMap[i][j] = 0;
+            }
+        }
+
+        // Convert the 2D array to a String to store in the database
+        this.hallMapString = convertArrayToString(hallMap);
+    }
     // קונסטרקטור עם פרמטרים לכל השדות
     public Movie(String title, LocalDateTime showtime, LocalDate releaseDate, String genre, int duration, float rating, String director, String description, String imagePath, String place, float price, boolean isOnline, int availableSeat, int hallNumber) {
         this.title = title;
@@ -95,6 +171,18 @@ public class Movie implements Serializable {
         this.price = price;
         this.isOnline = isOnline;
         this.imageData = imageData;
+    }
+    public Movie(String title, LocalDateTime showtime, LocalDate releaseDate, String director, String description, float price, boolean isOnline, String genre, int duration, float rating) {
+        this.title = title;
+        this.showtime = showtime;
+        this.releaseDate = releaseDate;
+        this.genre = genre;
+        this.duration = duration;
+        this.rating = rating;
+        this.director = director;
+        this.description = description;
+        this.price = price;
+        this.isOnline = isOnline;
     }
 
     // Getters ו- Setters לכל שדה
@@ -233,5 +321,44 @@ public class Movie implements Serializable {
                 "id=%d;title=%s;showtime=%s;releaseDate=%s;genre=%s;duration=%d;rating=%.1f;director=%s;description=%s;imagePath=%s;place=%s;price=%.2f;isOnline=%b;availableSeat=%d;hallNumber=%d;imageData=%s",
                 this.id, this.title, this.showtime, this.releaseDate, this.genre, this.duration, this.rating, this.director, this.description, this.imagePath, this.place, this.price, this.isOnline, this.availableSeat, this.hallNumber, Base64.getEncoder().encodeToString(this.imageData)
         );
+    }
+    //added by loay in order to deal with 2d array in database
+    // Method to convert 2D int array to a String
+    private String convertArrayToString(int[][] array) {
+        StringBuilder sb = new StringBuilder();
+        for (int[] row : array) {
+            for (int element : row) {
+                sb.append(element).append(",");  // Separate elements with a comma
+            }
+            sb.append(";");  // Separate rows with a semicolon
+        }
+        return sb.toString();
+    }
+
+    // Method to convert a String back to 2D int array
+    private int[][] convertStringToArray(String str) {
+        String[] rows = str.split(";");  // Split by row
+        int[][] array = new int[rows.length][];
+        for (int i = 0; i < rows.length; i++) {
+            String[] cols = rows[i].split(",");  // Split by column
+            array[i] = new int[cols.length];
+            for (int j = 0; j < cols.length; j++) {
+                array[i][j] = Integer.parseInt(cols[j]);  // Convert to int
+            }
+        }
+        return array;
+    }
+    // Getter for hallMap
+    public int[][] getHallMap() {
+        if (this.hallMap == null && this.hallMapString != null) {
+            this.hallMap = convertStringToArray(this.hallMapString);  // Convert back to int[][]
+        }
+        return hallMap;
+    }
+
+    // Setter for hallMap
+    public void setHallMap(int[][] hallMap) {
+        this.hallMap = hallMap;
+        this.hallMapString = convertArrayToString(hallMap);  // Convert int[][] to string
     }
 }

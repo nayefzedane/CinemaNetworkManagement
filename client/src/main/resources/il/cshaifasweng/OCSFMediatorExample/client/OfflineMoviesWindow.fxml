@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OfflineMoviesController" stylesheets="@OfflineMovies.css">
+<StackPane fx:id="mainWindowRoot" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OfflineMoviesController" stylesheets="@OfflineMovies.css">
 
     <!-- כל שאר החלון הראשי -->
     <ScrollPane fitToWidth="true">
@@ -36,6 +36,9 @@
                         <Text fx:id="upcomingMovieTitle" styleClass="upcoming-movie-title" textAlignment="LEFT"/>
                         <Text fx:id="upcomingMovieDate" styleClass="upcoming-movie-date" textAlignment="LEFT"/>
                         <Text fx:id="upcomingMovieDescription" wrappingWidth="200" textAlignment="LEFT"/> <!-- הסבר קצר על הסרט -->
+
+                        <!-- כפתור VIEW MORE נוסף לסרט הקרוב -->
+                        <Button fx:id="upcomingMovieViewMoreButton" text="View More" onAction="#onUpcomingViewMoreClicked" styleClass="upcoming-view-more-button"/>
                     </VBox>
 
                     <Button fx:id="nextButton" text="▶" onAction="#showNextUpcomingMovie" styleClass="nav-button"/>
@@ -65,5 +68,6 @@
         <ComboBox fx:id="genreComboBox" promptText="Select Genre" styleClass="combo-box" maxWidth="200"/>
         <Button text="Search" onAction="#searchMovies" styleClass="nav-button" maxWidth="200"/>
     </VBox>
+
 
 </StackPane>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.WatchScreenController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <children>
+        <!-- Title Label -->
+        <Label text="Watch your movie online" layoutX="180.0" layoutY="50.0" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+        <TextField fx:id="linkField" layoutX="100" layoutY="150" prefWidth="300" promptText="Enter Movie Link"/>
+        <Button fx:id="viewButton" layoutX="100" layoutY="200" text="View Movie" onAction="#handleViewMovieButton"/>
+
+
+
+
+
+    </children>
+</AnchorPane>

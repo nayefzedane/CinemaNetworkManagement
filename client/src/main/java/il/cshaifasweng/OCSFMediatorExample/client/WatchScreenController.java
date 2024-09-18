@@ -12,57 +12,34 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.util.Duration;
 import java.io.IOException;
 
-public class ReturnTicket {
+public class WatchScreenController {
 
     @FXML
-    private TextField orderIdField;
+    private TextField linkField;
 
     @FXML
-    private TextField customerIdField;
-
-    @FXML
-    private RadioButton purchaseCardOption;
-
-    @FXML
-    private RadioButton purchaseLinkOption;
-
-    private ToggleGroup purchaseTypeToggleGroup;
-
-    @FXML
-    public void initialize() {
-        // Initialize the ToggleGroup and assign it to the radio buttons
-        purchaseTypeToggleGroup = new ToggleGroup();
-        purchaseCardOption.setToggleGroup(purchaseTypeToggleGroup);
-        purchaseLinkOption.setToggleGroup(purchaseTypeToggleGroup);
-    }
-
-    @FXML
-    private void handleReturnTicket() {
-        String orderId = orderIdField.getText();
-        String customerId = customerIdField.getText();
-        RadioButton selectedPurchaseType = (RadioButton) purchaseTypeToggleGroup.getSelectedToggle();
-
-        // Validate input fields
-        if (orderId.isEmpty() || customerId.isEmpty() || selectedPurchaseType == null) {
-            showAlert("Input Error", "Please make sure all fields are filled out:\n- Order ID\n- Customer ID\n- Purchase Type", Alert.AlertType.ERROR);
+    public void handleViewMovieButton() {
+        String link = linkField.getText();
+        if (link == null || link.isEmpty()) {
+            showErrorAlert("Link cannot be empty");
             return;
+
+        }
+        else {
+            System.out.println(link);
+            try {
+                SimpleClient.getClient().sendToServer("CheckLink:"+ link);
+                System.out.println(link);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
         }
 
-        // If everything is filled out
-        String purchaseType = selectedPurchaseType.getText();
-        String message = String.format("Return Ticket,%s,%s,%s", purchaseType, orderId, customerId);
-        System.out.println(message);
-        try {
-            SimpleClient.getClient().sendToServer(message);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        // Send message to the server (placeholder for your actual server communication logic)
-        // SimpleClient.getInstance().sendMessageToServer(message);
-
-        // Show success alert for 2 seconds
-        showTemporaryAlert("Request Sent", "The request to return the ticket has been sent successfully!", Alert.AlertType.INFORMATION, 2000);
     }
+
+
+
 
     // Method to display a regular alert
     private void showAlert(String title, String content, Alert.AlertType alertType) {
@@ -99,9 +76,9 @@ public class ReturnTicket {
         PauseTransition delay = new PauseTransition(Duration.seconds(2));  // Create a 2-second delay
         delay.setOnFinished(event -> {
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Ticket Returned Successfully");
+            alert.setTitle("Checking link Succeded!");
             alert.setHeaderText(null);
-            alert.setContentText(message);
+            alert.setContentText(message + "\nEnjoy wathcing the movie!\n");
             alert.show();  // Use show() instead of showAndWait() to avoid blocking the UI thread
         });
         delay.play();  // Start the delay
@@ -112,11 +89,18 @@ public class ReturnTicket {
         PauseTransition delay = new PauseTransition(Duration.seconds(2));  // Create a 2-second delay
         delay.setOnFinished(event -> {
             Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Failed to Return Ticket");
+            alert.setTitle("Checking link Failed!");
             alert.setHeaderText(null);
             alert.setContentText(errorMessage);
             alert.show();  // Use show() instead of showAndWait() to avoid blocking the UI thread
         });
         delay.play();  // Start the delay
+    }
+    private void showErrorAlert(String message) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

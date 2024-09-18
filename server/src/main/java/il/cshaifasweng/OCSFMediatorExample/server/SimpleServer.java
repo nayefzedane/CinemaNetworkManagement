@@ -90,7 +90,6 @@ public class SimpleServer extends AbstractServer {
 		}
 
 
-
 		if (msg.equals("request_price_change_requests")) {
 			System.out.println("we are on server and we are on request price change requests");
 			List<Request> requestsList = ConnectToDatabase.getAllPriceChangeRequests();
@@ -102,7 +101,7 @@ public class SimpleServer extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
-		if(msgString.startsWith("delete_request ")){
+		if (msgString.startsWith("delete_request ")) {
 			System.err.println("we are on server and we want to delete");
 			System.err.println(msgString);
 			String requestId = msgString.substring("delete_request ".length());
@@ -137,10 +136,10 @@ public class SimpleServer extends AbstractServer {
 			String type = parts[1].trim();  // Card or Link
 			String orderId = parts[2].trim();
 			String customerId = parts[3].trim();
-			if(type.equals("Purchase Card")){
+			if (type.equals("Purchase Card")) {
 				type = "purchaseCard";
 			}
-			if(type.equals("Purchase Link")){
+			if (type.equals("Purchase Link")) {
 				type = "PurchaseLink";
 			}
 
@@ -150,6 +149,43 @@ public class SimpleServer extends AbstractServer {
 			// Send the result back to the client
 			client.sendToClient(result);
 		}
+		//buy with package:
+		if (msgString.startsWith("PackageCardRequest:")) {
+			// Remove the prefix and split the remaining part of the message by ":"
+			String[] parts = msgString.substring("PackageCardRequest:".length()).split(":");
+
+			// Ensure that we have the correct number of parts
+			if (parts.length == 4) {
+				// Extract the individual values
+				int customerId = Integer.parseInt(parts[0]);  // Customer ID
+				String packageId = parts[1];                  // Package Card ID
+				String seatNumber = parts[2];                 // Seat number
+				int movieId = Integer.parseInt(parts[3]);     // Movie ID
+
+				// Now you have the values in separate variables
+				System.out.println("Customer ID: " + customerId);
+				System.out.println("Package Card ID: " + packageId);
+				System.out.println("Seat Number: " + seatNumber);
+				System.out.println("Movie ID: " + movieId);
+				String answer = ConnectToDatabase.processPackageCard(customerId, Integer.parseInt(packageId), movieId, seatNumber);
+				System.out.println(answer);
+				if(answer.startsWith("Error")) //if buying with package failed
+					client.sendToClient(answer);
+				else{//if entering with package succeded
+					String[] partsPackage = answer.split(":", 3);  // Split into 3 parts: "Email", email, and the receipt
+					String email = partsPackage[1];  // This is the customer's email
+					String receiptMessage = partsPackage[2];  // This is the full receipt message
+					receiptMessage = receiptMessage + seatNumber + "\n=====================================\n";
+
+					System.out.println("Email to send to: " + email);
+					System.out.println("Receipt Message: " + receiptMessage);
+					EmailService.sendEmail(email, "Package entrie receipt", receiptMessage);
+					client.sendToClient("PackageCardUse:" + receiptMessage);
+				} else {
+				System.out.println("Invalid PackageCardRequest format.");
+			  }
+		 }
+
 
 // Moaawiayh worked here
 		if (msgString.equals("getUnansweredComplaints")) {
@@ -208,6 +244,9 @@ public class SimpleServer extends AbstractServer {
 		}
 
 // till here **************************
+
+			
+
 
 
 		if (msgString.startsWith("login@")) {
@@ -387,6 +426,138 @@ public class SimpleServer extends AbstractServer {
 			client.sendToClient(movies);
 
 
+		} else if (msgString.startsWith("send request:")) {
+
+			String[] parts = msgString.split(":");
+			String movieTitle = parts[1];
+			String movieId = parts[2];
+			String moviePrice = parts[3];
+			String newPrice = parts[4];
+			String movieShowtime = parts[5];
+			String moviePlace = parts[6];
+
+			Request req = new Request();
+			req.setTitle("Price update request");
+			req.setDescription(movieTitle + ", Id: " + movieId + ", Showtime: " + movieShowtime + ", Place: " + moviePlace + ", Old price: " + moviePrice + ", New price: " + newPrice);
+			ConnectToDatabase.addRequest(req);
+			//for checking the link is available
+		} else if(msgString.startsWith("CheckLink")){
+			System.out.println(msgString);
+			String message = msgString; //
+			String[] parts = message.split(":");
+			String link = parts[1];  // Extract the link part
+			String result = ConnectToDatabase.checkLinkByString(link);
+			System.out.println(result);
+			client.sendToClient(result);
+
 		}
+		if (msg instanceof PackageCard) {
+			PackageCard packageCard = (PackageCard) msg;
+			System.out.println("Received PackageCard from client: " + packageCard.getCustomerEmail());
+
+			// Save the PackageCard to the database and retrieve the generated ID
+			PackageCard savedPackageCard = ConnectToDatabase.savePackageCard(packageCard);
+
+
+			if (savedPackageCard != null) {
+				try {
+					StringBuilder receiptMessage = new StringBuilder();
+					receiptMessage.append("Receipt:\n");
+					receiptMessage.append("=====================================\n");
+					receiptMessage.append("Package ID: ").append(packageCard.getPackageId()).append("\n");  // Package ID now correctly populated
+					receiptMessage.append("Name: ").append(packageCard.getName()).append("\n");
+					receiptMessage.append("Customer ID: ").append(packageCard.getCustomerId()).append("\n");
+					receiptMessage.append("Customer Email: ").append(packageCard.getCustomerEmail()).append("\n");
+					receiptMessage.append("Price: $").append(packageCard.getPrice()).append("\n");
+					receiptMessage.append("Remaining Tickets: ").append(packageCard.getRemainingEntries()).append("\n");
+					receiptMessage.append("Payment (Last 4 digits): ").append(packageCard.getPaymentLastFourDigits()).append("\n");
+					receiptMessage.append("Purchase Date: ").append(packageCard.getPurchaseDate()).append("\n");
+					receiptMessage.append("=====================================\n");
+					receiptMessage.append("Note: Please remember your purchase ID number ").append(packageCard.getPackageId()).append(", as it will be required when you buy movie tickets.\n");
+					EmailService.sendEmail(packageCard.getCustomerEmail(), "Package purchase receipt", receiptMessage.toString());
+					client.sendToClient(savedPackageCard);
+					System.out.println("PackageCard sent back to client with ID: " + savedPackageCard.getPackageId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		if (msg instanceof PurchaseLink) {
+			PurchaseLink purchaseLink = (PurchaseLink) msg;
+			System.out.println("Received PurchaseLink from client: " + purchaseLink.getCustomerMail());
+
+			// Save the PurchaseLink to the database and retrieve the generated ID
+			PurchaseLink savedPurchaseLink = ConnectToDatabase.savePurchaseLink(purchaseLink);
+
+			if (savedPurchaseLink != null) {
+				try {
+					StringBuilder receiptMessage = new StringBuilder();
+					receiptMessage.append("Purchase Link Receipt:\n");
+					receiptMessage.append("=====================================\n");
+					receiptMessage.append("Purchase ID: ").append(savedPurchaseLink.getLinkId()).append("\n");
+					receiptMessage.append("Name: ").append(savedPurchaseLink.getName()).append("\n");
+					receiptMessage.append("Customer ID: ").append(savedPurchaseLink.getCustomerId()).append("\n");
+					receiptMessage.append("Customer Email: ").append(savedPurchaseLink.getCustomerMail()).append("\n");
+					receiptMessage.append("Price: $").append(savedPurchaseLink.getPrice()).append("\n");
+					receiptMessage.append("Payment (Last 4 digits): ").append(savedPurchaseLink.getPaymentCardLastFour()).append("\n");
+					receiptMessage.append("Purchase Date: ").append(savedPurchaseLink.getPurchaseTime()).append("\n");
+					receiptMessage.append("Purchase Link: ").append(savedPurchaseLink.getUniqueLink()).append("\n");
+					receiptMessage.append("Available from: ").append(purchaseLink.getAvailableFrom()).append("\n");
+					receiptMessage.append("=====================================\n");
+					receiptMessage.append("Note: Please remember your purchase ID number ").append(savedPurchaseLink.getLinkId()).append(", as it may be required for future transactions.\n");
+
+					// Send receipt email to customer
+					EmailService.sendEmail(savedPurchaseLink.getCustomerMail(), "Purchase Link Receipt", receiptMessage.toString());
+
+					// Send the saved PurchaseLink back to the client
+					client.sendToClient(receiptMessage.toString());
+					System.out.println("PurchaseLink receipt sent back to client with ID: " + savedPurchaseLink.getLinkId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}else{
+				client.sendToClient("failed Purchase Link buy");
+			}
+		}
+
+
+
+		if (msg instanceof purchaseCard) {
+			purchaseCard purchaseCard = (purchaseCard) msg;
+			System.out.println("Received purchaseCard from client: " + purchaseCard.getCostMail());
+
+			// Save the purchaseCard to the database and retrieve the generated ID
+			purchaseCard savedPurchaseCard = ConnectToDatabase.savePurchaseCard(purchaseCard);
+
+			if (savedPurchaseCard != null) {
+				try {
+					StringBuilder receiptMessage = new StringBuilder();
+					receiptMessage.append("Receipt:\n");
+					receiptMessage.append("=====================================\n");
+					receiptMessage.append("Purchase ID: ").append(savedPurchaseCard.getOrderId()).append("\n");  // Use purchase ID here
+					receiptMessage.append("Name: ").append(savedPurchaseCard.getName()).append("\n");
+					receiptMessage.append("Customer ID: ").append(savedPurchaseCard.getCustomerId()).append("\n");
+					receiptMessage.append("Customer Email: ").append(savedPurchaseCard.getCostMail()).append("\n");
+					receiptMessage.append("Price: $").append(savedPurchaseCard.getPrice()).append("\n");
+					receiptMessage.append("Movie Title: ").append(savedPurchaseCard.getMovieTitle()).append("\n");
+					receiptMessage.append("Branch Name: ").append(savedPurchaseCard.getBranchName()).append("\n");
+					receiptMessage.append("Seat: ").append(savedPurchaseCard.getSeat()).append("\n");
+					receiptMessage.append("Showtime: ").append(savedPurchaseCard.getShowTime()).append("\n");
+					receiptMessage.append("Payment (Last 4 digits): ").append(savedPurchaseCard.getPaymentCardLastFour()).append("\n");
+					receiptMessage.append("Purchase Date: ").append(savedPurchaseCard.getPurchaseDate()).append("\n");
+					receiptMessage.append("=====================================\n");
+					EmailService.sendEmail(savedPurchaseCard.getCostMail(), "Ticket Purchase Receipt", receiptMessage.toString());
+
+					client.sendToClient(savedPurchaseCard);
+					System.out.println("purchaseCard sent back to client with ID: " + savedPurchaseCard.getCustomerId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+
+
 	}
 }

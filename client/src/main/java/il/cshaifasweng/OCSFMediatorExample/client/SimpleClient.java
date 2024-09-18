@@ -99,7 +99,6 @@ public class SimpleClient extends AbstractClient {
 		}
 	}
 
-	// הוספת פונקציה לשליחת בקשה לשרת לפי קריטריונים של חיפוש לסרטים אונליין
 	public void requestOnlineMoviesByCriteria(String genre, String title) {
 		try {
 			String request = "#searchOnlineMoviesByCriteria ";
@@ -123,34 +122,8 @@ public class SimpleClient extends AbstractClient {
 		if (msg instanceof List<?>) {
 			List<?> list = (List<?>) msg;
 
-			// Check if it's a list of movies
-			if (!list.isEmpty() && list.get(0) instanceof Movie) {
-				List<Movie> movies = (List<Movie>) msg;
-				System.out.println("Movies received from server: " + movies.size()); // Debugging output
-				Platform.runLater(() -> {
-					try {
-						MainWindowController mainController = (MainWindowController) App.getController();
-						Object activeController = mainController.getActiveController();
-
-						if (activeController instanceof OfflineMoviesController) {
-							OfflineMoviesController controller = (OfflineMoviesController) activeController;
-							controller.displayMovies(movies);
-							controller.setUpcomingMovies(movies);  // הוספת קריאה לפונקציה setUpcomingMovies
-						} else if (activeController instanceof OnlineMoviesController) {
-							((OnlineMoviesController) activeController).displayMovies(movies);
-						} else {
-							System.out.println("No appropriate controller found to display movies.");
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				});
-				ContentManagerController controller = (ContentManagerController) App.getController();
-				controller.updateMovieTable(movies);
-			}
-
 			// Check if it's a list of purchase cards
-			else if (!list.isEmpty() && list.get(0) instanceof purchaseCard) {
+			if (!list.isEmpty() && list.get(0) instanceof purchaseCard) {
 				System.out.println("we are in simple client after we get back from server, purchase card");
 				List<purchaseCard> purchaseList = (List<purchaseCard>) list;
 				System.out.println("Purchase report received from server: " + purchaseList.size()); // Debugging output
@@ -174,7 +147,8 @@ public class SimpleClient extends AbstractClient {
 					AdminController controller = (AdminController) App.getController();
 					controller.updatePackageList(packageCardList);
 				});
-			} else if (!list.isEmpty() && list.get(0) instanceof Request) {
+			}
+			if (!list.isEmpty() && list.get(0) instanceof Request) {
 				System.out.println("on simple client requests");
 				List<Request> requests = (List<Request>) list;
 				System.out.println("Price change requests received from server: " + requests.size());
@@ -190,8 +164,10 @@ public class SimpleClient extends AbstractClient {
 
 					}
 				});
-				// to check here later if reports not working again
-			} else if (!list.isEmpty() && list.get(0) instanceof Complaints) {
+
+			}
+			if (!list.isEmpty() && list.get(0) instanceof Complaints) {
+
 				System.out.println("Client: Received complaints report from server");
 				List<Complaints> complaintsList = (List<Complaints>) list;
 				Platform.runLater(() -> {
@@ -215,6 +191,38 @@ public class SimpleClient extends AbstractClient {
 						e.printStackTrace();
 					}
 				});
+			}
+			else {
+				//trying this:
+				MainWindowController mainController = (MainWindowController) App.getController();
+				Object activeController = mainController.getActiveController();
+				if (activeController instanceof AdminController) {
+					AdminController controller= (AdminController) activeController;
+					controller.showAlert("error", "no tickets found");
+					return;
+				}
+				// Check if it's a list of movies
+				List<Movie> movies = (List<Movie>) msg;
+				System.out.println("Movies received from server: " + movies.size()); // Debugging output
+				Platform.runLater(() -> {
+					try {
+
+
+						if (activeController instanceof OfflineMoviesController) {
+							OfflineMoviesController controller = (OfflineMoviesController) activeController;
+							controller.displayMovies(movies);
+							controller.setUpcomingMovies(movies);  // הוספת קריאה לפונקציה setUpcomingMovies
+						} else if (activeController instanceof OnlineMoviesController) {
+							((OnlineMoviesController) activeController).displayMovies(movies);
+						} else {
+							System.out.println("No appropriate controller found to display movies.");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				});
+				ContentManagerController controller = (ContentManagerController) App.getController();
+				controller.updateMovieTable(movies);
 			}
 
 
@@ -282,13 +290,37 @@ public class SimpleClient extends AbstractClient {
 				}
 				// Handle the return ticket message
 				else if (response.startsWith("Return Ticket succeeded")) {
-					String[] parts = response.split(" ");
-					float refundAmount = Float.parseFloat(parts[3]); // extract the refund amount
-					ReturnTicket.showSuccessAlert(refundAmount); // Show success alert with the refund amount
+
+					ReturnTicket.showSuccessAlert(response); // Show success alert with the refund amount
 				} else if (response.startsWith("Return Ticket failed")) {
 					ReturnTicket.showFailureAlert(response); // Show failure alert with the error message
 				}
+				else if (response.startsWith("Link available:")) {
+					WatchScreenController.showSuccessAlert(response);
+				}
+				else if (response.startsWith("Link not available:")) {
+					WatchScreenController.showFailureAlert(response);
+				}
+				else if(response.startsWith("PackageCardUse:")){ // entering with package card succeded
+					// Split the message into two parts: "PackageCardUse:" and the receipt message
+					String receiptMessage = response.split("PackageCardUse:", 2)[1];
+					// Now you have just the receipt message
+					System.out.println("Received receipt message: " + receiptMessage);
+					OfflineMoviesController.showPackageBuyReceipt(receiptMessage);
+				}
+				else if (response.startsWith("Error")) {
+					System.out.println("recieved message from server " + response);
+					OfflineMoviesController.showFailureAlert(response);
+				}
 			});
+		}
+		if(msg instanceof PackageCard){
+			BuyTicketPackageController.ShowReceipt((PackageCard) msg);
+			System.out.println("Recieved receipt frpm server sending to Controller");
+		}
+		if (msg instanceof purchaseCard) {
+			OfflineMoviesController.ShowReceipt((purchaseCard) msg);  // Adapt this to the correct controller
+			System.out.println("Received receipt from server, sending to Controller");
 		}
 	}
 
@@ -306,4 +338,6 @@ public class SimpleClient extends AbstractClient {
 
 
 
+
 }
+

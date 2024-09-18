@@ -40,12 +40,15 @@ public class PurchaseLink implements Serializable {
     private String uniqueLink;
     @Column(name = "price", nullable = false)
     private float price;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     // Default constructor
     public PurchaseLink() {}
 
     // Constructor with parameters
-    public PurchaseLink(LocalDateTime purchaseTime, int customerId, int paymentCardLastFour, String movieTitle, String customerMail, float price) {
+    public PurchaseLink(String name, LocalDateTime purchaseTime, int customerId, int paymentCardLastFour, String movieTitle, String customerMail, float price) {
+        this.name = name;
         this.purchaseTime = purchaseTime;
         this.customerId = customerId;
         this.paymentCardLastFour = paymentCardLastFour;
@@ -57,6 +60,22 @@ public class PurchaseLink implements Serializable {
         this.price = price;
         // Generate the unique link when the object is created
     }
+    //constructor to check the that the checking if the link valid feature is valid so would put a link handly
+    //also i will put his time from the time its created and not after 3 hours
+    public PurchaseLink(String name, LocalDateTime purchaseTime, int customerId, int paymentCardLastFour, String movieTitle, String customerMail, float price, String uniqueLink) {
+        this.name = name;
+        this.purchaseTime = purchaseTime;
+        this.customerId = customerId;
+        this.paymentCardLastFour = paymentCardLastFour;
+        this.movieTitle = movieTitle;
+        this.customerMail = customerMail;
+        this.availableFrom = LocalDateTime.now();
+        this.available = false; // Initially false, it will be true after 3 hours
+        this.uniqueLink = uniqueLink;
+        this.price = price;
+        // Generate the unique link when the object is created
+    }
+
 
     // Method to generate a unique link
     private String generateUniqueLink() {
@@ -159,5 +178,9 @@ public class PurchaseLink implements Serializable {
 
     public void setPrice(float price) {
         this.price = price;
+    }
+
+    public String getName() {
+        return name;
     }
 }

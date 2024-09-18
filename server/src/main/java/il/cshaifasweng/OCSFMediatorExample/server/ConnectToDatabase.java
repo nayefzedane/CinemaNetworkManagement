@@ -10,11 +10,12 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
-
+import java.time.LocalDateTime;
 import org.hibernate.*;
 
 
@@ -80,8 +81,8 @@ public class    ConnectToDatabase {
                     LocalDate.of(2024, 12, 10),   // Release Date
                     "Sci-Fi", 148, 8.8f, "Christopher Nolan",
                     "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
-                    "images/background_login.png", "Cinema City",
-                    40.0f, false, 80, 3);
+                    "images/Inception.png", "Cinema City",
+                    40.0f, false, 2);
             session.save(movie1);
 
             Movie movie2 = new Movie("The Shawshank Redemption",
@@ -137,6 +138,68 @@ public class    ConnectToDatabase {
                     "images/background_login.png", "Cinema City",
                     38.0f, true, 90, 3);
             session.save(movie7);
+            Movie movie8 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie8);
+
+            Movie movie9 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie9);
+
+            Movie movie10 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie10);
+
+            Movie movie11 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie11);
+
+            Movie movie12 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie12);
+
+            Movie movie13 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie13);
+
+            Movie movie14 = new Movie("The Godfather",
+                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                    LocalDate.of(2024, 12, 3),    // Release Date
+                    "Crime", 175, 9.2f, "Francis Ford Coppola",
+                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                    "images/background_login.png", "Yes Planet",
+                    50.0f, false, 100, 5);
+            session.save(movie14);
 
             // הוספת משתמשים לדוגמא
             User admin = new User("admin", "admin123", "Admin");
@@ -254,6 +317,25 @@ public class    ConnectToDatabase {
             session.save(movie);  // Save the movie object to the database
             transaction.commit();
             System.out.println("Movie added successfully: " + movie.getTitle());
+            try {
+                String movie_title = movie.getTitle();
+                LocalDateTime time = movie.getShowtime();
+                String branch = movie.getPlace();
+
+                List<PackageCard> packages = getAllPackageCardsOrderedByDate();
+                for (PackageCard packageCard : packages) {
+                    //
+                    String cost_mail = packageCard.getCustomerEmail(); //
+                    String name = packageCard.getName();
+                    EmailService.sendEmail(cost_mail, "Announcement of a new movie", "Hello " + name + " from Cinema City!\n We are happy to tell you about a new movie upcomming\n" +movie_title +"\n" + "is available on " + time +" in our " + branch + " branch.\nDont waste it.");
+
+
+
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();  // Rollback in case of an error
@@ -320,7 +402,10 @@ public class    ConnectToDatabase {
                     1234,
                     "Inception",
                     LocalDateTime.of(2024, 12, 24, 14, 30),
-                    "loay@gmail.com"
+                    "loay@gmail.com",
+                    "loay",
+                    "no seat",
+                    0
             );
             session.save(purchase1);
             purchaseCard purchase2 = new purchaseCard(
@@ -331,7 +416,10 @@ public class    ConnectToDatabase {
                     5678,
                     "The Dark Knight",
                     LocalDateTime.of(2024, 12, 24, 20, 0),
-                    "mohammed@gmail.com"
+                    "mohammed@gmail.com",
+                    "mohammad",
+                    "no seat",
+                    0
             );
             session.save(purchase2);
 
@@ -343,7 +431,11 @@ public class    ConnectToDatabase {
                     1414,
                     "loay asaad",
                     LocalDateTime.of(2025, 12, 24, 20, 0),
-                    "nayef@gmail.com"
+                    "nayef@gmail.com",
+                    "nayef",
+                    "no seat",
+                    0
+
             );
             session.save(purchase3);
             purchaseCard purchase4 = new purchaseCard(
@@ -354,7 +446,10 @@ public class    ConnectToDatabase {
                     1414,
                     "nayef zedan",
                     LocalDateTime.of(2025, 12, 24, 20, 0),
-                    "nayef1@gmail.com"
+                    "nayef1@gmail.com",
+                    "nayef",
+                    "no seat",
+                    0
             );
             session.save(purchase4);
             purchaseCard purchase5 = new purchaseCard(
@@ -365,7 +460,10 @@ public class    ConnectToDatabase {
                     1414,
                     "real madrid",
                     LocalDateTime.of(2024, 9, 6, 1, 0),
-                    "madrid@gmail.com"
+                    "madrid@gmail.com",
+                    "madrid",
+                    "no seat",
+                    0
             );
             session.save(purchase5);
 
@@ -386,6 +484,7 @@ public class    ConnectToDatabase {
 
             // Creating a sample PurchaseLink
             PurchaseLink purchaseLink1 = new PurchaseLink(
+                    "ahmad",
                     LocalDateTime.of(2024, 8, 17, 10, 0),  // purchaseTime
                     1004,  // customerId
                     9876,  // paymentCardLastFour
@@ -397,7 +496,8 @@ public class    ConnectToDatabase {
 
             // You can add more PurchaseLink samples as needed
             PurchaseLink purchaseLink2 = new PurchaseLink(
-                    LocalDateTime.of(2024, 8, 18, 15, 0),  // purchaseTime
+                    "mohammad",
+                    LocalDateTime.of(2024, 9, 16, 21, 0),  // purchaseTime
                     1005,  // customerId
                     4321,  // paymentCardLastFour
                     "Interstellar",  // movieTitle
@@ -405,6 +505,16 @@ public class    ConnectToDatabase {
                     30// customerMail
             );
             session.save(purchaseLink2);
+            PurchaseLink purchaseLink3 = new PurchaseLink(
+                    "loay",
+                    LocalDateTime.of(2024, 9, 16, 22, 0),  // purchaseTime
+                    1005,  // customerId
+                    4321,  // paymentCardLastFour
+                    "Red Dead Redemption 2",  // movieTitle
+                    "sample@example.com",
+                    30,"www.loay.com"// customerMail
+            );
+            session.save(purchaseLink3);
 
             session.getTransaction().commit();
             System.out.println("Sample purchase links created successfully");
@@ -686,6 +796,7 @@ public class    ConnectToDatabase {
 
         Object purchase = null;
         float returnedValue = 0;
+        String returnedPercentage = " ";
         int linkId = orderId;
 
         try {
@@ -700,8 +811,12 @@ public class    ConnectToDatabase {
                     return "Return Ticket failed order id or Customer id wrong";
                 }
 
+
+
                 purchaseCard card = (purchaseCard) purchase;
                 System.out.println("Found PurchaseCard: " + card);
+
+
 
                 // Check if customerId matches
                 if (card.getCustomerId() != customerId) {
@@ -709,20 +824,48 @@ public class    ConnectToDatabase {
                     session.getTransaction().rollback();
                     return "Return Ticket failed order id or Customer id wrong";
                 }
-
-                // Check the time conditions against showtime
                 LocalDateTime currentTime = LocalDateTime.now();
                 LocalDateTime showTime = card.getShowTime();
                 System.out.println(currentTime);
                 System.out.println(showTime);
+                if(currentTime.isAfter(showTime)){
+                    return ("Return Ticket failed because you are out of time, the movie is already displayed on: " + card.getShowTime());
+                }
+                //updating the seats on the movie:
+                // Retrieve the movie by ID
+                Movie movie = session.get(Movie.class, card.getMovieId());
+                if (movie == null) {
+                    session.getTransaction().rollback();
+                    return "Movie not found for the given purchase.";
+                }
+
+                // Update the seat back to available in the hall map
+                String seatString = card.getSeat();  // Example: "Seat 2-3"
+                String[] seatParts = seatString.split(" ")[1].split("-");
+                int seatRow = Integer.parseInt(seatParts[0]) - 1;  // Convert to 0-based index
+                int seatCol = Integer.parseInt(seatParts[1]) - 1;  // Convert to 0-based index
+
+                int[][] hallMap = movie.getHallMap();
+                if (hallMap[seatRow][seatCol] == 1) {  // Check if the seat is currently taken
+                    hallMap[seatRow][seatCol] = 0;  // Mark the seat as available
+                    movie.setHallMap(hallMap);  // Update the hall map
+                    movie.setAvailableSeat(movie.getAvailableSeat() + 1);  // Increase available seats by 1
+                }
+
+                // Check the time conditions against showtime
+
 
                 if (currentTime.isBefore(showTime.minusHours(3))) {
                     returnedValue = card.getPrice();  // Full refund
+                    returnedPercentage = "100%";
                 } else if (currentTime.isBefore(showTime.minusHours(1))) {
                     returnedValue = card.getPrice() / 2;  // Half refund
+                    returnedPercentage = "50%";
                 } else {
                     returnedValue = 0;  // No refund
+                    returnedPercentage = "0%";
                 }
+                session.update(movie);  // Update the movie after seat is returned
 
                 session.delete(card);  // Delete the PurchaseCard
                 System.out.println("Deleted PurchaseCard: " + card);
@@ -752,10 +895,12 @@ public class    ConnectToDatabase {
                 LocalDateTime currentTime = LocalDateTime.now();
                 LocalDateTime availableFrom = link.getAvailableFrom();
 
+
                 if (currentTime.isBefore(availableFrom.minusHours(1))) {
                     returnedValue = link.getPrice() / 2;  // Half refund
+                    returnedPercentage = "50%";
                 } else {
-                    returnedValue = 0;  // No refund
+                    return "Return Ticket failed because you are out of time"; // No refund
                 }
 
                 session.delete(link);  // Delete the PurchaseLink
@@ -773,7 +918,7 @@ public class    ConnectToDatabase {
             session.close();
         }
 
-        return "Return Ticket succeeded " + returnedValue;
+        return "Return Ticket succeeded, you will receive a refund of " +returnedPercentage+" which is: " + returnedValue;
     }
 
 
@@ -994,6 +1139,237 @@ public class    ConnectToDatabase {
             return null;
         }
     }
+
+
+    public static void addRequest(Request req) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(req);
+            transaction.commit();
+            System.out.println("Request saved successfully");
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("Failed to save the request");
+        }
+    }
+
+    public static PackageCard savePackageCard(PackageCard packageCard) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(packageCard);  // Save the PackageCard object, and Hibernate will generate the ID
+            transaction.commit();
+            System.out.println("PackageCard saved successfully");
+            return packageCard;  // Return the PackageCard object with the generated packageId
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("Failed to save the PackageCard");
+            return null;  // Return null in case of failure
+        }
+    }
+    public static PurchaseLink savePurchaseLink(PurchaseLink purchaseLink) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(purchaseLink);
+            transaction.commit();
+            System.out.println("PurchaseLink saved successfully");
+            return purchaseLink;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("Failed to save the PurchaseLink");
+            return null;
+        }
+    }
+    public static purchaseCard savePurchaseCard(purchaseCard purchaseCard) {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+
+            // Retrieve the movie by ID
+            Movie movie = session.get(Movie.class, purchaseCard.getMovieId());
+            if (movie == null) {
+                System.out.println("Movie with ID " + purchaseCard.getMovieId() + " not found.");
+                return null;
+            }
+
+            // Parse the seat string from the purchaseCard to find the row and column
+            String seatString = purchaseCard.getSeat(); // Example: "Seat 2-3"
+            String[] seatParts = seatString.split(" ")[1].split("-");
+            int seatRow = Integer.parseInt(seatParts[0]) - 1;  // Convert to 0-based index
+            int seatCol = Integer.parseInt(seatParts[1]) - 1;  // Convert to 0-based index
+
+            // Get the hall map and update the seat to 1 (taken)
+            int[][] hallMap = movie.getHallMap();
+            if (hallMap[seatRow][seatCol] == 0) {  // Check if the seat is available
+                hallMap[seatRow][seatCol] = 1;  // Mark the seat as taken
+                movie.setHallMap(hallMap);  // Update the hall map
+            } else {
+                System.out.println("Seat " + seatString + " is already taken.");
+                return null;  // Seat is already taken, return null or handle as needed
+            }
+
+            // Decrease the available seats
+            int availableSeats = movie.getAvailableSeat();
+            if (availableSeats > 0) {
+                movie.setAvailableSeat(availableSeats - 1);  // Decrease by 1
+            } else {
+                System.out.println("No available seats left.");
+                return null;  // No seats left, return null or handle as needed
+            }
+
+            // Save the updated movie
+            session.update(movie);
+
+            // Save the purchaseCard
+            session.save(purchaseCard);
+            transaction.commit();
+            System.out.println("purchaseCard saved successfully and seat updated.");
+            return purchaseCard;  // Return the purchaseCard object with the generated ID
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.out.println("Failed to save the purchaseCard or update the movie.");
+            return null;  // Return null in case of failure
+        }
+    }
+
+
+    public static String checkLinkByString(String link) {
+        System.out.println("We are on connect to database and we are checking the link");
+        System.out.println(link);
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        // Use a query to find the PurchaseLink by the unique link value
+        Query query = session.createQuery("FROM PurchaseLink WHERE uniqueLink = :link");
+        query.setParameter("link", link);
+        PurchaseLink purchaseLink = (PurchaseLink) query.uniqueResult();
+
+        if (purchaseLink != null) {
+            // Check if the link is available
+            if (purchaseLink.isAvailable()) {
+                String movieTitle = purchaseLink.getMovieTitle(); // Get the movie title
+                session.getTransaction().commit();
+                session.close();
+                return "Link available: " + movieTitle;
+            } else {
+                session.getTransaction().commit();
+                session.close();
+                return "Link not available: out of time";
+            }
+        } else {
+            session.getTransaction().commit();
+            session.close();
+            return "Link not available: link not found.";
+        }
+    }
+    public static String processPackageCard(int customerId, int packageId, int movieId, String seat) {
+        // Open the session and transaction
+        Session session = ConnectToDatabase.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        try {
+            // Retrieve the PackageCard by packageId and customerId
+            PackageCard packageCard = (PackageCard) session.createQuery(
+                            "FROM PackageCard WHERE packageId = :packageId AND customerId = :customerId")
+                    .setParameter("packageId", packageId)
+                    .setParameter("customerId", customerId)
+                    .uniqueResult();
+
+            if (packageCard == null) {
+                session.getTransaction().rollback();
+                return "Error, PackageCard or Customer ID is invalid.";
+            }
+
+            // Retrieve the movie by ID
+            Movie movie = session.get(Movie.class, movieId);
+            if (movie == null) {
+                session.getTransaction().rollback();
+                return "Error, Movie with ID " + movieId + " not found.";
+            }
+
+            // Parse the seat string to find the row and column
+            String[] seatParts = seat.split(" ")[1].split("-");
+            int seatRow = Integer.parseInt(seatParts[0]) - 1;  // Convert to 0-based index
+            int seatCol = Integer.parseInt(seatParts[1]) - 1;  // Convert to 0-based index
+
+            // Get the hall map and update the seat to 1 (taken)
+            int[][] hallMap = movie.getHallMap();
+            if (hallMap[seatRow][seatCol] == 0) {  // Check if the seat is available
+                hallMap[seatRow][seatCol] = 1;  // Mark the seat as taken
+                movie.setHallMap(hallMap);  // Update the hall map
+                movie.setAvailableSeat(movie.getAvailableSeat() - 1);  // Decrease available seats by 1
+            } else {
+                session.getTransaction().rollback();
+                return "Error, Seat " + seat + " is already taken.";
+            }
+
+            // Use the package (decrease the remaining entries)
+            boolean success = packageCard.usePackage();  // Decrease remaining entries by 1
+            if (!success) {
+                session.getTransaction().rollback();
+                return "Error, No remaining entries in the package.";
+            }
+
+            // Save the updated movie and package card
+            session.update(movie);
+            session.update(packageCard);
+            session.getTransaction().commit();
+            //prepare the recipe
+            String receiptMessage = String.format(
+                    "Receipt:\n" +
+                            "=====================================\n" +
+                            "Name: %s\n" +
+                            "Customer Email: %s\n" +
+                            "Remaining Entries: %d\n" +
+                            "Movie Title: %s\n" +
+                            "Showtime: %s\n" +
+                            "Place: %s\n" +
+                            "Hall Number: %d\n",
+
+                    packageCard.getName(),
+                    packageCard.getCustomerEmail(),
+                    packageCard.getRemainingEntries(),
+                    movie.getTitle(),
+                    movie.getShowtime().toString(),
+                    movie.getPlace(),
+                    movie.getHallNumber()
+            );
+
+            // Return the message and include the email at the start for easy fetching
+            return "Email:" + packageCard.getCustomerEmail() + ":" + receiptMessage;
+
+
+
+
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            e.printStackTrace();
+            return "Error, Failed to process package due to an internal error.";
+        } finally {
+            session.close();
+        }
+    }
+
+
+
+
+
+
 }
 
 
