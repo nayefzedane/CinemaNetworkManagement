@@ -34,8 +34,8 @@ public class SimpleServer extends AbstractServer {
 			// Print or log the received complaint (optional for debugging)
 			System.out.println("Received complaint from client: " + complaint.toString());
 
-			// Save the complaint to the database using ConnectToDatabase
-			//ConnectToDatabase dbHandler = new ConnectToDatabase();
+			// Save the complaint to the data_base using ConnectToDatabase
+			//ConnectTo_Database dbHandler = new ConnectToD_atabase();
 			ConnectToDatabase.insertComplaint(complaint); // Assuming you have this method defined in ConnectToDatabase
 
 			// Send a response back to the client (optional)
@@ -169,9 +169,9 @@ public class SimpleServer extends AbstractServer {
 				System.out.println("Movie ID: " + movieId);
 				String answer = ConnectToDatabase.processPackageCard(customerId, Integer.parseInt(packageId), movieId, seatNumber);
 				System.out.println(answer);
-				if(answer.startsWith("Error")) //if buying with package failed
+				if (answer.startsWith("Error")) //if buying with package failed
 					client.sendToClient(answer);
-				else{//if entering with package succeded
+				else {//if entering with package succeded
 					String[] partsPackage = answer.split(":", 3);  // Split into 3 parts: "Email", email, and the receipt
 					String email = partsPackage[1];  // This is the customer's email
 					String receiptMessage = partsPackage[2];  // This is the full receipt message
@@ -181,10 +181,11 @@ public class SimpleServer extends AbstractServer {
 					System.out.println("Receipt Message: " + receiptMessage);
 					EmailService.sendEmail(email, "Package entrie receipt", receiptMessage);
 					client.sendToClient("PackageCardUse:" + receiptMessage);
-				} else {
+				}
+			} else {
 				System.out.println("Invalid PackageCardRequest format.");
-			  }
-		 }
+			}
+		}
 
 
 // Moaawiayh worked here
@@ -224,6 +225,7 @@ public class SimpleServer extends AbstractServer {
 						// Send response back to client
 						if (success) {
 							client.sendToClient("updateComplaintResponse;success");
+							EmailService.sendEmail(complaint.getMail(), "Complain Responded:" + complaint.getComplainTitle(), complaint.getAnswer() + "\n============\nyour original complain text:\n" +complaint.getComplainText()+"\n============\nfeel free to text us back.");
 						} else {
 							client.sendToClient("updateComplaintResponse;failure");
 						}
