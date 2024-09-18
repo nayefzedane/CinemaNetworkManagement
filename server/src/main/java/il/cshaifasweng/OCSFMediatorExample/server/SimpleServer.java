@@ -402,6 +402,7 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
+
 		if (msg instanceof PurchaseLink) {
 			PurchaseLink purchaseLink = (PurchaseLink) msg;
 			System.out.println("Received PurchaseLink from client: " + purchaseLink.getCustomerMail());
