@@ -101,7 +101,7 @@ public class    ConnectToDatabase {
                             "Crime", 175, 9.2f, "Francis Ford Coppola",
                             "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
                             "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\THe godfather.png", "Yes Planet",
-                            50.0f, false, 100, 5),
+                            50.0f, false,1),
                     new Movie("The Dark Knight",
                             LocalDateTime.of(2024, 12, 24, 20, 0),  // Showtime
                             LocalDate.of(2024, 12, 7),    // Release Date
@@ -122,7 +122,7 @@ public class    ConnectToDatabase {
                             "Biography", 195, 8.9f, "Steven Spielberg",
                             "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
                             "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\schinderlist.png", "Yes Planet",
-                            50.0f, false, 60, 1),
+                            50.0f, false, 1),
                     new Movie("Fight Club",
                             LocalDateTime.of(2024, 12, 24, 12, 15),  // Showtime
                             LocalDate.of(2024, 12, 2),     // Release Date
@@ -136,7 +136,7 @@ public class    ConnectToDatabase {
                             "Crime", 175, 9.2f, "Francis Ford Coppola",
                             "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
                             "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\THe godfather.png", "Yes Planet",
-                            50.0f, false, 100, 5)
+                            50.0f, false,2)
             );
             // Loop through the movies and convert image paths to byte arrays
             for (Movie movie : movies) {
