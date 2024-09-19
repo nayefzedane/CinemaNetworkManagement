@@ -15,8 +15,12 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import org.hibernate.*;
+import java.util.Arrays;
 
 
 
@@ -29,6 +33,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 
@@ -75,131 +80,74 @@ public class    ConnectToDatabase {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
 
-            // הוספת סרטים לדוגמא עם כל השדות החדשים באמצעות הקונסטרקטור
-            Movie movie1 = new Movie("Inception",
-                    LocalDateTime.of(2024, 12, 24, 14, 30),  // Showtime
-                    LocalDate.of(2024, 12, 10),   // Release Date
-                    "Sci-Fi", 148, 8.8f, "Christopher Nolan",
-                    "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
-                    "images/Inception.png", "Cinema City",
-                    40.0f, false, 2);
-            session.save(movie1);
+            List<Movie> movies = Arrays.asList(
+                    new Movie("Inception",
+                            LocalDateTime.of(2024, 12, 24, 14, 30),  // Showtime
+                            LocalDate.of(2024, 12, 10),   // Release Date
+                            "Sci-Fi", 148, 8.8f, "Christopher Nolan",
+                            "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
+                            "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\Inception.png", "Cinema City",
+                            40.0f, false, 2),
+                    new Movie("The Shawshank Redemption",
+                            LocalDateTime.of(2024, 12, 24, 16, 0),  // Showtime
+                            LocalDate.of(2024, 12, 5),    // Release Date
+                            "Drama", 142, 9.3f, "Frank Darabont",
+                            "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+                            "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\The ShawShank Reddemption.png", "Cinema City",
+                            35.0f, true, 60, 2),
+                    new Movie("The Godfather",
+                            LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                            LocalDate.of(2024, 12, 3),    // Release Date
+                            "Crime", 175, 9.2f, "Francis Ford Coppola",
+                            "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                            "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\THe godfather.png", "Yes Planet",
+                            50.0f, false, 100, 5),
+                    new Movie("The Dark Knight",
+                            LocalDateTime.of(2024, 12, 24, 20, 0),  // Showtime
+                            LocalDate.of(2024, 12, 7),    // Release Date
+                            "Action", 152, 9.0f, "Christopher Nolan",
+                            "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.",
+                            "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\The dark knight.png", "Yes Planet",
+                            45.0f, true, 70, 4),
+                    new Movie("Pulp Fiction",
+                            LocalDateTime.of(2024, 12, 24, 22, 30),  // Showtime
+                            LocalDate.of(2024, 12, 1),     // Release Date
+                            "Crime", 154, 8.9f, "Quentin Tarantino",
+                            "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
+                            "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\pulpfiction.png", "Cinema City",
+                            42.0f, true, 85, 2),
+                    new Movie("Schindler's List",
+                            LocalDateTime.of(2024, 12, 24, 10, 30),  // Showtime
+                            LocalDate.of(2024, 11, 28),    // Release Date
+                            "Biography", 195, 8.9f, "Steven Spielberg",
+                            "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
+                            "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\schinderlist.png", "Yes Planet",
+                            50.0f, false, 60, 1),
+                    new Movie("Fight Club",
+                            LocalDateTime.of(2024, 12, 24, 12, 15),  // Showtime
+                            LocalDate.of(2024, 12, 2),     // Release Date
+                            "Drama", 139, 8.8f, "David Fincher",
+                            "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.",
+                            "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\fightclub.png", "Cinema City",
+                            38.0f, true, 90, 3),
+                    new Movie("The Godfather",
+                            LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
+                            LocalDate.of(2024, 12, 3),    // Release Date
+                            "Crime", 175, 9.2f, "Francis Ford Coppola",
+                            "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                            "C:\\Users\\loaii\\IdeaProjects\\CinemaNetworkManagementselawe\\server\\src\\main\\resources\\images\\THe godfather.png", "Yes Planet",
+                            50.0f, false, 100, 5)
+            );
+            // Loop through the movies and convert image paths to byte arrays
+            for (Movie movie : movies) {
+                byte[] imageData = convertImagePathToByteArray(movie.getImagePath());
+                if (imageData != null) {
+                    movie.setImageData(Base64.getEncoder().encodeToString(imageData));
+                    movie.setImagePath("images/background_login.png");
+                }
+                session.save(movie);  // Save the movie to the database
+            }
 
-            Movie movie2 = new Movie("The Shawshank Redemption",
-                    LocalDateTime.of(2024, 12, 24, 16, 0),  // Showtime
-                    LocalDate.of(2024, 12, 5),    // Release Date
-                    "Drama", 142, 9.3f, "Frank Darabont",
-                    "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-                    "images/background_login.png", "Cinema City",
-                    35.0f, true, 60, 2);
-            session.save(movie2);
-
-            Movie movie3 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie3);
-
-            Movie movie4 = new Movie("The Dark Knight",
-                    LocalDateTime.of(2024, 12, 24, 20, 0),  // Showtime
-                    LocalDate.of(2024, 12, 7),    // Release Date
-                    "Action", 152, 9.0f, "Christopher Nolan",
-                    "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.",
-                    "images/background_login.png", "Yes Planet",
-                    45.0f, true, 70, 4);
-            session.save(movie4);
-
-            Movie movie5 = new Movie("Pulp Fiction",
-                    LocalDateTime.of(2024, 12, 24, 22, 30),  // Showtime
-                    LocalDate.of(2024, 12, 1),     // Release Date
-                    "Crime", 154, 8.9f, "Quentin Tarantino",
-                    "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
-                    "images/background_login.png", "Cinema City",
-                    42.0f, true, 85, 2);
-            session.save(movie5);
-
-            Movie movie6 = new Movie("Schindler's List",
-                    LocalDateTime.of(2024, 12, 24, 10, 30),  // Showtime
-                    LocalDate.of(2024, 11, 28),    // Release Date
-                    "Biography", 195, 8.9f, "Steven Spielberg",
-                    "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 60, 1);
-            session.save(movie6);
-
-            Movie movie7 = new Movie("Fight Club",
-                    LocalDateTime.of(2024, 12, 24, 12, 15),  // Showtime
-                    LocalDate.of(2024, 12, 2),     // Release Date
-                    "Drama", 139, 8.8f, "David Fincher",
-                    "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.",
-                    "images/background_login.png", "Cinema City",
-                    38.0f, true, 90, 3);
-            session.save(movie7);
-            Movie movie8 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie8);
-
-            Movie movie9 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie9);
-
-            Movie movie10 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie10);
-
-            Movie movie11 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie11);
-
-            Movie movie12 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie12);
-
-            Movie movie13 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie13);
-
-            Movie movie14 = new Movie("The Godfather",
-                    LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                    LocalDate.of(2024, 12, 3),    // Release Date
-                    "Crime", 175, 9.2f, "Francis Ford Coppola",
-                    "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                    "images/background_login.png", "Yes Planet",
-                    50.0f, false, 100, 5);
-            session.save(movie14);
 
             // הוספת משתמשים לדוגמא
             User admin = new User("admin", "admin123", "Admin");
@@ -220,6 +168,16 @@ public class    ConnectToDatabase {
         } catch (HibernateException e) {
             System.err.println("Error during initial data creation: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+    // Helper function to convert image path to byte array
+    private static byte[] convertImagePathToByteArray(String imagePath) {
+        try {
+            return Files.readAllBytes(Paths.get(imagePath));
+        } catch (IOException e) {
+            System.err.println("Error reading image file: " + imagePath);
+            e.printStackTrace();
+            return null;
         }
     }
 
