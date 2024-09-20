@@ -363,7 +363,7 @@ public class    ConnectToDatabase {
                     "loay@gmail.com",
                     "loay",
                     "no seat",
-                    0
+                    1
             );
             session.save(purchase1);
             purchaseCard purchase2 = new purchaseCard(
@@ -377,7 +377,7 @@ public class    ConnectToDatabase {
                     "mohammed@gmail.com",
                     "mohammad",
                     "no seat",
-                    0
+                    1
             );
             session.save(purchase2);
 
@@ -392,7 +392,7 @@ public class    ConnectToDatabase {
                     "nayef@gmail.com",
                     "nayef",
                     "no seat",
-                    0
+                    1
 
             );
             session.save(purchase3);
@@ -407,7 +407,7 @@ public class    ConnectToDatabase {
                     "nayef1@gmail.com",
                     "nayef",
                     "no seat",
-                    0
+                    1
             );
             session.save(purchase4);
             purchaseCard purchase5 = new purchaseCard(
@@ -421,7 +421,7 @@ public class    ConnectToDatabase {
                     "madrid@gmail.com",
                     "madrid",
                     "no seat",
-                    0
+                    1
             );
             session.save(purchase5);
 
