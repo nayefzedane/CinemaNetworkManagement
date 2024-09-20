@@ -233,6 +233,7 @@ public class OnlineMoviesController {
         detailsStage.setScene(scene);
         detailsStage.show();
     }
+
     private void sendPurchaseLinkToServer(PurchaseLink purchaseLink) {
         try {
             SimpleClient.getClient().sendToServer(purchaseLink);
@@ -260,7 +261,7 @@ public class OnlineMoviesController {
         nameField.setPromptText("Enter your name");
 
         TextField cardNumberField = new TextField();
-        cardNumberField.setPromptText("Enter your card number (last 4 digits)");
+        cardNumberField.setPromptText("Enter your 16-digit card number");
 
         Button payButton = new Button("Buy Link");
         payButton.getStyleClass().add("pay-button");
@@ -277,17 +278,20 @@ public class OnlineMoviesController {
                 return;
             }
 
-            if (!cardNumber.matches("\\d{4}")) {
-                showAlert(Alert.AlertType.ERROR, "Validation Error", "Card number must be the last 4 digits.");
+            if (!cardNumber.matches("\\d{16}")) {  // Verify that the card number is exactly 16 digits
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Card number must be exactly 16 digits.");
                 return;
             }
+
+            // Extract the last 4 digits of the card number
+            String lastFourDigits = cardNumber.substring(12);
 
             // Create a PurchaseLink object
             PurchaseLink purchaseLink = new PurchaseLink(
                     name,
                     LocalDateTime.now(),  // Current purchase time
                     12345,  // Customer ID (replace with actual ID if necessary)
-                    Integer.parseInt(cardNumber),  // Last 4 digits of card
+                    Integer.parseInt(lastFourDigits),  // Last 4 digits of card
                     movie.getTitle(),  // Movie title
                     email,
                     movie.getPrice()  // Price of the link
@@ -298,7 +302,10 @@ public class OnlineMoviesController {
 
             // Close the payment window
             paymentStage.close();
+            mainWindowRoot.setEffect(null);  // הסרת הטשטוש לאחר סגירת החלון
         });
+
+        paymentStage.setOnCloseRequest(event -> mainWindowRoot.setEffect(null)); // הסרת הטשטוש בעת סגירת החלון
 
         paymentDetails.getChildren().addAll(linkPriceLabel, emailField, nameField, cardNumberField, payButton);
 
@@ -306,8 +313,6 @@ public class OnlineMoviesController {
         paymentStage.setScene(paymentScene);
         paymentStage.show();
     }
-
-
 
     @FXML
     public void toggleSearchWindow() {
@@ -324,6 +329,7 @@ public class OnlineMoviesController {
             searchWindow.getStyleClass().add("hidden");  // Hide the search window with a fade-out effect
         }
     }
+
     private void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
