@@ -14,7 +14,7 @@
 <StackPane fx:id="mainWindowRoot" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OnlineMoviesController" stylesheets="@OnlineMovies.css">
 
     <!-- כל שאר החלון הראשי -->
-    <ScrollPane fitToWidth="true">
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">  <!-- מניעת גלילה ימינה -->
         <!-- תוכן החלון הראשי -->
         <VBox spacing="60" alignment="center" style="-fx-background-color: #D3D3D3;">
             <!-- כותרת ראשית לחלון -->

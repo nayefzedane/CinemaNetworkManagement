@@ -1,28 +1,37 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
+import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
+
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.layout.HBox;
-import javafx.scene.effect.GaussianBlur;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.geometry.Pos;
-import javafx.scene.control.ScrollPane;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import javafx.scene.control.Alert;
+import java.time.LocalDateTime;
+import java.io.IOException;
 
 public class OnlineMoviesController {
+
+    @FXML
+    private StackPane mainWindowRoot;  // שורש החלון הראשי
 
     @FXML
     private TilePane movieTilePane;
@@ -119,46 +128,186 @@ public class OnlineMoviesController {
     }
 
     private void showMovieDetails(Movie movie) {
-        // Create a new window for displaying movie details
+        // יצירת VBox שמכיל את כל פרטי הסרט
         VBox movieDetailsBox = new VBox(20);
-        movieDetailsBox.getStyleClass().add("movie-details");  // Add a custom style class for movie details
+        movieDetailsBox.getStyleClass().add("movie-details");
+        movieDetailsBox.setPadding(new Insets(20));
 
-        // Close button for the details window
+        // יצירת כפתור סגירה בצד ימין
         Button closeButton = new Button("X");
+        closeButton.getStyleClass().add("close-button");
         closeButton.setOnAction(e -> {
-            detailsStage.close();  // Close the details window
-            movieTilePane.setEffect(null);  // Remove the blur effect from the main window
+            detailsStage.close(); // סוגר את החלון
+            mainWindowRoot.setEffect(null); // מסיר את אפקט הטשטוש
         });
 
         HBox titleBar = new HBox(closeButton);
-        titleBar.setAlignment(Pos.TOP_RIGHT);  // Align the close button to the top right
+        titleBar.setAlignment(Pos.TOP_RIGHT); // יישור כפתור הסגירה לימין למעלה
 
-        // Movie details: image, title, and description
-        ImageView movieImage = new ImageView(new Image(movie.getImagePath()));
+        // הוספת תמונת הסרט
+        ImageView movieImage;
+        if (movie.getImageData() != null) {
+            Image image = new Image(new ByteArrayInputStream(movie.getImageData()));
+            movieImage = new ImageView(image);
+        } else {
+            movieImage = new ImageView(new Image(movie.getImagePath()));
+        }
         movieImage.setFitHeight(300);
         movieImage.setFitWidth(400);
+        movieImage.setPreserveRatio(true); // שמירת יחס התמונה
 
+        // פרטים נוספים של הסרט
         Text movieTitle = new Text(movie.getTitle());
+        movieTitle.getStyleClass().add("movie-title");
+
         Text movieDescription = new Text("Description: " + movie.getDescription());
+        movieDescription.getStyleClass().add("movie-description");
+        movieDescription.setWrappingWidth(400);
 
-        VBox movieInfo = new VBox(10, movieTitle, movieDescription);  // Container for movie info
+        Text movieGenre = new Text("Genre: " + movie.getGenre());
+        Text movieShowtime = new Text("Showtime: " + movie.getShowtime());
+        Text movieReleaseDate = new Text("Release Date: " + movie.getReleaseDate());
+        Text movieDuration = new Text("Duration: " + movie.getDuration() + " minutes");
+        Text movieRating = new Text("Rating: " + movie.getRating());
+        Text movieDirector = new Text("Director: " + movie.getDirector());
+        Text moviePlace = new Text("Place: " + movie.getPlace());
+        Text moviePrice = new Text("Price: ₪" + movie.getPrice());
+        Text movieAvailableSeat = new Text("Available Seats: " + movie.getAvailableSeat());
+        Text movieHallNumber = new Text("Hall Number: " + movie.getHallNumber());
+        Text movieIsOnline = new Text("Available Online: " + (movie.isOnline() ? "Yes" : "No"));
 
-        movieDetailsBox.getChildren().addAll(titleBar, movieImage, movieInfo);  // Add components to the details box
+        // כפתור "BUY LINK"
+        Button buyLinkButton = new Button("Buy Link");
+        buyLinkButton.getStyleClass().add("buy-button");
+        buyLinkButton.setOnAction(e -> {
+            detailsStage.close();  // Close the movie details window
+            openLinkPaymentWindow(movie);  // Open the payment window for the link
+        });
 
-        // Set up the details window with a ScrollPane for scrolling if needed
+        // סידור הפרטים בתוך VBox
+        VBox movieInfo = new VBox(10,
+                movieTitle,
+                movieDescription,
+                movieGenre,
+                movieShowtime,
+                movieReleaseDate,
+                movieDuration,
+                movieRating,
+                movieDirector,
+                moviePlace,
+                moviePrice,
+                movieAvailableSeat,
+                movieHallNumber,
+                movieIsOnline,
+                buyLinkButton  // הוספת כפתור התשלום עבור הלינק
+        );
+        movieInfo.getStyleClass().add("movie-info");
+        movieInfo.setAlignment(Pos.CENTER_LEFT); // יישור לשמאל
+
+        movieDetailsBox.getChildren().addAll(titleBar, movieImage, movieInfo);
+
+        // הוספת ScrollPane כדי לאפשר גלילה רק מעלה ומטה
         ScrollPane scrollPane = new ScrollPane(movieDetailsBox);
+        scrollPane.setFitToWidth(true);  // התאמת התוכן לרוחב
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);  // ביטול הגלילה האופקית
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);  // גלילה אנכית לפי הצורך
+
+        // יצירת חלון חדש עם התצוגה של פרטי הסרט
         detailsStage = new Stage();
+        detailsStage.setTitle("Movie Details");
+
+        // קביעת גודל החלון, ואפשרות גלילה
         Scene scene = new Scene(scrollPane, 700, 600);
+        scene.getStylesheets().add(getClass().getResource("OfflineMovies.css").toExternalForm());
+
+        // הוספת הטשטוש לחלון הראשי באופן מיידי
+        mainWindowRoot.setEffect(blurEffect);
+
+        // הסרת הטשטוש כשסוגרים את החלון
+        detailsStage.setOnCloseRequest(event -> mainWindowRoot.setEffect(null));
+
+        // הגדרת החלון הדינאמי שיהיה קבוע ולא ניתן להזזה
+        detailsStage.initStyle(StageStyle.UNDECORATED);
+        detailsStage.setResizable(false); // לא ניתן לשנות גודל
+
         detailsStage.setScene(scene);
-        detailsStage.initStyle(StageStyle.UNDECORATED);  // Remove window decorations (e.g., title bar)
-        detailsStage.setResizable(false);  // Disable resizing of the details window
-
-        // Apply a blur effect to the main window while the details window is open
-        movieTilePane.setEffect(blurEffect);
-
-        // Display the details window
         detailsStage.show();
     }
+    private void sendPurchaseLinkToServer(PurchaseLink purchaseLink) {
+        try {
+            SimpleClient.getClient().sendToServer(purchaseLink);
+        } catch (IOException e) {
+            e.printStackTrace();  // תוכל להציג הודעת שגיאה אחרת במקום להדפיס את ה-Stack Trace
+            showAlert(Alert.AlertType.ERROR, "Communication Error", "Failed to send purchase link to server.");
+        }
+    }
+
+    // חלון התשלום עבור רכישת לינק
+    private void openLinkPaymentWindow(Movie movie) {
+        Stage paymentStage = new Stage();
+        paymentStage.setTitle("Buy Link");
+
+        // Create the VBox for payment details
+        VBox paymentDetails = new VBox(10);
+        paymentDetails.setPadding(new Insets(20));
+
+        // Payment form fields
+        Text linkPriceLabel = new Text("Link Price: ₪" + movie.getPrice());
+        TextField emailField = new TextField();
+        emailField.setPromptText("Enter your email");
+
+        TextField nameField = new TextField();
+        nameField.setPromptText("Enter your name");
+
+        TextField cardNumberField = new TextField();
+        cardNumberField.setPromptText("Enter your card number (last 4 digits)");
+
+        Button payButton = new Button("Buy Link");
+        payButton.getStyleClass().add("pay-button");
+
+        // Set action on pay button
+        payButton.setOnAction(e -> {
+            // Collect payment details
+            String email = emailField.getText();
+            String name = nameField.getText();
+            String cardNumber = cardNumberField.getText();
+
+            if (email.isEmpty() || name.isEmpty() || cardNumber.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "All fields must be filled.");
+                return;
+            }
+
+            if (!cardNumber.matches("\\d{4}")) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Card number must be the last 4 digits.");
+                return;
+            }
+
+            // Create a PurchaseLink object
+            PurchaseLink purchaseLink = new PurchaseLink(
+                    name,
+                    LocalDateTime.now(),  // Current purchase time
+                    12345,  // Customer ID (replace with actual ID if necessary)
+                    Integer.parseInt(cardNumber),  // Last 4 digits of card
+                    movie.getTitle(),  // Movie title
+                    email,
+                    movie.getPrice()  // Price of the link
+            );
+
+            // Send the PurchaseLink object to the server
+            sendPurchaseLinkToServer(purchaseLink);
+
+            // Close the payment window
+            paymentStage.close();
+        });
+
+        paymentDetails.getChildren().addAll(linkPriceLabel, emailField, nameField, cardNumberField, payButton);
+
+        Scene paymentScene = new Scene(paymentDetails, 400, 200);
+        paymentStage.setScene(paymentScene);
+        paymentStage.show();
+    }
+
+
 
     @FXML
     public void toggleSearchWindow() {
@@ -175,4 +324,11 @@ public class OnlineMoviesController {
             searchWindow.getStyleClass().add("hidden");  // Hide the search window with a fade-out effect
         }
     }
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
 }

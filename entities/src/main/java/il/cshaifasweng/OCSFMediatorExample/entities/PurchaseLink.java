@@ -79,7 +79,7 @@ public class PurchaseLink implements Serializable {
 
     // Method to generate a unique link
     private String generateUniqueLink() {
-        String cinemaName = "cinemaName";  // Replace with the actual cinema name
+        String cinemaName = "Starlight";  // Replace with the actual cinema name
         String randomCode = generateRandomCode(5);  // Generate a random alphanumeric code of length 5
         return "www." + cinemaName + ".com/" + randomCode;
     }

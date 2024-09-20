@@ -1,6 +1,5 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import com.mysql.cj.xdevapi.Client;
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,6 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,14 +39,18 @@ public class ContentManagerController {
     @FXML private TextField priceField;
     @FXML private TextField durationField;
     @FXML private TextField ratingField;
-    @FXML private CheckBox isOnlineCheckbox;
     @FXML private TextField genreField;
     @FXML private TextField imagePathField;
+    @FXML private ComboBox<String> placeComboBox;
+    @FXML private ComboBox<String> hallNumberComboBox;
+    @FXML private TextField producerField;
+    @FXML private TextArea leadingActorsArea;
 
     private SimpleClient client;
 
     @FXML
     private Label movieCountLabel;
+
     @FXML
     private void initialize() {
         try {
@@ -55,6 +59,10 @@ public class ContentManagerController {
             showtimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getShowtime().toString()));
             priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
             loadMoviesIntoTable();
+
+            // Initialize the ComboBox values for place and hall number
+            placeComboBox.setItems(FXCollections.observableArrayList("Cinema City", "Yes Planet"));
+            hallNumberComboBox.setItems(FXCollections.observableArrayList("Hall 1", "Hall 2"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,8 +119,14 @@ public class ContentManagerController {
             int duration = Integer.parseInt(durationField.getText());
             float rating = Float.parseFloat(ratingField.getText());
             float price = Float.parseFloat(priceField.getText());
-            boolean isOnline = isOnlineCheckbox.isSelected();
             String genre = genreField.getText();
+
+            // Get new fields' values
+            String place = placeComboBox.getValue();
+            String hallNumber = hallNumberComboBox.getValue();
+            String producer = producerField.getText();
+            String leadingActors = leadingActorsArea.getText();
+
             byte[] imageData = null;
             File imageFile = new File(imagePathField.getText());
 
@@ -127,15 +141,12 @@ public class ContentManagerController {
                 System.err.println("Image file does not exist at path: " + imagePathField.getText());
             }
 
-            if (imageData != null) {
-                Movie movie = new Movie(title, showtime, releaseDate, director, description, price, isOnline, genre, duration, rating, imageData);
-                SimpleClient.getClient().sendToServer(movie.toString());
-                clearForm();
-            } else {
-                Movie movie = new Movie(title, showtime, releaseDate, director, description, price, isOnline, genre, duration, rating);
-                SimpleClient.getClient().sendToServer(movie.toString());
-                clearForm();
-            }
+            // Create the Movie object based on whether the image exists or not
+            Movie movie = new Movie(title, showtime, releaseDate, genre, duration, rating, director, description, imageData, place, price, false, hallNumber.equals("Hall 1") ? 1 : 2, producer, leadingActors);
+
+            // Send the movie to the server
+            SimpleClient.getClient().sendToServer(movie);
+            clearForm();
 
             // Show a confirmation message
             showAlert(Alert.AlertType.INFORMATION, "Movie Added", "The movie has been successfully added.");
@@ -150,6 +161,8 @@ public class ContentManagerController {
         int minute = Integer.parseInt(showtimeMinuteField.getText());
         return LocalDateTime.of(date, LocalTime.of(hour, minute));
     }
+
+    @FXML
     public void handleDeleteMovie(ActionEvent actionEvent) {
         Movie selectedMovie = movieTable.getSelectionModel().getSelectedItem();
         if (selectedMovie != null) {
@@ -235,19 +248,40 @@ public class ContentManagerController {
 
     private void clearForm() {
         titleField.clear();
-        showtimeDatePicker.setValue(null);
         showtimeHourField.clear();
         showtimeMinuteField.clear();
-        releaseDatePicker.setValue(null);
         directorField.clear();
         descriptionArea.clear();
         priceField.clear();
-        isOnlineCheckbox.setSelected(false);
         genreField.clear();
         imagePathField.clear();
         ratingField.clear();
         durationField.clear();
+        producerField.clear();
+        leadingActorsArea.clear();
+
+        if (!showtimeDatePicker.equals(null)) showtimeDatePicker.setValue(null);
+        if (!releaseDatePicker.equals(null)) releaseDatePicker.setValue(null);
+        if (!placeComboBox.equals(null)) placeComboBox.getSelectionModel().clearSelection();
+        if (!hallNumberComboBox.equals(null)) hallNumberComboBox.getSelectionModel().clearSelection();
     }
+
+    private void clearOnlineForm(){
+        titleField.clear();
+        directorField.clear();
+        descriptionArea.clear();
+        priceField.clear();
+        genreField.clear();
+        imagePathField.clear();
+        ratingField.clear();
+        durationField.clear();
+        producerField.clear();
+        leadingActorsArea.clear();
+
+        if (!releaseDatePicker.equals(null)) releaseDatePicker.setValue(null);
+    }
+
+
     private void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -282,11 +316,59 @@ public class ContentManagerController {
             case "Update Showtime":
                 fxmlFile = "content_manager_updateshowtime";
                 break;
+            case "Add Online Movie":
+                fxmlFile = "content_manager_addonlinemovie"; // Add this case for the new button
+                break;
         }
         try {
             App.setRoot(fxmlFile);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    public void handleAddOnlineMovie(ActionEvent actionEvent) {
+        try {
+            String title = titleField.getText();
+            LocalDate releaseDate = (releaseDatePicker != null) ? releaseDatePicker.getValue() : LocalDate.now();
+            String director = directorField.getText();
+            String producer = producerField.getText();  // New field for producer
+            String leadingActors = leadingActorsArea.getText();  // New field for leading actors
+            String description = descriptionArea.getText();
+            int duration = Integer.parseInt(durationField.getText());
+            float rating = Float.parseFloat(ratingField.getText());
+            float price = Float.parseFloat(priceField.getText());
+            String genre = genreField.getText();
+            byte[] imageData = null;
+            File imageFile = new File(imagePathField.getText());
+
+            if (imageFile.exists()) {
+                try {
+                    imageData = Files.readAllBytes(imageFile.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.err.println("Error reading the image file.");
+                }
+            } else {
+                System.err.println("Image file does not exist at path: " + imagePathField.getText());
+            }
+
+            // Set default values for place, hallNumber, and showtime for online movies
+            String place = "-";  // Default for online movies
+            int hallNumber = 1;  // Default hall number for online movies
+            LocalDateTime showtime = LocalDateTime.now() ;
+
+            // Create and send the online movie object
+            Movie movie = new Movie(title, showtime, releaseDate, genre, duration, rating, director, description, imageData, place, price, true, hallNumber, producer, leadingActors);
+            SimpleClient.getClient().sendToServer(movie);
+            clearOnlineForm();
+
+            // Show a confirmation message
+            showAlert(Alert.AlertType.INFORMATION, "Online Movie Added", "The online movie has been successfully added.");
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to add online movie: " + e.getMessage());
+            System.out.println("Failed to add online movie: " + e.getMessage());
         }
     }
 }

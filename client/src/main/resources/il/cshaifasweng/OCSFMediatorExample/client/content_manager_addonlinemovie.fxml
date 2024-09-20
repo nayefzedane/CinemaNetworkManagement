@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
+
+<VBox alignment="TOP_CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ContentManagerController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Add Online Movie" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <GridPane vgap="15" hgap="15" alignment="CENTER">
+        <!-- Row 1: Title -->
+        <Label text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="titleField" GridPane.columnIndex="1" GridPane.rowIndex="0" HBox.hgrow="ALWAYS"/>
+
+        <!-- Row 2: Release Date -->
+        <Label text="Release Date:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+        <DatePicker fx:id="releaseDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="1" HBox.hgrow="ALWAYS"/>
+
+        <!-- Row 3: Director -->
+        <Label text="Director:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="directorField" GridPane.columnIndex="1" GridPane.rowIndex="2" HBox.hgrow="ALWAYS"/>
+
+        <!-- Row 4: Producer -->
+        <Label text="Producer:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="producerField" GridPane.columnIndex="1" GridPane.rowIndex="3" HBox.hgrow="ALWAYS"/>
+
+        <!-- Row 5: Leading Actors -->
+        <Label text="Leading Actors:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold;"/>
+        <TextArea fx:id="leadingActorsArea" GridPane.columnIndex="1" GridPane.rowIndex="4" prefHeight="60" HBox.hgrow="ALWAYS"/>
+
+        <!-- Row 6: Description -->
+        <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-font-weight: bold;"/>
+        <TextArea fx:id="descriptionArea" GridPane.columnIndex="1" GridPane.rowIndex="5" prefHeight="100" HBox.hgrow="ALWAYS"/>
+
+        <!-- Row 7: Price -->
+        <Label text="Price:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="priceField" GridPane.columnIndex="1" GridPane.rowIndex="6" HBox.hgrow="ALWAYS"/>
+
+        <!-- Row 8: Genre -->
+        <Label text="Genre:" GridPane.columnIndex="0" GridPane.rowIndex="7" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="genreField" GridPane.columnIndex="1" GridPane.rowIndex="7" HBox.hgrow="ALWAYS"/>
+
+        <!-- Row 9: Duration -->
+        <Label text="Duration (minutes):" GridPane.columnIndex="0" GridPane.rowIndex="8" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="durationField" GridPane.columnIndex="1" GridPane.rowIndex="8" HBox.hgrow="ALWAYS"/>
+
+        <!-- Row 10: Rating -->
+        <Label text="Rating:" GridPane.columnIndex="0" GridPane.rowIndex="9" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="ratingField" GridPane.columnIndex="1" GridPane.rowIndex="9" HBox.hgrow="ALWAYS"/>
+
+        <!-- Row 11: Image Path -->
+        <Label text="Image Path:" GridPane.columnIndex="0" GridPane.rowIndex="10" style="-fx-font-weight: bold;"/>
+        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="10" HBox.hgrow="ALWAYS">
+            <TextField fx:id="imagePathField" HBox.hgrow="ALWAYS"/>
+            <Button text="Browse" onAction="#handleImageUpload"/>
+        </HBox>
+    </GridPane>
+
+    <HBox spacing="20">
+        <Button text="Add Online Movie" onAction="#handleAddOnlineMovie" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <Button text="Back" onAction="#handleBack" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox>
