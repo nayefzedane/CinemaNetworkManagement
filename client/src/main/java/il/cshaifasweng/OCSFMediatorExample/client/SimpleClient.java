@@ -193,36 +193,36 @@ public class SimpleClient extends AbstractClient {
 				});
 			}
 			else {
-				//trying this:
-				MainWindowController mainController = (MainWindowController) App.getController();
-				Object activeController = mainController.getActiveController();
-				if (activeController instanceof AdminController) {
-					AdminController controller= (AdminController) activeController;
-					controller.showAlert("error", "no tickets found");
-					return;
-				}
-				// Check if it's a list of movies
+
 				List<Movie> movies = (List<Movie>) msg;
-				System.out.println("Movies received from server: " + movies.size()); // Debugging output
+				System.out.println("Movies received from server: " + movies.size());
+				Object activeController = App.getController();
+				if (activeController instanceof ContentManagerController){
+					ContentManagerController controller = (ContentManagerController) activeController;
+					controller.updateMovieTable(movies);
+
+				}
+				MainWindowController mainController = (MainWindowController) App.getController();
+				Object activeController1 = mainController.getActiveController();
+
 				Platform.runLater(() -> {
 					try {
 
 
-						if (activeController instanceof OfflineMoviesController) {
-							OfflineMoviesController controller = (OfflineMoviesController) activeController;
+						if (activeController1 instanceof OfflineMoviesController) {
+							OfflineMoviesController controller = (OfflineMoviesController) activeController1;
 							controller.displayMovies(movies);
 							controller.setUpcomingMovies(movies);  // הוספת קריאה לפונקציה setUpcomingMovies
-						} else if (activeController instanceof OnlineMoviesController) {
-							((OnlineMoviesController) activeController).displayMovies(movies);
+						} else if (activeController1 instanceof OnlineMoviesController) {
+							((OnlineMoviesController) activeController1).displayMovies(movies);
 						} else {
-							System.out.println("No appropriate controller found to display movies.");
+							System.out.println("hello world");
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				});
-				ContentManagerController controller = (ContentManagerController) App.getController();
-				controller.updateMovieTable(movies);
+
 			}
 
 
