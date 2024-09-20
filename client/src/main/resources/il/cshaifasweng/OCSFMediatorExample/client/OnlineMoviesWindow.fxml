@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.ScrollPane?>
 
-<StackPane fx:id="mainWindowRoot" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OnlineMoviesController" stylesheets="@OnlineMovies.css">
+<StackPane fx:id="mainWindowRoot" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.OnlineMoviesController" stylesheets="@OnlineMovies.css" style="-fx-background-color: #D3D3D3;">
 
     <!-- כל שאר החלון הראשי -->
     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">  <!-- מניעת גלילה ימינה -->
@@ -21,9 +21,9 @@
             <Label text="Online Movies" styleClass="label-title"/>
 
             <!-- הוספת מרווח גדול יותר לפני אזור הסרטים -->
-            <VBox spacing="80" alignment="center"> <!-- מרווח גדול יותר למטה מהכותרת -->
+            <VBox spacing="80" alignment="center" style="-fx-background-color: #D3D3D3;"> <!-- מרווח גדול יותר למטה מהכותרת -->
                 <!-- אזור הסרטים -->
-                <TilePane fx:id="movieTilePane" hgap="15" vgap="15" alignment="center" styleClass="movie-tile-pane"/>
+                <TilePane fx:id="movieTilePane" hgap="15" vgap="15" alignment="center" style="-fx-background-color: #D3D3D3;" styleClass="movie-tile-pane"/>
             </VBox>
         </VBox>
     </ScrollPane>
@@ -32,7 +32,7 @@
     <Button fx:id="searchButton" text="🔍" onAction="#toggleSearchWindow" styleClass="search-icon" StackPane.alignment="TOP_RIGHT"/>
 
     <!-- חלון החיפוש -->
-    <VBox fx:id="searchWindow" spacing="10" maxWidth="250" maxHeight="250" styleClass="search-window" visible="false" managed="false" StackPane.alignment="TOP_RIGHT" translateY="60">
+    <VBox fx:id="searchWindow" spacing="10" maxWidth="250" maxHeight="250" style="-fx-background-color: #D3D3D3;" styleClass="search-window" visible="false" managed="false" StackPane.alignment="TOP_RIGHT" translateY="60">
         <TextField fx:id="searchField" promptText="Search by Movie Name" styleClass="search-field" maxWidth="200"/>
         <ComboBox fx:id="genreComboBox" promptText="Select Genre" styleClass="combo-box" maxWidth="200"/>
         <Button text="Search" onAction="#searchMovies" styleClass="nav-button" maxWidth="200"/>

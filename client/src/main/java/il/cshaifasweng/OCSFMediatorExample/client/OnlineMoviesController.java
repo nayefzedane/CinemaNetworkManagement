@@ -92,29 +92,27 @@ public class OnlineMoviesController {
         System.out.println("Searching movies with criteria: Genre = " + selectedGenre + ", Title = " + movieTitle);
         client.requestOnlineMoviesByCriteria(selectedGenre, movieTitle);
     }
-
     public void displayMovies(List<Movie> movies) {
         movieTilePane.getChildren().clear();  // Clear the current movie tiles
-
-        // Log the number of movies received for debugging purposes
-        System.out.println("Number of movies received: " + (movies != null ? movies.size() : "null list"));
 
         if (movies == null || movies.isEmpty()) {
             Text noMoviesText = new Text("No movies found.");
             movieTilePane.getChildren().add(noMoviesText);  // Display a "No movies found" message
         } else {
             for (Movie movie : movies) {
-
-                VBox movieBox = new VBox(5);
+                VBox movieBox = new VBox(10);  // מרווח גדול יותר בין התמונה לשם הסרט
                 ImageView movieImage = new ImageView(new Image(movie.getImagePath()));
+
                 if (movie.getImageData() != null && movie.getImageData().length > 0) {
-                    // Convert byte array to Image
                     ByteArrayInputStream inputStream = new ByteArrayInputStream(movie.getImageData());
                     movieImage = new ImageView(new Image(inputStream));
                 }
 
-                movieImage.setFitHeight(150);
-                movieImage.setFitWidth(100);
+                // הגדרת גודל התמונה
+                movieImage.setFitHeight(300);  // גובה גדול יותר
+                movieImage.setFitWidth(200);   // רוחב גדול יותר
+                movieImage.setPreserveRatio(true);  // שמירת יחס התמונה
+
                 Text movieTitle = new Text(movie.getTitle());  // Movie title
 
                 // Adding a "View More" button to display additional details
@@ -165,16 +163,13 @@ public class OnlineMoviesController {
         movieDescription.setWrappingWidth(400);
 
         Text movieGenre = new Text("Genre: " + movie.getGenre());
-        Text movieShowtime = new Text("Showtime: " + movie.getShowtime());
-        Text movieReleaseDate = new Text("Release Date: " + movie.getReleaseDate());
         Text movieDuration = new Text("Duration: " + movie.getDuration() + " minutes");
         Text movieRating = new Text("Rating: " + movie.getRating());
         Text movieDirector = new Text("Director: " + movie.getDirector());
-        Text moviePlace = new Text("Place: " + movie.getPlace());
-        Text moviePrice = new Text("Price: ₪" + movie.getPrice());
-        Text movieAvailableSeat = new Text("Available Seats: " + movie.getAvailableSeat());
-        Text movieHallNumber = new Text("Hall Number: " + movie.getHallNumber());
+        Text moviePrice = new Text("Price: $" + movie.getPrice());
         Text movieIsOnline = new Text("Available Online: " + (movie.isOnline() ? "Yes" : "No"));
+        Text movieProducer = new Text("Producer: " + movie.getProducer());
+        Text movieLeadingActors = new Text("LeadingActors: " + movie.getLeadingActors());
 
         // כפתור "BUY LINK"
         Button buyLinkButton = new Button("Buy Link");
@@ -189,15 +184,12 @@ public class OnlineMoviesController {
                 movieTitle,
                 movieDescription,
                 movieGenre,
-                movieShowtime,
-                movieReleaseDate,
                 movieDuration,
                 movieRating,
                 movieDirector,
-                moviePlace,
                 moviePrice,
-                movieAvailableSeat,
-                movieHallNumber,
+                movieProducer,
+                movieLeadingActors,
                 movieIsOnline,
                 buyLinkButton  // הוספת כפתור התשלום עבור הלינק
         );

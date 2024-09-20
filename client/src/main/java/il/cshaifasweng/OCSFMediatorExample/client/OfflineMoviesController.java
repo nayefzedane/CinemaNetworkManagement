@@ -232,6 +232,8 @@ public class OfflineMoviesController {
         Text movieAvailableSeat = new Text("Available Seats: " + movie.getAvailableSeat());
         Text movieHallNumber = new Text("Hall Number: " + movie.getHallNumber());
         Text movieIsOnline = new Text("Available Online: " + (movie.isOnline() ? "Yes" : "No"));
+        Text movieProducer = new Text("Producer: " + movie.getProducer());
+        Text movieLeadingActors = new Text("LeadingActors: " + movie.getLeadingActors());
 
         // כפתור "BUY"
         Button buyButton = new Button("BUY");
@@ -262,6 +264,8 @@ public class OfflineMoviesController {
                 movieTitle,
                 movieDescription,
                 movieGenre,
+                movieProducer,
+                movieLeadingActors,
                 movieShowtime,
                 movieReleaseDate,
                 movieDuration,
