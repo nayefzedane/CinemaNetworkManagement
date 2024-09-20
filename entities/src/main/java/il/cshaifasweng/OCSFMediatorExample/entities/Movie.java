@@ -109,6 +109,40 @@ public class Movie implements Serializable {
         this.hallMapString = convertArrayToString(hallMap);
     }
 
+    public Movie(String title, LocalDateTime showtime, LocalDate releaseDate, String genre, int duration, float rating, String director, String description, byte[] imageData, String place, float price, boolean isOnline, int hallNumber, String producer, String leadingActors) {
+        this.title = title;
+        this.showtime = showtime;
+        this.releaseDate = releaseDate;
+        this.genre = genre;
+        this.duration = duration;
+        this.rating = rating;
+        this.director = director;
+        this.description = description;
+        this.imageData = imageData;
+        this.place = place;
+        this.price = price;
+        this.isOnline = isOnline;
+        this.hallNumber = hallNumber;
+        this.producer = producer;  // הגדרת המפיק
+        this.leadingActors = leadingActors;  // הגדרת השחקנים הראשיים
+
+        if (hallNumber == 1) {
+            this.availableSeat = 25;
+            this.hallMap = new int[5][5];
+        }
+        if (hallNumber == 2) {
+            this.availableSeat = 36;
+            this.hallMap = new int[6][6];
+        }
+        for (int i = 0; i < hallMap.length; i++) {  // matrix.length נותן את מספר השורות
+            for (int j = 0; j < hallMap[i].length; j++) {  // matrix[i].length נותן את מספר העמודות בשורה i
+                hallMap[i][j] = 0;
+            }
+        }
+
+        // המרת המערך הדו-ממדי למחרוזת כדי לשמור בבסיס הנתונים
+        this.hallMapString = convertArrayToString(hallMap);
+    }
     //added by loay for testing
     public Movie(String title, LocalDateTime showtime, LocalDate releaseDate, String genre, int duration, float rating, String director, String description, String imagePath, String place, float price, boolean isOnline, int hallNumber) {
         this.title = title;
@@ -183,6 +217,41 @@ public class Movie implements Serializable {
         this.description = description;
         this.price = price;
         this.isOnline = isOnline;
+    }
+
+    public Movie(String title, LocalDateTime showtime, LocalDate releaseDate, String genre, int duration, float rating, String director, String description, byte[] imageData, String place, float price, boolean isOnline, int hallNum) {
+        this.title = title;
+        this.showtime = showtime;
+        this.releaseDate = releaseDate;
+        this.genre = genre;
+        this.duration = duration;
+        this.rating = rating;
+        this.director = director;
+        this.description = description;
+        this.imageData = imageData;
+        this.place = place;
+        this.price = price;
+        this.isOnline = isOnline;
+        this.hallNumber = hallNumber;
+        this.producer = producer;  // הגדרת המפיק
+        this.leadingActors = leadingActors;  // הגדרת השחקנים הראשיים
+
+        if (hallNumber == 1) {
+            this.availableSeat = 25;
+            this.hallMap = new int[5][5];
+        }
+        if (hallNumber == 2) {
+            this.availableSeat = 36;
+            this.hallMap = new int[6][6];
+        }
+        for (int i = 0; i < hallMap.length; i++) {  // matrix.length נותן את מספר השורות
+            for (int j = 0; j < hallMap[i].length; j++) {  // matrix[i].length נותן את מספר העמודות בשורה i
+                hallMap[i][j] = 0;
+            }
+        }
+
+        // המרת המערך הדו-ממדי למחרוזת כדי לשמור בבסיס הנתונים
+        this.hallMapString = convertArrayToString(hallMap);
     }
 
     // Getters ו- Setters לכל שדה

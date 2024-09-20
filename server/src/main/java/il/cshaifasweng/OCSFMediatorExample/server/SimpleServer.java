@@ -288,68 +288,6 @@ public class SimpleServer extends AbstractServer {
 
 			// Update movie showtime in the database
 			ConnectToDatabase.updateMovieShowtimeInDatabase(movieId, newShowtime);
-		} else if (msgString.startsWith("id=")) {
-			String movieString = msg.toString();
-			String[] fields = movieString.split(";");
-			Movie movie = new Movie();
-
-			for (String field : fields) {
-				String[] keyValue = field.split("=");
-				String key = keyValue[0];
-				String value = keyValue[1];
-
-				switch (key) {
-					case "id":
-						movie.setId(Integer.parseInt(value));
-						break;
-					case "title":
-						movie.setTitle(value);
-						break;
-					case "showtime":
-						movie.setShowtime(LocalDateTime.parse(value));
-						break;
-					case "releaseDate":
-						movie.setReleaseDate(LocalDate.parse(value));
-						break;
-					case "genre":
-						movie.setGenre(value);
-						break;
-					case "duration":
-						movie.setDuration(Integer.parseInt(value));
-						break;
-					case "rating":
-						movie.setRating(Float.parseFloat(value));
-						break;
-					case "director":
-						movie.setDirector(value);
-						break;
-					case "description":
-						movie.setDescription(value);
-						break;
-					case "imagePath":
-						movie.setImagePath(value);
-						break;
-					case "place":
-						movie.setPlace(value);
-						break;
-					case "price":
-						movie.setPrice(Float.parseFloat(value));
-						break;
-					case "isOnline":
-						movie.setOnline(Boolean.parseBoolean(value));
-						break;
-					case "availableSeat":
-						movie.setAvailableSeat(Integer.parseInt(value));
-						break;
-					case "hallNumber":
-						movie.setHallNumber(Integer.parseInt(value));
-						break;
-					case "imageData":
-						movie.setImageData(value);
-						break;
-				}
-			}
-			ConnectToDatabase.addMovie(movie);
 
 		} else if (msgString.startsWith("#getMovieCount")) {
 			client.sendToClient("#movieCount:" + ConnectToDatabase.getMovieCountFromDatabase());
@@ -524,7 +462,6 @@ public class SimpleServer extends AbstractServer {
 		}
 
 
-
 		if (msg instanceof purchaseCard) {
 			purchaseCard purchaseCard = (purchaseCard) msg;
 			System.out.println("Received purchaseCard from client: " + purchaseCard.getCostMail());
@@ -558,8 +495,9 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-
-
-
+		if(msg instanceof Movie){
+			ConnectToDatabase.addMovie((Movie) msg);
+			System.out.println("Recived movie from Client... Sending Movie to save in database...");
+		}
 	}
 }

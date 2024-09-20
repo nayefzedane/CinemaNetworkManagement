@@ -13,9 +13,9 @@
 
         <TableView fx:id="movieTable" prefHeight="400" prefWidth="600">
             <columns>
-                <TableColumn fx:id="titleColumn" text="Title" />
+                <TableColumn fx:id="titleColumn" text="Title" prefWidth="170"/>
                 <TableColumn fx:id="placeColumn" text="Place" />
-                <TableColumn fx:id="showtimeColumn" text="Showtime" />
+                <TableColumn fx:id="showtimeColumn" text="Showtime" prefWidth="130" />
                 <TableColumn fx:id="priceColumn" text="Price" />
             </columns>
         </TableView>
