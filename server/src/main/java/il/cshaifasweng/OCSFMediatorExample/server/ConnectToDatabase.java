@@ -772,7 +772,7 @@ public class    ConnectToDatabase {
 
 
                 purchaseCard card = (purchaseCard) purchase;
-                System.out.println("Found PurchaseCard: " + card);
+                System.out.println("Found PurchaseCard: " + card.getOrderId());
 
 
 
@@ -798,17 +798,20 @@ public class    ConnectToDatabase {
                 }
 
                 // Update the seat back to available in the hall map
-                String seatString = card.getSeat();  // Example: "Seat 2-3"
-                String[] seatParts = seatString.split(" ")[1].split("-");
-                int seatRow = Integer.parseInt(seatParts[0]) - 1;  // Convert to 0-based index
-                int seatCol = Integer.parseInt(seatParts[1]) - 1;  // Convert to 0-based index
+                if (!card.getSeat().equals("no seat")){ // if the purchase is not sample update the movie available seats
+                    String seatString = card.getSeat();  // Example: "Seat 2-3"
+                    String[] seatParts = seatString.split(" ")[1].split("-");
+                    int seatRow = Integer.parseInt(seatParts[0]) - 1;  // Convert to 0-based index
+                    int seatCol = Integer.parseInt(seatParts[1]) - 1;  // Convert to 0-based index
 
-                int[][] hallMap = movie.getHallMap();
-                if (hallMap[seatRow][seatCol] == 1) {  // Check if the seat is currently taken
-                    hallMap[seatRow][seatCol] = 0;  // Mark the seat as available
-                    movie.setHallMap(hallMap);  // Update the hall map
-                    movie.setAvailableSeat(movie.getAvailableSeat() + 1);  // Increase available seats by 1
+                    int[][] hallMap = movie.getHallMap();
+                    if (hallMap[seatRow][seatCol] == 1) {  // Check if the seat is currently taken
+                        hallMap[seatRow][seatCol] = 0;  // Mark the seat as available
+                        movie.setHallMap(hallMap);  // Update the hall map
+                        movie.setAvailableSeat(movie.getAvailableSeat() + 1);  // Increase available seats by 1
+                    }
                 }
+
 
                 // Check the time conditions against showtime
 
@@ -826,7 +829,7 @@ public class    ConnectToDatabase {
                 session.update(movie);  // Update the movie after seat is returned
 
                 session.delete(card);  // Delete the PurchaseCard
-                System.out.println("Deleted PurchaseCard: " + card);
+                System.out.println("Deleted PurchaseCard: " + card.getOrderId());
 
             } else if (type.equals("PurchaseLink")) {
                 System.out.println("Searching for PurchaseLink with order_id: " + linkId);
@@ -840,7 +843,7 @@ public class    ConnectToDatabase {
                 }
 
                 PurchaseLink link = (PurchaseLink) purchase;
-                System.out.println("Found PurchaseLink: " + link);
+                System.out.println("Found PurchaseLink: " + link.getLinkId());
 
                 // Check if customerId matches
                 if (link.getCustomerId() != customerId) {
@@ -862,7 +865,7 @@ public class    ConnectToDatabase {
                 }
 
                 session.delete(link);  // Delete the PurchaseLink
-                System.out.println("Deleted PurchaseLink: " + link);
+                System.out.println("Deleted PurchaseLink: " + link.getLinkId());
             }
 
             // Commit the transaction

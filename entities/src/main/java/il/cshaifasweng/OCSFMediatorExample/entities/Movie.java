@@ -430,4 +430,20 @@ public class Movie implements Serializable {
         this.hallMap = hallMap;
         this.hallMapString = convertArrayToString(hallMap);  // Convert int[][] to string
     }
+    public String getProducer() {
+        return producer;
+    }
+
+    public void setProducer(String producer) {
+        this.producer = producer;
+    }
+
+    // Getter and Setter for leadingActors
+    public String getLeadingActors() {
+        return leadingActors;
+    }
+
+    public void setLeadingActors(String leadingActors) {
+        this.leadingActors = leadingActors;
+    }
 }

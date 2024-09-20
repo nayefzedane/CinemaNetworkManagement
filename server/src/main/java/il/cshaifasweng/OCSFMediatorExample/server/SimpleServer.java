@@ -377,7 +377,7 @@ public class SimpleServer extends AbstractServer {
 			String moviePlace = parts[6];
 
 			Request req = new Request();
-			req.setTitle("Price update request");
+			req.setTitle("Update Price");
 			req.setDescription(movieTitle + ", Id: " + movieId + ", Showtime: " + movieShowtime + ", Place: " + moviePlace + ", Old price: " + moviePrice + ", New price: " + newPrice);
 			ConnectToDatabase.addRequest(req);
 			//for checking the link is available
