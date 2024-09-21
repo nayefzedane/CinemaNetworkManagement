@@ -54,15 +54,26 @@ public class ContentManagerController {
     @FXML
     private void initialize() {
         try {
-            titleColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitle()));
-            placeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPlace()));
-            showtimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getShowtime().toString()));
-            priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-            loadMoviesIntoTable();
+            if (titleColumn != null) {
+                titleColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitle()));
+            }
+            if (placeColumn != null) {
+                placeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPlace()));
+            }
+            if (showtimeColumn != null) {
+                showtimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getShowtime().toString()));
+            }
+            if (priceColumn != null) {
+                priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+            }
+            if (titleColumn != null)
+                loadMoviesIntoTable();
 
             // Initialize the ComboBox values for place and hall number
-            placeComboBox.setItems(FXCollections.observableArrayList("Cinema City", "Yes Planet"));
-            hallNumberComboBox.setItems(FXCollections.observableArrayList("Hall 1", "Hall 2"));
+            if(placeComboBox != null)
+                placeComboBox.setItems(FXCollections.observableArrayList("Cinema City", "Yes Planet"));
+            if(hallNumberComboBox != null)
+                hallNumberComboBox.setItems(FXCollections.observableArrayList("Hall 1", "Hall 2"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,7 +102,8 @@ public class ContentManagerController {
     }
     public void setMovieCount(int count) {
         Platform.runLater(() -> {
-            movieCountLabel.setText("Movies in Database: " + count);
+            if(movieCountLabel != null)
+                movieCountLabel.setText("Movies in Database: " + count);
         });
     }
 
