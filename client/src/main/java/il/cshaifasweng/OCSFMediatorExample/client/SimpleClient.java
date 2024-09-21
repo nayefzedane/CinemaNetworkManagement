@@ -312,6 +312,10 @@ public class SimpleClient extends AbstractClient {
 					System.out.println("recieved message from server " + response);
 					OfflineMoviesController.showFailureAlert(response);
 				}
+				else if (response.startsWith("Purchase Link Receipt:")) {
+					System.out.println("recieved purchase link reciept in simple client " + response);
+					OnlineMoviesController.showPurchaseLinkReceipt(response);
+				}
 			});
 		}
 		if(msg instanceof PackageCard){

@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import il.cshaifasweng.OCSFMediatorExample.entities.PurchaseLink;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -327,6 +328,17 @@ public class OnlineMoviesController {
         alert.setTitle(title);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    public static void showPurchaseLinkReceipt(String message){
+        Platform.runLater(() -> {
+
+            // Show the receipt in an alert dialog
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Purchase Link Receipt");
+            alert.setHeaderText("Purchase Link Receipt");  // Optional: remove header text
+            alert.setContentText(message);
+            alert.showAndWait();  // Use showAndWait to block until the user closes the alert
+        });
     }
 
 }
