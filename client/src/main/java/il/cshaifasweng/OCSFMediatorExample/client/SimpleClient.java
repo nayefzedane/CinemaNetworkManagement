@@ -235,6 +235,14 @@ public class SimpleClient extends AbstractClient {
 		if (msg instanceof String) {
 			String response = (String) msg;
 			Platform.runLater(() -> {
+				if (response.equals("request movies bro")) {
+					MainWindowController mainController = (MainWindowController) App.getController();
+					Object activeController1 = mainController.getActiveController();
+					if (activeController1 instanceof OfflineMoviesController) {
+						OfflineMoviesController controller = (OfflineMoviesController) activeController1;
+						controller.searchMovies();
+					}
+				}
 				if (response.startsWith("login_success@")) {
 					String role = response.split("@")[1];
 					try {
@@ -315,6 +323,9 @@ public class SimpleClient extends AbstractClient {
 				else if (response.startsWith("Purchase Link Receipt:")) {
 					System.out.println("recieved purchase link reciept in simple client " + response);
 					OnlineMoviesController.showPurchaseLinkReceipt(response);
+				}else if (response.startsWith("puchase card failed")){
+					System.out.println("puchase card failed");
+					OfflineMoviesController.showFailureAlert(response);
 				}
 			});
 		}

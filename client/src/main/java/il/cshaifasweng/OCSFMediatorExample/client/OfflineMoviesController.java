@@ -145,6 +145,7 @@ public class OfflineMoviesController {
         client.requestMoviesByAdvancedCriteria(selectedCinema, startDate, endDate, selectedGenre, movieTitle, false);
     }
 
+
     public void displayMovies(List<Movie> movies) {
         movieTilePane.getChildren().clear();
 
