@@ -4,97 +4,101 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.collections.FXCollections?>
-
 <?import java.lang.String?>
-<VBox alignment="TOP_CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ContentManagerController">
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
 
-    <Label text="Add New Movie" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+<ScrollPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ContentManagerController"
+            fitToWidth="true" fitToHeight="true" pannable="true">
 
-    <GridPane vgap="15" hgap="15" alignment="CENTER">
-        <!-- Row 1: Title -->
-        <Label text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
-        <TextField fx:id="titleField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <VBox alignment="TOP_CENTER" spacing="20.0">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
 
-        <!-- Row 2: Director -->
-        <Label text="Director:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
-        <TextField fx:id="directorField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Label text="Add New Movie" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
-        <!-- Row 3: Producer -->
-        <Label text="Producer:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
-        <TextField fx:id="producerField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <GridPane vgap="15" hgap="15" alignment="CENTER">
+            <!-- Row 1: Title -->
+            <Label text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="titleField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <!-- Row 4: Leading Actors -->
-        <Label text="Leading Actors:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
-        <TextArea fx:id="leadingActorsArea" GridPane.columnIndex="1" GridPane.rowIndex="3" prefHeight="50"/>
+            <!-- Row 2: Director -->
+            <Label text="Director:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="directorField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-        <!-- Row 5: Genre -->
-        <Label text="Genre:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold;"/>
-        <TextField fx:id="genreField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            <!-- Row 3: Producer -->
+            <Label text="Producer:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="producerField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-        <!-- Row 6: Duration -->
-        <Label text="Duration (minutes):" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-font-weight: bold;"/>
-        <TextField fx:id="durationField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+            <!-- Row 4: Leading Actors -->
+            <Label text="Leading Actors:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
+            <TextArea fx:id="leadingActorsArea" GridPane.columnIndex="1" GridPane.rowIndex="3" prefHeight="50"/>
 
-        <!-- Row 7: Rating -->
-        <Label text="Rating:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-weight: bold;"/>
-        <TextField fx:id="ratingField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+            <!-- Row 5: Genre -->
+            <Label text="Genre:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="genreField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
-        <!-- Row 8: Price -->
-        <Label text="Price:" GridPane.columnIndex="0" GridPane.rowIndex="7" style="-fx-font-weight: bold;"/>
-        <TextField fx:id="priceField" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+            <!-- Row 6: Duration -->
+            <Label text="Duration (minutes):" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="durationField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
 
-        <!-- Row 9: Release Date -->
-        <Label text="Release Date:" GridPane.columnIndex="0" GridPane.rowIndex="8" style="-fx-font-weight: bold;"/>
-        <DatePicker fx:id="releaseDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+            <!-- Row 7: Rating -->
+            <Label text="Rating:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="ratingField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
 
-        <!-- Row 10: Showtime -->
-        <Label text="Showtime:" GridPane.columnIndex="0" GridPane.rowIndex="9" style="-fx-font-weight: bold;"/>
-        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="9">
-            <DatePicker fx:id="showtimeDatePicker"/>
-            <TextField fx:id="showtimeHourField" promptText="HH" prefWidth="50"/>
-            <Label text=":"/>
-            <TextField fx:id="showtimeMinuteField" promptText="MM" prefWidth="50"/>
+            <!-- Row 8: Price -->
+            <Label text="Price:" GridPane.columnIndex="0" GridPane.rowIndex="7" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="priceField" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+
+            <!-- Row 9: Release Date -->
+            <Label text="Release Date:" GridPane.columnIndex="0" GridPane.rowIndex="8" style="-fx-font-weight: bold;"/>
+            <DatePicker fx:id="releaseDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+
+            <!-- Row 10: Showtime -->
+            <Label text="Showtime:" GridPane.columnIndex="0" GridPane.rowIndex="9" style="-fx-font-weight: bold;"/>
+            <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                <DatePicker fx:id="showtimeDatePicker"/>
+                <TextField fx:id="showtimeHourField" promptText="HH" prefWidth="50"/>
+                <Label text=":"/>
+                <TextField fx:id="showtimeMinuteField" promptText="MM" prefWidth="50"/>
+            </HBox>
+
+            <!-- Row 11: Place ComboBox -->
+            <Label text="Place:" GridPane.columnIndex="0" GridPane.rowIndex="10" style="-fx-font-weight: bold;"/>
+            <ComboBox fx:id="placeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Cinema City"/>
+                        <String fx:value="Yes Planet"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- Row 12: Hall Number ComboBox -->
+            <Label text="Hall Number:" GridPane.columnIndex="0" GridPane.rowIndex="11" style="-fx-font-weight: bold;"/>
+            <ComboBox fx:id="hallNumberComboBox" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Hall 1"/>
+                        <String fx:value="Hall 2"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- Row 13: Image Path -->
+            <Label text="Image Path:" GridPane.columnIndex="0" GridPane.rowIndex="12" style="-fx-font-weight: bold;"/>
+            <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                <TextField fx:id="imagePathField"/>
+                <Button text="Browse" onAction="#handleImageUpload"/>
+            </HBox>
+
+            <!-- Row 14: Description -->
+            <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="13" style="-fx-font-weight: bold;"/>
+            <TextArea fx:id="descriptionArea" GridPane.columnIndex="1" GridPane.rowIndex="13" prefHeight="100"/>
+        </GridPane>
+
+        <HBox spacing="20">
+            <Button text="Add Movie" onAction="#handleAddMovie" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <Button text="Back" onAction="#handleBack" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
         </HBox>
-
-        <!-- Row 11: Place ComboBox -->
-        <Label text="Place:" GridPane.columnIndex="0" GridPane.rowIndex="10" style="-fx-font-weight: bold;"/>
-        <ComboBox fx:id="placeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="10">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Cinema City"/>
-                    <String fx:value="Yes Planet"/>
-                </FXCollections>
-            </items>
-        </ComboBox>
-
-        <!-- Row 12: Hall Number ComboBox -->
-        <Label text="Hall Number:" GridPane.columnIndex="0" GridPane.rowIndex="11" style="-fx-font-weight: bold;"/>
-        <ComboBox fx:id="hallNumberComboBox" GridPane.columnIndex="1" GridPane.rowIndex="11">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Hall 1"/>
-                    <String fx:value="Hall 2"/>
-                </FXCollections>
-            </items>
-        </ComboBox>
-
-        <!-- Row 13: Image Path -->
-        <Label text="Image Path:" GridPane.columnIndex="0" GridPane.rowIndex="12" style="-fx-font-weight: bold;"/>
-        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="12">
-            <TextField fx:id="imagePathField"/>
-            <Button text="Browse" onAction="#handleImageUpload"/>
-        </HBox>
-
-        <!-- Row 14: Description -->
-        <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="13" style="-fx-font-weight: bold;"/>
-        <TextArea fx:id="descriptionArea" GridPane.columnIndex="1" GridPane.rowIndex="13" prefHeight="100"/>
-    </GridPane>
-
-    <HBox spacing="20">
-        <Button text="Add Movie" onAction="#handleAddMovie" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-        <Button text="Back" onAction="#handleBack" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-    </HBox>
-</VBox>
+    </VBox>
+</ScrollPane>

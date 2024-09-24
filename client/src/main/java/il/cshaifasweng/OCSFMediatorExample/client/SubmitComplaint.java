@@ -49,7 +49,7 @@ public class SubmitComplaint {
 
     @FXML
     public void initialize() {
-        submitComplaintLabel.setText("Submit Complaint Window Initialized");
+        submitComplaintLabel.setText("Submit Complaint Window");
         // You can add additional setup here if needed
     }
 

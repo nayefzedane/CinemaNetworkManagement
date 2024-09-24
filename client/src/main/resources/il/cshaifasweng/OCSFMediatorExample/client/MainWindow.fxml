@@ -15,7 +15,7 @@
             <Button text="Return Tickets" onAction="#showReturnTicketWindow" styleClass="menu-button"/> <!-- כפתור Return Tickets -->
             <Button text="Buy Ticket Package" onAction="#showBuyTicketPackageWindow" styleClass="menu-button"/> <!-- כפתור Buy Ticket Package -->
             <Button text="Submit Complaint" onAction="#showSubmitComplaintWindow" styleClass="menu-button"/> <!-- כפתור Submit Complaint -->
-            <Button text="Watch Online Movie" onAction="#showWathcingScreen" styleClass="menu-button"/> <!-- כפתור watch movie -->
+            <Button text="Watch Online Movie" onAction="#showWatchingScreen" styleClass="menu-button"/> <!-- כפתור watch movie -->
             <Button text="Login" onAction="#showLoginWindow" styleClass="menu-button"/> <!-- כפתור Login בסוף הרשימה -->
         </VBox>
     </left>

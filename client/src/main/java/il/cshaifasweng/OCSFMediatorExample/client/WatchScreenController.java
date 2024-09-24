@@ -2,11 +2,11 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.RadioButton;
+//import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.application.Platform;
-import javafx.stage.Stage;
+//import javafx.scene.control.ToggleGroup;
+//import javafx.application.Platform;
+//import javafx.stage.Stage;
 import javafx.animation.PauseTransition;
 import javafx.scene.control.Alert.AlertType;
 import javafx.util.Duration;
@@ -22,7 +22,7 @@ public class WatchScreenController {
         String link = linkField.getText();
         if (link == null || link.isEmpty()) {
             showErrorAlert("Link cannot be empty");
-            return;
+            //return;
 
         }
         else {
@@ -40,7 +40,7 @@ public class WatchScreenController {
 
 
 
-
+    /*
     // Method to display a regular alert
     private void showAlert(String title, String content, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
@@ -71,14 +71,15 @@ public class WatchScreenController {
             });
         }).start();
     }
+    */
     // Show success alert with refund value, but after 2 seconds delay
     public static void showSuccessAlert(String message) {
         PauseTransition delay = new PauseTransition(Duration.seconds(2));  // Create a 2-second delay
         delay.setOnFinished(event -> {
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Checking link Succeded!");
+            alert.setTitle("Checking link Succeeded!");
             alert.setHeaderText(null);
-            alert.setContentText(message + "\nEnjoy wathcing the movie!\n");
+            alert.setContentText(message + "\nEnjoy watching the movie!\n");
             alert.show();  // Use show() instead of showAndWait() to avoid blocking the UI thread
         });
         delay.play();  // Start the delay

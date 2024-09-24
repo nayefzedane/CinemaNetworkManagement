@@ -17,6 +17,7 @@ public class MainWindowController {
     private ReturnTicket returnTicketController;
     private BuyTicketPackageController buyTicketPackageController;
     private SubmitComplaint submitComplaintController;
+    private WatchScreenController watchScreenController;
 
     private Object activeController;
 
@@ -55,9 +56,9 @@ public class MainWindowController {
         System.out.println("Loading Submit Complaint Window...");
         loadWindow("submit_complaint.fxml", SubmitComplaint.class);
     }
-    public void showWathcingScreen() {
+    public void showWatchingScreen() {
         System.out.println("Loading wathcing movie Window...");
-        loadWindow("WatchScreen.fxml", WatchScreenController.class);
+        loadWindow("watchScreen.fxml", WatchScreenController.class);
     }
 
     // מתודה פרטית שמטפלת בטעינת קובץ FXML והחלפת התוכן בחלון המרכזי
@@ -99,6 +100,8 @@ public class MainWindowController {
     public SubmitComplaint getSubmitComplaintController() {
         return submitComplaintController;
     }
+
+    public WatchScreenController getWatchScreenController() {return watchScreenController;}
 
     public Object getActiveController() {
         return activeController;

@@ -4,14 +4,14 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Movie;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
+//import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
+//import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.effect.GaussianBlur;
@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.io.ByteArrayInputStream;
+//import java.io.ByteArrayInputStream;
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 import javafx.util.Duration;
 
@@ -232,7 +232,7 @@ public class OfflineMoviesController {
         Text moviePrice = new Text("Price: $" + movie.getPrice());
         Text movieAvailableSeat = new Text("Available Seats: " + movie.getAvailableSeat());
         Text movieHallNumber = new Text("Hall Number: " + movie.getHallNumber());
-        Text movieIsOnline = new Text("Available Online: " + (movie.isOnline() ? "Yes" : "No"));
+        //Text movieIsOnline = new Text("Available Online: " + (movie.isOnline() ? "Yes" : "No"));
         Text movieProducer = new Text("Producer: " + movie.getProducer());
         Text movieLeadingActors = new Text("LeadingActors: " + movie.getLeadingActors());
 
@@ -276,7 +276,7 @@ public class OfflineMoviesController {
                 moviePrice,
                 movieAvailableSeat,
                 movieHallNumber,
-                movieIsOnline,
+                //movieIsOnline,
                 buttonBox  // Adding both buttons horizontally
 
         );
@@ -695,7 +695,7 @@ public class OfflineMoviesController {
 
         // Ensure the alert dialog is shown on the JavaFX Application Thread
         Platform.runLater(() -> {
-            System.out.println(receiptMessage.toString());
+            System.out.println(receiptMessage);
             // Show the receipt in an alert dialog
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Ticket Purchase Receipt");

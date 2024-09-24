@@ -47,6 +47,7 @@ public class SimpleServer extends AbstractServer {
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) throws Exception {
 		new Thread(() ->{
 			String msgString = msg.toString();
+			System.out.println("Received message from client: " + msgString); // Debugging output
 			// Check if the message is an instance of Complaints
 			if (msg instanceof Complaints) {
 				// Cast the incoming message to Complaints
@@ -65,12 +66,9 @@ public class SimpleServer extends AbstractServer {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            } else {
-				// Handle other types of messages if needed
-				System.out.println("Received unknown message type.");
-			}
+            }
 
-			System.out.println("Received message from client: " + msgString); // Debugging output
+
 
 			//handle the complaints report
 
@@ -157,10 +155,11 @@ public class SimpleServer extends AbstractServer {
 				String requestId = msgString.substring("delete_request ".length());
 				System.err.println(requestId);
 				ConnectToDatabase.deleteRequestById(Long.parseLong(requestId));
+				broadcastMessageToAllClients("request movies bro");
 
 
 			}
-			if (msgString.startsWith("change_request ")) {
+			if (msgString.startsWith("change_request ")) { // if the admin clicked approve then we change the price here
 				System.err.println("we are on server and we want to update price");
 				System.err.println(msgString);
 
@@ -177,6 +176,7 @@ public class SimpleServer extends AbstractServer {
 				System.out.println("New Price: " + newPrice);
 
 				ConnectToDatabase.updateMoviePrice(movieId, newPrice);
+				broadcastMessageToAllClients("request movies bro");
 
 				// Additional implementation if needed
 			}
@@ -206,50 +206,55 @@ public class SimpleServer extends AbstractServer {
             }
 			//buy with package:
 			if (msgString.startsWith("PackageCardRequest:")) {
-				// Remove the prefix and split the remaining part of the message by ":"
-				String[] parts = msgString.substring("PackageCardRequest:".length()).split(":");
+				synchronized (lock){
+					// Remove the prefix and split the remaining part of the message by ":"
+					String[] parts = msgString.substring("PackageCardRequest:".length()).split(":");
 
-				// Ensure that we have the correct number of parts
-				if (parts.length == 4) {
-					// Extract the individual values
-					int customerId = Integer.parseInt(parts[0]);  // Customer ID
-					String packageId = parts[1];                  // Package Card ID
-					String seatNumber = parts[2];                 // Seat number
-					int movieId = Integer.parseInt(parts[3]);     // Movie ID
+					// Ensure that we have the correct number of parts
+					if (parts.length == 4) {
+						// Extract the individual values
+						int customerId = Integer.parseInt(parts[0]);  // Customer ID
+						String packageId = parts[1];                  // Package Card ID
+						String seatNumber = parts[2];                 // Seat number
+						int movieId = Integer.parseInt(parts[3]);     // Movie ID
 
-					// Now you have the values in separate variables
-					System.out.println("Customer ID: " + customerId);
-					System.out.println("Package Card ID: " + packageId);
-					System.out.println("Seat Number: " + seatNumber);
-					System.out.println("Movie ID: " + movieId);
-					String answer = ConnectToDatabase.processPackageCard(customerId, Integer.parseInt(packageId), movieId, seatNumber);
-					System.out.println(answer);
-					if (answer.startsWith("Error")) //if buying with package failed
-                    {
-                        try {
-                            client.sendToClient(answer);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-					else {//if entering with package succeded
-						String[] partsPackage = answer.split(":", 3);  // Split into 3 parts: "Email", email, and the receipt
-						String email = partsPackage[1];  // This is the customer's email
-						String receiptMessage = partsPackage[2];  // This is the full receipt message
-						receiptMessage = receiptMessage + seatNumber + "\n=====================================\n";
+						// Now you have the values in separate variables
+						System.out.println("Customer ID: " + customerId);
+						System.out.println("Package Card ID: " + packageId);
+						System.out.println("Seat Number: " + seatNumber);
+						System.out.println("Movie ID: " + movieId);
+						String answer = ConnectToDatabase.processPackageCard(customerId, Integer.parseInt(packageId), movieId, seatNumber);
+						System.out.println(answer);
+						if (answer.startsWith("Error")) //if buying with package failed
+						{
+							try {
+								client.sendToClient(answer);
+							} catch (IOException e) {
+								throw new RuntimeException(e);
+							}
+						}
+						else {//if entering with package succeded
+							String[] partsPackage = answer.split(":", 3);  // Split into 3 parts: "Email", email, and the receipt
+							String email = partsPackage[1];  // This is the customer's email
+							String receiptMessage = partsPackage[2];  // This is the full receipt message
+							receiptMessage = receiptMessage + seatNumber + "\n=====================================\n";
 
-						System.out.println("Email to send to: " + email);
-						System.out.println("Receipt Message: " + receiptMessage);
-						EmailService.sendEmail(email, "Package entrie receipt", receiptMessage);
-                        try {
-                            client.sendToClient("PackageCardUse:" + receiptMessage);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-				} else {
-					System.out.println("Invalid PackageCardRequest format.");
+							System.out.println("Email to send to: " + email);
+							System.out.println("Receipt Message: " + receiptMessage);
+
+							try {
+								client.sendToClient("PackageCardUse:" + receiptMessage);
+								broadcastMessageToAllClients("request movies bro");
+								EmailService.sendEmail(email, "Package entrie receipt", receiptMessage);
+							} catch (IOException e) {
+								throw new RuntimeException(e);
+							}
+						}
+					} else {
+						System.out.println("Invalid PackageCardRequest format.");
+					}
 				}
+
 			}
 
 
@@ -265,8 +270,6 @@ public class SimpleServer extends AbstractServer {
 					System.err.println("Failed to send unanswered complaints to client: " + e.getMessage());
 					e.printStackTrace();
 				}
-			} else {
-				System.out.println("Unhandled message: " + msgString);
 			}
 
 
@@ -374,6 +377,7 @@ public class SimpleServer extends AbstractServer {
 
 				// Update movie showtime in the database
 				ConnectToDatabase.updateMovieShowtimeInDatabase(movieId, newShowtime);
+				broadcastMessageToAllClients("request movies bro");
 
 			} else if (msgString.startsWith("#getMovieCount")) {
                 try {
