@@ -10,14 +10,12 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Complaints;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import org.hibernate.*;
 import java.util.Arrays;
@@ -31,16 +29,12 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
 
 //this what loay added:
-import il.cshaifasweng.OCSFMediatorExample.entities.purchaseCard;
-import java.time.LocalDate;
-import javax.persistence.criteria.Order;
+
 
 public class    ConnectToDatabase {
     private static SessionFactory sessionFactory;
@@ -86,56 +80,57 @@ public class    ConnectToDatabase {
                             LocalDate.of(2024, 12, 10),   // Release Date
                             "Sci-Fi", 148, 8.8f, "Christopher Nolan",
                             "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
-                            "src/main/resources/images/Inception.png", "Cinema City",
+                            "/images/Inception.png"
+                            , "Cinema City",
                             40.0f, false, 2),
                     new Movie("The Shawshank Redemption",
                             LocalDateTime.of(2024, 12, 24, 16, 0),  // Showtime
                             LocalDate.of(2024, 12, 5),    // Release Date
                             "Drama", 142, 9.3f, "Frank Darabont",
                             "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-                            "src/main/resources/images/The ShawShank Reddemption.png", "Cinema City",
+                            "/images/TheShawShankReddemption.png", "Cinema City",
                             35.0f, true, 60, 2),
                     new Movie("The Godfather",
                             LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
                             LocalDate.of(2024, 12, 3),    // Release Date
                             "Crime", 175, 9.2f, "Francis Ford Coppola",
                             "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                            "src/main/resources/images/THe godfather.png", "Yes Planet",
+                            "/images/Thegodfather.png", "Yes Planet",
                             50.0f, false,1),
                     new Movie("The Dark Knight",
                             LocalDateTime.of(2024, 12, 24, 20, 0),  // Showtime
                             LocalDate.of(2024, 12, 7),    // Release Date
                             "Action", 152, 9.0f, "Christopher Nolan",
                             "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.",
-                            "src/main/resources/images/The dark knight.png", "Yes Planet",
+                            "/images/Thedarkknight.png", "Yes Planet",
                             45.0f, true, 70, 4),
                     new Movie("Pulp Fiction",
                             LocalDateTime.of(2024, 12, 24, 22, 30),  // Showtime
                             LocalDate.of(2024, 12, 1),     // Release Date
                             "Crime", 154, 8.9f, "Quentin Tarantino",
                             "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
-                            "src/main/resources/images/pulpfiction.png", "Cinema City",
+                            "/images/pulpfiction.png", "Cinema City",
                             42.0f, true, 85, 2),
                     new Movie("Schindler's List",
                             LocalDateTime.of(2024, 12, 24, 10, 30),  // Showtime
                             LocalDate.of(2024, 11, 28),    // Release Date
                             "Biography", 195, 8.9f, "Steven Spielberg",
                             "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
-                            "src/main/resources/images/schinderlist.png", "Yes Planet",
+                            "/images/schinderlist.png", "Yes Planet",
                             50.0f, false, 1),
                     new Movie("Fight Club",
                             LocalDateTime.of(2024, 12, 24, 12, 15),  // Showtime
                             LocalDate.of(2024, 12, 2),     // Release Date
                             "Drama", 139, 8.8f, "David Fincher",
                             "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.",
-                            "src/main/resources/images/fightclub.png", "Cinema City",
+                            "/images/fightclub.png", "Cinema City",
                             38.0f, true, 90, 3),
                     new Movie("The Godfather",
                             LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
                             LocalDate.of(2024, 12, 3),    // Release Date
                             "Crime", 175, 9.2f, "Francis Ford Coppola",
                             "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                            "src/main/resources/images/THe godfather.png", "Yes Planet",
+                            "/images/Thegodfather.png", "Yes Planet",
                             50.0f, false,2)
             );
             // Loop through the movies and convert image paths to byte arrays
@@ -170,7 +165,22 @@ public class    ConnectToDatabase {
             e.printStackTrace();
         }
     }
-    // Helper function to convert image path to byte array
+    private static byte[] convertImagePathToByteArray(String imagePath) {
+        try (InputStream is = ConnectToDatabase.class.getResourceAsStream(imagePath)) {
+            if (is == null) {
+                throw new IOException("Resource not found: " + imagePath);
+            }
+            return is.readAllBytes();  // Read all bytes from the InputStream
+        } catch (IOException e) {
+            System.err.println("Error reading image file: " + imagePath);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+    /*  // Helper function to convert image path to byte array
     private static byte[] convertImagePathToByteArray(String imagePath) {
         try {
             return Files.readAllBytes(Paths.get(imagePath));
@@ -180,7 +190,7 @@ public class    ConnectToDatabase {
             return null;
         }
     }
-
+*/
     public static void updateShowtime(String title, LocalDateTime newShowtime) throws Exception {
         System.out.println("Update function reached...");
         try (Session session = getSessionFactory().openSession()) {
