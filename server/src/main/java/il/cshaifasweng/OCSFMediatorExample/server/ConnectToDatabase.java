@@ -79,57 +79,57 @@ public class    ConnectToDatabase {
             List<Movie> movies = Arrays.asList(
                     new Movie("Inception",
                             LocalDateTime.of(2024, 12, 24, 14, 30),  // Showtime
-                            LocalDate.of(2024, 12, 10),   // Release Date
+                            LocalDate.of(2024, 8, 10),   // Release Date
                             "Sci-Fi", 148, 8.8f, "Christopher Nolan",
                             "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
                             "/images/Inception.png"
                             , "Cinema City",
                             40.0f, false, 2),
                     new Movie("The Shawshank Redemption",
-                            LocalDateTime.of(2024, 12, 24, 16, 0),  // Showtime
-                            LocalDate.of(2024, 12, 5),    // Release Date
+                            LocalDateTime.of(1, 1, 1, 1, 1),  // Showtime
+                            LocalDate.of(2024, 7, 5),    // Release Date
                             "Drama", 142, 9.3f, "Frank Darabont",
                             "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
                             "/images/TheShawShankReddemption.png", "Cinema City",
                             35.0f, true, 60, 2),
                     new Movie("The Godfather",
-                            LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                            LocalDate.of(2024, 12, 3),    // Release Date
+                            LocalDateTime.of(2024, 9, 26, 16, 0),  // Showtime
+                            LocalDate.of(2024, 6, 3),    // Release Date
                             "Crime", 175, 9.2f, "Francis Ford Coppola",
                             "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
                             "/images/Thegodfather.png", "Yes Planet",
                             50.0f, false,1),
                     new Movie("The Dark Knight",
-                            LocalDateTime.of(2024, 12, 24, 20, 0),  // Showtime
-                            LocalDate.of(2024, 12, 7),    // Release Date
+                            LocalDateTime.of(1, 1, 1, 1, 1),  // Showtime
+                            LocalDate.of(2024, 5, 7),    // Release Date
                             "Action", 152, 9.0f, "Christopher Nolan",
                             "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.",
                             "/images/Thedarkknight.png", "Yes Planet",
                             45.0f, true, 70, 4),
                     new Movie("Pulp Fiction",
-                            LocalDateTime.of(2024, 12, 24, 22, 30),  // Showtime
-                            LocalDate.of(2024, 12, 1),     // Release Date
+                            LocalDateTime.of(1, 1, 1, 1, 1),  // Showtime
+                            LocalDate.of(2024, 6, 1),     // Release Date
                             "Crime", 154, 8.9f, "Quentin Tarantino",
                             "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
                             "/images/pulpfiction.png", "Cinema City",
                             42.0f, true, 85, 2),
                     new Movie("Schindler's List",
-                            LocalDateTime.of(2024, 12, 24, 10, 30),  // Showtime
-                            LocalDate.of(2024, 11, 28),    // Release Date
+                            LocalDateTime.of(2024, 9, 26, 17, 45),  // Showtime
+                            LocalDate.of(2024, 7, 28),    // Release Date
                             "Biography", 195, 8.9f, "Steven Spielberg",
                             "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
                             "/images/schinderlist.png", "Yes Planet",
                             50.0f, false, 1),
                     new Movie("Fight Club",
-                            LocalDateTime.of(2024, 12, 24, 12, 15),  // Showtime
-                            LocalDate.of(2024, 12, 2),     // Release Date
+                            LocalDateTime.of(1, 1, 1, 1, 1),  // Showtime
+                            LocalDate.of(2024, 6, 2),     // Release Date
                             "Drama", 139, 8.8f, "David Fincher",
                             "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.",
                             "/images/fightclub.png", "Cinema City",
                             38.0f, true, 90, 3),
                     new Movie("The Godfather",
                             LocalDateTime.of(2024, 12, 24, 18, 0),  // Showtime
-                            LocalDate.of(2024, 12, 3),    // Release Date
+                            LocalDate.of(2024, 6, 3),    // Release Date
                             "Crime", 175, 9.2f, "Francis Ford Coppola",
                             "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
                             "/images/Thegodfather.png", "Yes Planet",
@@ -365,7 +365,7 @@ public class    ConnectToDatabase {
             session.beginTransaction();
 
             purchaseCard purchase1 = new purchaseCard(
-                    LocalDate.of(2024, 8, 17),
+                    LocalDate.of(2024, 9, 24),
                     "Cinema City",
                     40,
                     1001,
@@ -396,22 +396,22 @@ public class    ConnectToDatabase {
             purchaseCard purchase3 = new purchaseCard(
                     LocalDate.of(2024, 3, 17),
                     "Yes Planet",
-                    100,
+                    50,
                     1003,
                     1414,
                     "loay asaad",
-                    LocalDateTime.of(2025, 12, 24, 20, 0),
+                    LocalDateTime.of(2024, 9, 26, 16, 0),
                     "nayef@gmail.com",
                     "nayef",
                     "no seat",
-                    1
+                    2
 
             );
             session.save(purchase3);
             purchaseCard purchase4 = new purchaseCard(
                     LocalDate.of(2024, 8, 1),
                     "Yes Planet",
-                    60,
+                    50,
                     1004,
                     1414,
                     "nayef zedan",
@@ -419,7 +419,7 @@ public class    ConnectToDatabase {
                     "nayef1@gmail.com",
                     "nayef",
                     "no seat",
-                    1
+                    6
             );
             session.save(purchase4);
             purchaseCard purchase5 = new purchaseCard(
@@ -455,7 +455,7 @@ public class    ConnectToDatabase {
             // Creating a sample PurchaseLink
             PurchaseLink purchaseLink1 = new PurchaseLink(
                     "ahmad",
-                    LocalDateTime.of(2024, 8, 17, 10, 0),  // purchaseTime
+                    LocalDateTime.of(2024, 9, 26, 10, 0),  // purchaseTime
                     1004,  // customerId
                     9876,  // paymentCardLastFour
                     "Avatar",  // movieTitle
@@ -467,7 +467,7 @@ public class    ConnectToDatabase {
             // You can add more PurchaseLink samples as needed
             PurchaseLink purchaseLink2 = new PurchaseLink(
                     "mohammad",
-                    LocalDateTime.of(2024, 9, 16, 21, 0),  // purchaseTime
+                    LocalDateTime.of(2024, 9, 26, 14, 0),  // purchaseTime
                     1005,  // customerId
                     4321,  // paymentCardLastFour
                     "Interstellar",  // movieTitle
@@ -501,9 +501,9 @@ public class    ConnectToDatabase {
             // Creating a sample PackageCard
             PackageCard packageCard1 = new PackageCard(
                     LocalDate.of(2024, 8, 17),  // purchaseDate
-                    100.00,  // price
+                    400.00,  // price
                     1004,  // customerId
-                    "example@example.com",  // customerEmail
+                    "mhmd.selawe2@gmail.com",  // customerEmail
                     9876  // paymentLastFourDigits
             );
             session.save(packageCard1);
@@ -511,9 +511,9 @@ public class    ConnectToDatabase {
             // Adding another sample PackageCard
             PackageCard packageCard2 = new PackageCard(
                     LocalDate.of(2024, 8, 18),  // purchaseDate
-                    120.00,  // price
+                    400.00,  // price
                     1005,  // customerId
-                    "sample@example.com",  // customerEmail
+                    "loai.isam.asaad@gmail.com",  // customerEmail
                     4321  // paymentLastFourDigits
             );
             session.save(packageCard2);

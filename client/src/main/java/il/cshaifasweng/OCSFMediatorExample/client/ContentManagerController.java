@@ -21,7 +21,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class ContentManagerController {
-
+    private static String currentScreen = "";
 
     @FXML private TableView<Movie> movieTable;
     @FXML private TableColumn<Movie, String> titleColumn;
@@ -68,7 +68,10 @@ public class ContentManagerController {
                 priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
             }
             if (titleColumn != null)
-                loadMoviesIntoTable();
+                if(currentScreen.equals(""))
+                    loadMoviesIntoTable();
+                else if(currentScreen.equals("update_showtime"))
+                    loadOfflineMoivesIntoTable();
 
             // Initialize the ComboBox values for place and hall number
             if(placeComboBox != null)
@@ -81,6 +84,16 @@ public class ContentManagerController {
         client = SimpleClient.getClient();
         client.setContentManagerController(this);
         updateMovieCount();
+    }
+
+    private void loadOfflineMoivesIntoTable() {
+        try {
+            SimpleClient client = SimpleClient.getClient();
+            System.out.println("Requesting all movies that are not online.");
+            client.requestMoviesByOnlineStatus(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadMoviesIntoTable() {
@@ -318,18 +331,23 @@ public class ContentManagerController {
 
         switch (clickedButton.getText()) {
             case "Add Movie":
+                currentScreen = "";
                 fxmlFile = "content_manager_addmovie";
                 break;
             case "Delete Movie":
+                currentScreen ="";
                 fxmlFile = "content_manager_deletemovie";
                 break;
             case "Update Price":
+                currentScreen = "";
                 fxmlFile = "content_manager_updateprice";
                 break;
             case "Update Showtime":
+                currentScreen = "update_showtime";
                 fxmlFile = "content_manager_updateshowtime";
                 break;
             case "Add Online Movie":
+                currentScreen = "";
                 fxmlFile = "content_manager_addonlinemovie"; // Add this case for the new button
                 break;
         }

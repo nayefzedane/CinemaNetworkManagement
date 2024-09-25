@@ -246,12 +246,16 @@ public class OnlineMoviesController {
         paymentDetails.setPadding(new Insets(20));
 
         // Payment form fields
-        Text linkPriceLabel = new Text("Link Price: ₪" + movie.getPrice());
-        TextField emailField = new TextField();
-        emailField.setPromptText("Enter your email");
+        Text linkPriceLabel = new Text("Link Price: " + movie.getPrice());
 
         TextField nameField = new TextField();
         nameField.setPromptText("Enter your name");
+
+        TextField emailField = new TextField();
+        emailField.setPromptText("Enter your email");
+
+        TextField customerIdField = new TextField();
+        customerIdField.setPromptText("Enter your customer id");
 
         TextField cardNumberField = new TextField();
         cardNumberField.setPromptText("Enter your 16-digit card number");
@@ -265,8 +269,9 @@ public class OnlineMoviesController {
             String email = emailField.getText();
             String name = nameField.getText();
             String cardNumber = cardNumberField.getText();
+            String customerId = customerIdField.getText();
 
-            if (email.isEmpty() || name.isEmpty() || cardNumber.isEmpty()) {
+            if (email.isEmpty() || name.isEmpty() || cardNumber.isEmpty()|| customerId.isEmpty())  {
                 showAlert(Alert.AlertType.ERROR, "Validation Error", "All fields must be filled.");
                 return;
             }
@@ -283,7 +288,7 @@ public class OnlineMoviesController {
             PurchaseLink purchaseLink = new PurchaseLink(
                     name,
                     LocalDateTime.now(),  // Current purchase time
-                    12345,  // Customer ID (replace with actual ID if necessary)
+                    Integer.parseInt(customerId),  // Customer ID (replace with actual ID if necessary)
                     Integer.parseInt(lastFourDigits),  // Last 4 digits of card
                     movie.getTitle(),  // Movie title
                     email,
@@ -300,9 +305,10 @@ public class OnlineMoviesController {
 
         paymentStage.setOnCloseRequest(event -> mainWindowRoot.setEffect(null)); // הסרת הטשטוש בעת סגירת החלון
 
-        paymentDetails.getChildren().addAll(linkPriceLabel, emailField, nameField, cardNumberField, payButton);
+        paymentDetails.getChildren().addAll(linkPriceLabel, nameField, emailField, customerIdField, cardNumberField, payButton);
 
-        Scene paymentScene = new Scene(paymentDetails, 400, 200);
+
+        Scene paymentScene = new Scene(paymentDetails, 400, 230);
         paymentStage.setScene(paymentScene);
         paymentStage.show();
     }
