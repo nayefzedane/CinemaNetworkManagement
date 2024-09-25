@@ -22,6 +22,7 @@ import java.util.List;
 
 public class ContentManagerController {
 
+
     @FXML private TableView<Movie> movieTable;
     @FXML private TableColumn<Movie, String> titleColumn;
     @FXML private TableColumn<Movie, String> placeColumn;

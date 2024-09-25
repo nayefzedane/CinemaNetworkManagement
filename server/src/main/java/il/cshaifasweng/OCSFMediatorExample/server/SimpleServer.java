@@ -17,8 +17,15 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.lang.Thread;
+import java.time.format.DateTimeFormatter;
+import java.time.Duration;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 public class SimpleServer extends AbstractServer {
+	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
 	private static final Object lock = new Object();
 
 	public SimpleServer(int port) {
@@ -45,7 +52,7 @@ public class SimpleServer extends AbstractServer {
 
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) throws Exception {
-		new Thread(() ->{
+
 			String msgString = msg.toString();
 			System.out.println("Received message from client: " + msgString); // Debugging output
 			// Check if the message is an instance of Complaints
@@ -293,7 +300,7 @@ public class SimpleServer extends AbstractServer {
 							// Send response back to client
 							if (success) {
 								client.sendToClient("updateComplaintResponse;success");
-								EmailService.sendEmail(complaint.getMail(), "Complain Responded:" + complaint.getComplainTitle(), complaint.getAnswer() + "\n============\nyour original complain text:\n" +complaint.getComplainText()+"\n============\nfeel free to text us back.");
+								EmailService.sendEmail(complaint.getMail(), "Complain Responded:" + complaint.getComplainTitle(), complaint.getAnswer() +"\nyou will receive refund of: " +complaint.getFinancialCompensation() + "\n============\nyour original complain text:\n" +complaint.getComplainText()+"\n============\nfeel free to text us back.");
 							} else {
 								client.sendToClient("updateComplaintResponse;failure");
 							}
@@ -546,6 +553,7 @@ public class SimpleServer extends AbstractServer {
 
 				if (savedPurchaseLink != null) {
 					try {
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 						StringBuilder receiptMessage = new StringBuilder();
 						receiptMessage.append("Purchase Link Receipt:\n");
 						receiptMessage.append("=====================================\n");
@@ -557,7 +565,8 @@ public class SimpleServer extends AbstractServer {
 						receiptMessage.append("Payment (Last 4 digits): ").append(savedPurchaseLink.getPaymentCardLastFour()).append("\n");
 						receiptMessage.append("Purchase Date: ").append(savedPurchaseLink.getPurchaseTime()).append("\n");
 						receiptMessage.append("Purchase Link: ").append(savedPurchaseLink.getUniqueLink()).append("\n");
-						receiptMessage.append("Available from: ").append(purchaseLink.getAvailableFrom()).append("\n");
+						receiptMessage.append("Available from: ").append(purchaseLink.getAvailableFrom().format(formatter)).append("\n");
+						receiptMessage.append("Your link will be available for 48 hours.\n");
 						receiptMessage.append("=====================================\n");
 						receiptMessage.append("Note: Please remember your purchase ID number ").append(savedPurchaseLink.getLinkId()).append(", as it may be required for future transactions.\n");
 
@@ -567,6 +576,7 @@ public class SimpleServer extends AbstractServer {
 						// Send the saved PurchaseLink back to the client
 						client.sendToClient(receiptMessage.toString());
 						System.out.println("PurchaseLink receipt sent back to client with ID: " + savedPurchaseLink.getLinkId());
+						scheduleReminderEmail(savedPurchaseLink);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -630,7 +640,30 @@ public class SimpleServer extends AbstractServer {
 				System.out.println("Recived movie from Client... Sending Movie to save in database...");
 				broadcastMessageToAllClients("request movies bro");
 			}
-		}).start();  // Start the thread
 
+
+	}
+	private void scheduleReminderEmail(PurchaseLink purchaseLink) {
+		// Get the time when the link will be available
+		LocalDateTime availableFrom = purchaseLink.getAvailableFrom();
+
+		// Calculate the time until 1 hour before the link is available
+		LocalDateTime reminderTime = availableFrom.minusHours(1);
+		Duration delay = Duration.between(LocalDateTime.now(), reminderTime);
+
+		long delayInMillis = delay.toMillis();
+		if (delayInMillis > 0) {
+			scheduler.schedule(() -> {
+				try {
+					String reminderMessage = "Reminder: Your purchase link will be available in one hour at: " + availableFrom.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+					EmailService.sendEmail(purchaseLink.getCustomerMail(), "Purchase Link Reminder", reminderMessage);
+					System.out.println("Reminder email sent to " + purchaseLink.getCustomerMail() + " one hour before availability.");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}, delayInMillis, TimeUnit.MILLISECONDS);
+		} else {
+			System.out.println("Reminder time has already passed. No reminder email scheduled.");
+		}
 	}
 }

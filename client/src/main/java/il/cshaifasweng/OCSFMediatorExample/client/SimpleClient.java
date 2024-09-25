@@ -120,6 +120,7 @@ public class SimpleClient extends AbstractClient {
 
 		// Check if the message is a list
 		if (msg instanceof List<?>) {
+			System.out.println("Received a list in messages");
 			List<?> list = (List<?>) msg;
 
 			// Check if it's a list of purchase cards

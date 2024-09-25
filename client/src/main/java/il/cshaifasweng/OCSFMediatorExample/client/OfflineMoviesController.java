@@ -82,8 +82,8 @@ public class OfflineMoviesController {
     @FXML
     public void initialize() {
         // Initialize combo boxes
-        cinemaComboBox.getItems().addAll("ALL", "Cinema City", "Yes Planet", "Rav Chen", "Lev Cinema");
-        genreComboBox.getItems().addAll("ALL", "Action", "Drama", "Comedy", "Sci-Fi", "Horror");
+        cinemaComboBox.getItems().addAll("ALL", "Cinema City", "Yes Planet");
+        genreComboBox.getItems().addAll("ALL", "Action", "Drama", "Comedy", "Sci-Fi", "Horror", "Biography", "Crime");
 
         // Add listeners for search criteria
         searchField.textProperty().addListener((observable, oldValue, newValue) -> searchMovies());

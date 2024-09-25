@@ -18,8 +18,10 @@ import org.hibernate.Transaction;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import org.hibernate.*;
-import java.util.Arrays;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import javax.persistence.criteria.Predicate;
 
 
 
@@ -964,45 +966,31 @@ public class    ConnectToDatabase {
             // התחלת הבנייה של השאילתה
             query.select(root);
 
+            // יצירת רשימה של קריטריונים
+            List<Predicate> predicates = new ArrayList<>();
+
             // הוספת קריטריון חובה - סינון לפי אונליין או לא
-            query.where(builder.equal(root.get("isOnline"), isOnline));
+            predicates.add(builder.equal(root.get("isOnline"), isOnline));
 
             // הוספת תנאים נוספים לפי הקריטריונים שנבחרו
             if (cinema != null && !cinema.isEmpty() && !"ALL".equals(cinema)) {
-                query.where(
-                        builder.and(
-                                builder.equal(root.get("isOnline"), isOnline),
-                                builder.equal(root.get("place"), cinema)
-                        )
-                );
+                predicates.add(builder.equal(root.get("place"), cinema));
             }
 
             if (startDate != null && endDate != null) {
-                query.where(
-                        builder.and(
-                                builder.equal(root.get("isOnline"), isOnline),
-                                builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate)
-                        )
-                );
+                predicates.add(builder.between(root.get("showtime").as(LocalDate.class), startDate, endDate));
             }
 
             if (genre != null && !genre.isEmpty() && !"ALL".equals(genre)) {
-                query.where(
-                        builder.and(
-                                builder.equal(root.get("isOnline"), isOnline),
-                                builder.equal(root.get("genre"), genre)
-                        )
-                );
+                predicates.add(builder.equal(root.get("genre"), genre));
             }
 
             if (title != null && !title.isEmpty()) {
-                query.where(
-                        builder.and(
-                                builder.equal(root.get("isOnline"), isOnline),
-                                builder.like(root.get("title"), "%" + title + "%")
-                        )
-                );
+                predicates.add(builder.like(root.get("title"), "%" + title + "%"));
             }
+
+            // החלת כל הקריטריונים עם and
+            query.where(builder.and(predicates.toArray(new Predicate[0])));
 
             List<Movie> movies = session.createQuery(query).getResultList();
             session.getTransaction().commit();

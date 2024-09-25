@@ -63,7 +63,7 @@
         <TextField fx:id="searchField" promptText="Search by Movie Name" styleClass="search-field" maxWidth="200"/>
         <DatePicker fx:id="startDatePicker" promptText="Start Date" styleClass="date-picker" maxWidth="200"/>
         <DatePicker fx:id="endDatePicker" promptText="End Date" styleClass="date-picker" maxWidth="200"/>
-        <Button text="Reset Dates" onAction="#resetDates" styleClass="reset-button" maxWidth="200"/>
+        <Button text="Reset Search" onAction="#resetDates" styleClass="reset-button" maxWidth="200"/>
         <ComboBox fx:id="cinemaComboBox" promptText="Select Cinema" styleClass="combo-box" maxWidth="200"/>
         <ComboBox fx:id="genreComboBox" promptText="Select Genre" styleClass="combo-box" maxWidth="200"/>
         <Button text="Search" onAction="#searchMovies" styleClass="nav-button" maxWidth="200"/>
