@@ -86,7 +86,7 @@ The screenshots below were added to the repository and reflect the application f
 
 The main page is the customer gateway into the system. It presents the current cinema catalogue, highlights upcoming content, and gives direct access to the rest of the guest flows such as online viewing, ticket returns, packages, and complaints.
 
-![Main customer page](./main.png)
+![Main customer page](./images/main.png)
 
 ### Buying a movie ticket
 
@@ -96,73 +96,73 @@ The ticket-purchase flow is split into clear steps. The customer first opens a m
 
 This screen shows the selected movie in detail and gives the customer two purchase paths: a regular ticket purchase or entry through an existing package card.
 
-![Buy process - movie details](./buy1.png)
+![Buy process - movie details](./images/buy1.png)
 
 #### Step 2: Seat selection
 
 After choosing to buy, the user selects an available seat from the hall layout. This keeps the purchase process visual and easy to follow.
 
-![Buy process - choose seat](./buy2.png)
+![Buy process - choose seat](./images/buy2.png)
 
 #### Step 3: Entering payment details
 
 The final step collects the customer details required to complete the booking and generate the purchase record.
 
-![Buy process - payment details](./buy3.png)
+![Buy process - payment details](./images/buy3.png)
 
 ### Online movies
 
 The online movies page is dedicated to titles that are not being watched inside a physical theater hall. These movies can be purchased as digital viewing links and watched remotely through the online flow.
 
-![Online movies page](./online%20movies.png)
+![Online movies page](./images/online%20movies.png)
 
 ### Return ticket
 
 Customers can return an existing purchase by providing the order details and specifying whether the item is a regular purchase card or an online purchase link.
 
-![Return ticket page](./return.png)
+![Return ticket page](./images/return.png)
 
 ### Buy ticket package
 
 The package feature allows customers to buy multiple future entries in advance. This is useful for frequent visitors who want a reusable package instead of paying for each visit separately.
 
-![Buy package page](./buyTicket.png)
+![Buy package page](./images/buyTicket.png)
 
 ### Submit complaint
 
 The complaint page gives customers a direct communication channel with the cinema network. Users can enter their contact details, describe the issue, choose a branch, and submit the complaint for follow-up by customer service.
 
-![Submit complaint page](./submitComliment.png)
+![Submit complaint page](./images/submitComliment.png)
 
 ### Content manager dashboard
 
 The content manager dashboard is the control center for maintaining the movie catalogue. From here, the manager can add movies, add online titles, delete items, update prices, and update showtimes.
 
-![Content manager dashboard](./contentManager.png)
+![Content manager dashboard](./images/contentManager.png)
 
 ### Adding a movie
 
 This screen is an example of the content-management workflow in action. It captures the information needed to publish a new movie into the system, including title, staff credits, schedule, hall, location, pricing, artwork, and description.
 
-![Content manager add movie](./conentManagerAddMovie.png)
+![Content manager add movie](./images/conentManagerAddMovie.png)
 
 ### Admin dashboard
 
 The admin dashboard acts as the entry point to the reporting and decision-making side of the system. It groups together ticket reports, online movie reports, package reports, complaints, and price-change requests.
 
-![Admin dashboard](./adminMain.png)
+![Admin dashboard](./images/adminMain.png)
 
 ### Admin report example: ticket sales
 
 This report gives administrators a structured view of sold tickets, including movie title, branch, purchase date, customer details, and monthly income totals.
 
-![Admin tickets report](./adminTicketReport.png)
+![Admin tickets report](./images/adminTicketReport.png)
 
 ### Admin report example: price change requests
 
 This screen shows how pricing governance is handled in the system. Content managers can submit requests, and administrators can review them before approving or denying changes.
 
-![Admin price change requests](./adminChangePriceRequest.png)
+![Admin price change requests](./images/adminChangePriceRequest.png)
 
 ## User Roles
 
