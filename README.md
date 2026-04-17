@@ -189,12 +189,7 @@ The project supports multiple roles, each with a different responsibility in the
 
 The server uses the configuration in `server/src/main/resources/hibernate.properties`.
 
-By default, the project is configured with:
 
-- database: `avTepos`
-- host: `localhost:3306`
-- username: `root`
-- password: `admin`
 
 Important note: the current Hibernate setting is `hibernate.hbm2ddl.auto = create`, which recreates the schema when the server starts.
 
